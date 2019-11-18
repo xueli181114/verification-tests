@@ -66,3 +66,17 @@ details_loaded:
 buttons_are_partial_enabled:
     action: detail_launch_console_disabled
     action: scale_cluster_button_disabled
+edit_display_name_on_cluster_detail_page:
+  action: click_edit_display_name
+  action: check_display_name_dialog_loaded
+  action: edit_display_name_in_dialog
+  action: check_new_name_in_cluster_detail
+check_new_name_in_cluster_detail:
+  element:
+     selector:
+       xpath: //div[@id='cl-details-top']/div/div/h1[text()='<new_name>']
+go_to_cluster_list:
+  element:
+    selector:
+      xpath: //div[@id='cl-details-top']/div/div/nav/ol/li/a[contains(.,'Clusters')]
+    op: click
