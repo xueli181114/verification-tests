@@ -5,7 +5,7 @@ check_cluster_list_page_without_cluster:
         - selector:
             xpath: //div[@class='pf-c-empty-state__body' and contains(., 'create your first cluster')]
         - selector:
-            xpath: //a[contains(@href, '/openshift/create')]/button[@id='cluster-list-emptystate-primary-action' and text()='Create Cluster']
+            xpath: //a[contains(@href, '/openshift/create')]/button[@id='cluster-list-emptystate-primary-action' and text()='Create cluster']
         - selector:
             xpath: //a[contains(@href, '/openshift/register')]/button[@class='pf-c-button pf-m-link' and text()='Register disconnected cluster']
         - selector:
@@ -16,7 +16,7 @@ cluster_list_page_loaded:
         - selector:
             xpath: //h1[text()='Clusters']
         - selector:
-            xpath: //button[@class='pf-c-button pf-m-primary toolbar-item' and text()='Create Cluster']
+            xpath: //button[@class='pf-c-button pf-m-primary toolbar-item' and text()='Create cluster']
         - selector:
             xpath: //button[@class='pf-c-button pf-m-plain' and text()='Name']
 check_cluster_list_page:
@@ -26,16 +26,16 @@ check_cluster_list_page:
         - selector:
             xpath: //div[@class='pf-c-dropdown toolbar-item']/button/span[text()='Filter']
         - selector:
-            xpath: //a[contains(@href, '/openshift/create')]/button[@class='pf-c-button pf-m-primary toolbar-item' and text()='Create Cluster']
+            xpath: //a[contains(@href, '/openshift/create')]/button[@class='pf-c-button pf-m-primary toolbar-item' and text()='Create cluster']
         - selector:
-            xpath: //button[@class='pf-c-button pf-m-primary toolbar-item' and text()='Create Cluster']/../..//button[@aria-label='Actions']
+            xpath: //button[@class='pf-c-button pf-m-primary toolbar-item' and text()='Create cluster']/../..//button[@aria-label='Actions']
           op: click
         - selector:
             xpath: //a[text()='Register cluster' and contains(@href, '/openshift/register')]
         - selector:
             xpath: //a[text()='Show archived clusters' and contains(@href, '/openshift/archived')]
         - selector:
-            xpath: //button[@class='pf-c-button pf-m-primary toolbar-item' and text()='Create Cluster']/../..//button[@aria-label='Actions']
+            xpath: //button[@class='pf-c-button pf-m-primary toolbar-item' and text()='Create cluster']/../..//button[@aria-label='Actions']
           op: click
     elements:
         - selector:
@@ -80,9 +80,9 @@ check_cluster_list_page:
             xpath: //div[@class='pf-c-pagination pf-m-footer']//button[@id='pagination-options-menu-toggle']
 check_clusters_list_info:
     elements:
-        - selector: 
+        - selector:
             xpath: //td[@data-label='Name']/a[text()='<cluster_name>' and contains(@href, '/openshift/details/')]
-        - selector: 
+        - selector:
             xpath: //a[text()='<cluster_name>']/../../td[@data-label='Status']/span[text()='<cluster_status>']
         - selector:
             xpath: //a[text()='<cluster_name>']/../../td[@data-label='Type']/span[text()='<cluster_type>']
@@ -116,7 +116,7 @@ close_filter_dropdown:
 expand_actions_behind_create_button:
     element:
         selector:
-            xpath: //button[text()='Create Cluster']/../../../div[@id='cluster-list-toolbar']//button[@aria-label='Actions']
+            xpath: //button[text()='Create cluster']/../../../div[@id='cluster-list-toolbar']//button[@aria-label='Actions']
         op: click
     action: actions_behind_create_button_menu_loaded
 close_actions_behind_create_button:
@@ -150,12 +150,12 @@ select_filter:
 click_create_cluster_button:
     element:
         selector:
-            xpath: //a[contains(@href, '/openshift/create')]/button[text()='Create Cluster']
+            xpath: //a[contains(@href, '/openshift/create')]/button[text()='Create cluster']
         op: click
 click_actions_behind_create_button:
     element:
         selector:
-            xpath: //button[text()='Create Cluster']/../../../div[@id='cluster-list-toolbar']//button[@aria-label='Actions']
+            xpath: //button[text()='Create cluster']/../../../div[@id='cluster-list-toolbar']//button[@aria-label='Actions']
         op: click
 actions_behind_create_button_menu_loaded:
     elements:
