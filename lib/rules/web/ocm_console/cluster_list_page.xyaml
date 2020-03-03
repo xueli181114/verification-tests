@@ -380,11 +380,11 @@ go_to_access_control_tab:
 click_logout_button:
   element:
     selector:
-      xpath: //div[@class='pf-c-dropdown']/button/span[contains(., 'UItesting')]/../../button
+      xpath: //div[@widget-type="InsightsOverflowActions"]//button[@aria-label="Actions"]
     op: click
   element:
     selector:
-      xpath: //button[@class='pf-c-dropdown__menu-item' and text()='Logout']
+      xpath: //div[@widget-type="InsightsOverflowActions"]//button[text()='Logout']
     op: click
     timeout: 20
 logout_page_loaded:
