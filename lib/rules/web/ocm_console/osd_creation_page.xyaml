@@ -203,15 +203,48 @@ check_cidr_background_validation_error_message:
 fill_in_required_items_on_osd_creation_page:
     action: input_cluster_name_on_osd_creation_page
     action: select_machine_type
-select_multi_az:
-    element:
+multi_az_radio_button_loaded:
+    element: &multi_az_radio_button
         selector:
             xpath: //input[@id='multi_az-true']
+select_multi_az:
+    element:
+        <<: *multi_az_radio_button
         op: click
+check_disabled_single_zone:
+    element:
+        selector:
+            xpath: //div[@class='pf-c-radio radio-az-disabled']/*[@id="multi_az-false"]
+        op: hover
+    action: no_option_quota_tooltip_displayed
+check_disabled_multi_zone:
+    element:
+        selector:
+            xpath: //div[@class='pf-c-radio radio-az-disabled']/*[@id="multi_az-true"]
+        op: hover
+    action: no_option_quota_tooltip_displayed
+check_disabled_standard_card:
+    element:
+        selector:
+            xpath: //div[@class='ocm-flat-radio-button-disabled']/button[@id='standard']
+        op: hover
+    action: no_option_quota_tooltip_displayed
+
+check_disabled_byoc_card:
+    element:
+        selector:
+            xpath: //div[@class='ocm-flat-radio-button-disabled']/button[@id='customer cloud subscription']
+        op: hover
+    action: no_option_quota_tooltip_displayed
+
 no_quota_tooltip_displayed:
     element:
         selector:
             xpath: //div[@class='pf-c-tooltip__content' and text()='You do not have quota for this node type. Contact sales to purchase additional quota.']
+no_option_quota_tooltip_displayed:
+    element:
+        selector:
+            xpath: //div[@class='pf-c-tooltip__content' and text()='You do not have quota for this option. Contact sales to purchase additional quota.']
 check_no_quota_tooltip:
     action: hover_machine_type
     action: no_quota_tooltip_displayed
