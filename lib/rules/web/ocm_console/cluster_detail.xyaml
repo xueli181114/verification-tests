@@ -45,12 +45,12 @@ resource_usage_loaded:
 cpu_chart_loaded:
     elements:
         - selector:
-            xpath: //section[@id='overviewTabContent']//h4[@class='pf-c-title pf-m-xl metrics-chart' and text()='vCPU']
+            xpath: //section[@id='overviewTabContent']//h4[text()='vCPU']
 
 overview_tab_loaded:
     elements:
         - selector:
-            xpath: //section[@id='overviewTabContent']//h2[@class='pf-c-title pf-m-3xl' and text()='Details']
+            xpath: //section[@id='overviewTabContent']//h2[text()='Details']
 
 monitoring_tab_loaded:
     element:
