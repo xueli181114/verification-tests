@@ -155,3 +155,32 @@ total_sockets_loaded:
     element:
         selector:
             xpath: //div[@class='pf-l-grid']/div[2]//dt[3][text()='Total Sockets']
+check_total_vcpu_value:
+    element:
+        selector:
+            xpath: //div[@class='pf-l-grid']/div[2]//dd[2][contains(text(),<total_vcpu_value>)]
+check_total_sockets_value:
+    element:
+        selector:
+            xpath: //div[@class='pf-l-grid']/div[2]//dd[3][contains(text(),<total_sockets_value>)]
+check_total_memory_value:
+    element:
+        selector:
+            xpath: //div[@class='pf-l-grid']/div[2]//dd[contains(text(),<total_memory_value>)]
+check_compute_node_value:
+    element:
+        selector:
+            xpath: //div[@class='pf-l-grid']/div[2]//dd[4]/dl[2]/dd[contains(text(),<total_node_value>)]
+check_cluster_metrics:
+    action:
+        if_param: total_node_value
+        ref: check_compute_node_value
+    action:
+        if_param: total_memory_value
+        ref: check_total_memory_value
+    action:
+        if_param: total_sockets_value
+        ref: check_total_sockets_value
+    action:
+        if_param: total_vcpu_value
+        ref: check_total_vcpu_value

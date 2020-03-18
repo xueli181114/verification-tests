@@ -260,5 +260,143 @@ go_to_cluster_list_page:
             xpath: //a[contains(@href, '/openshift/') and text()='Clusters']
         op: click
     action: cluster_list_page_loaded
-
-
+open_cluster_registration_dialog_from_cluster_list_page:
+    action: expand_cluster_actions_on_cluster_list_page
+    action: click_edit_cluster_registration_button_in_dropdown
+    action: edit_cluster_registration_dialog_loaded
+edit_cluster_registration_dialog_loaded:
+    action: memory_text_box_loaded
+    action: compute_node_number_text_box_loaded
+check_cluster_registration_dialog:
+    action:
+        if_param: sockets_type
+        ref: sockets_text_box_loaded
+    action:
+        if_param: vcpu_type
+        ref: vcpu_text_box_loaded
+    action: memory_text_box_loaded
+    action: compute_node_number_text_box_loaded
+    action: save_button_loaded
+    action: check_cancel_button
+    elements:
+        - selector:
+            text: "Memory capacity (GiB)"
+        - selector:
+            text: Number of compute nodes
+check_cluster_registration_dialog_default_value:
+    action:
+        if_param: default_vcpu_value
+        ref: check_vcpu_text_box_default_value
+    action:
+        if_param: default_sockets_value
+        ref: check_sockets_text_box_default_value
+    action: check_memory_text_box_default_value
+    action: check_compute_node_number_text_box_default_value
+sockets_text_box_loaded:
+    element: &sockets_text_box
+        selector:
+            xpath: //input[@id='sockets']
+    action: sockets_text_loaded
+edit_sockets_value:
+    params:
+        locator_id: sockets
+    action: clear_input
+    element:
+        <<: *sockets_text_box
+        op: send_keys <sockets_value>
+check_sockets_text_box_default_value:
+    element:
+        selector:
+            xpath: //input[@id='sockets' and @value='<default_sockets_value>']
+memory_text_box_loaded:
+    element: &memory_text_box
+        selector:
+            xpath: //input[@id='memoryCapacity']
+edit_memory_value:
+    params:
+        locator_id: memoryCapacity
+    action: clear_input
+    element:
+        <<: *memory_text_box
+        op: send_keys <memory_value>
+check_memory_text_box_default_value:
+    element:
+        selector:
+            xpath: //input[@id='memoryCapacity' and @value='<default_memory_value>']
+compute_node_number_text_box_loaded:
+    element: &compute_node_number_text_box
+        selector:
+            xpath: //input[@id='computeNodes']
+edit_compute_node_value:
+    params:
+        locator_id: computeNodes
+    action: clear_input
+    element:
+        <<: *compute_node_number_text_box
+        op: send_keys <node_value>
+check_compute_node_number_text_box_default_value:
+    element:
+        selector:
+            xpath: //input[@id='computeNodes' and @value='<default_node_value>']
+vcpu_text_box_loaded:
+    element: &vcpu_text_box
+        selector:
+            xpath: //input[@id='vCPUs']
+    action: vcpu_text_loaded
+edit_vcpu_value:
+    params:
+        locator_id: vCPUs
+    action: clear_input
+    element:
+        <<: *vcpu_text_box
+        op: send_keys <vcpu_value>
+check_vcpu_text_box_default_value:
+    element:
+        selector:
+            xpath: //input[@id='vCPUs' and @value='<default_vcpu_value>']
+vcpu_text_loaded:
+    elements:
+        - selector:
+            text: Number of vCPUs
+        - selector:
+            xpath: //span[text()='Number of vCPUs']/../span[text()='*']
+sockets_text_loaded:
+    elements:
+        - selector:
+            text: Number of sockets or LPARs
+        - selector:
+            xpath: //span[text()='Number of sockets or LPARs']/../span[text()='*']
+save_button_loaded:
+    element: &save_button
+        selector:
+            xpath: //button[@type='submit' and text()='Save']
+click_save_button:
+    element:
+        <<: *save_button
+        op: click
+edit_cluster_registration:
+    action:
+        if_param: vcpu_value
+        ref: edit_vcpu_value
+    action:
+        if_param: sockets_value
+        ref: edit_sockets_value
+    action:
+        if_param: memory_value
+        ref: edit_memory_value
+    action:
+        if_param: node_value
+        ref: edit_compute_node_value
+    action:
+        if_param: save
+        ref: click_save_button
+    action:
+        if_param: cancel
+        ref: click_cancel_button
+    action: edit_cluster_registration_dialog_missing
+edit_cluster_registration_dialog_missing:
+    element:
+        selector:
+            xpath: //div[@role='dialog' and @aria-label='Edit Cluster Registration']
+        missing: true
+        timeout: 10
