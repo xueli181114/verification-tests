@@ -22,6 +22,18 @@ check_delete_cluster_button_in_dropdown:
   element: &delete_cluster_button_in_dropdown
     selector:
       xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Delete Cluster' and not(@disabled)]
+check_edit_cluster_registration_button_in_dropdown:
+  element: &edit_cluster_registration 
+    selector:
+      xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Edit Cluster Registration']
+check_add_console_url_button_in_dropdown:
+  element: &add_console_url
+    selector:
+      xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Add Console URL']
+click_edit_cluster_registration_button_in_dropdown:
+  element:
+    <<: *edit_cluster_registration
+    op: click
 click_edit_display_name_button_in_dropdown:
   element:
     <<: *edit_display_name_button_in_dropdown
@@ -71,3 +83,49 @@ check_scale_cluster_button_in_dropdown_missing:
     selector:
       xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Scale Cluster']
     missing: true
+check_edit_cluster_registration_button_in_dropdown_missing:
+  element:
+    selector:
+      xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Edit Cluster Registration']
+    missing: true
+check_add_console_url_button_in_dropdown_missing:
+  element:
+    selector:
+      xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Add Console URL']
+    missing: true
+check_edit_display_name_button_in_dropdown_missing:
+  element:
+    <<: *edit_display_name_button_in_dropdown
+    missing: true
+check_enabled_actions_in_dropdown:
+  action:
+    if_param: edit_cluster_registration_button
+    ref: check_edit_cluster_registration_button_in_dropdown
+  action:
+    if_param: edit_display_name_button
+    ref: check_edit_display_name_button_in_dropdown
+  action:
+    if_param: add_console_url_button
+    ref: check_add_console_url_button_in_dropdown
+  action:
+    if_param: archive_button
+    ref: check_archive_button_in_dropdown
+  action:
+    if_param: edit_console_button
+    ref: check_edit_console_button_in_dropdown
+check_missing_actions_in_dropdown:
+  action:
+    if_param: add_console_url_button
+    ref: check_add_console_url_button_in_dropdown_missing
+  action:
+    if_param: edit_cluster_registration_button
+    ref: check_edit_cluster_registration_button_in_dropdown_missing
+  action:
+    if_param: edit_console_button
+    ref: check_edit_console_button_in_dropdown_missing
+  action:
+    if_param: archive_button
+    ref: check_archive_button_in_dropdown_missing
+  action:
+    if_param: edit_display_name_button
+    ref: check_edit_display_name_button_in_dropdown_missing

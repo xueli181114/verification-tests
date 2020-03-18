@@ -2,6 +2,10 @@
 cluster_detail_page_loaded:
     action: overview_tab_loaded
     action: monitoring_tab_loaded
+check_disabled_actions_on_cluster_detail_page:
+    element:
+        selector:
+            xpath: //button[@disabled='']/span[text()='Actions']
 add_console_url_button_on_cluster_detail_page_loaded:
     element: &add_console_url_on_detail_page
         selector:
