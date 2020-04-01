@@ -42,6 +42,7 @@ click_scale_cluster_button_in_dropdown:
   element:
     <<: *scale_cluster_button_in_dropdown
     op: click
+    timeout: 60
 click_delete_cluster_button_in_dropdown:
   element:
     <<: *delete_cluster_button_in_dropdown

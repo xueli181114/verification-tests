@@ -257,3 +257,55 @@ check_persistent_storage_field_in_scale_dialog:
       xpath: //label[@for='persistent_storage']/span[text()='Persistent storage']
   - selector:
       xpath: //select[@name='persistent_storage']
+choose_loadbalancer_in_dialog:
+  action: click_loadbalancer_dropdown
+  action: select_loadbalancer_in_dialog
+  action: click_apply_button
+  action: check_dialog_missing
+click_loadbalancer_dropdown:
+  element:
+    selector:
+      xpath: //select[@name='load_balancers']
+    op: click
+select_loadbalancer_in_dialog:
+  element:
+    selector: 
+      xpath: //select[@name='load_balancers']//option[text()='<load_balancers_number>']
+    op: click
+choose_persistent_quota_in_dialog:
+  action: click_persistent_quota_dropdown
+  action: select_persistent_quota_in_dialog
+  action: click_apply_button
+  action: check_dialog_missing
+click_persistent_quota_dropdown:
+  element:
+    selector:
+      xpath: //select[@name='persistent_storage']
+    op: click
+select_persistent_quota_in_dialog:
+  element:
+    selector: 
+      xpath: //select[@name='persistent_storage']//option[text()='<persistent_storage_number>']
+    op: click
+check_persistent_storage_scaledown_warning_message:
+  elements:
+  - selector:
+      xpath: //select[@name='persistent_storage']/../following-sibling::div/h4[text()='Scaling below the current limit can cause problems in your environment']
+  - selector:
+      xpath: //select[@name='persistent_storage']/../following-sibling::div/div//a[text()='Check your usage']
+check_persistent_storage_scaledown_warning_message_missing:
+  element:
+    selector:
+      xpath: //select[@name='persistent_storage']/../following-sibling::div[@aria-label='Warning Alert']
+    missing: true
+check_loadbalancer_scaledown_warning_message:
+  elements:
+  - selector:
+      xpath: //select[@name='load_balancers']/../following-sibling::div/h4[text()='Scaling below the current limit can cause problems in your environment']
+  - selector:
+      xpath: //select[@name='load_balancers']/../following-sibling::div/div//a[text()='Check your usage']
+check_loadbalancer_scaledown_warning_message_missing:
+  element:
+    selector:
+      xpath: //select[@name='load_balancers']/../following-sibling::div[@aria-label='Warning Alert']
+    missing: true
