@@ -74,15 +74,16 @@ check_install_page:
     action: required_install_page_items_loaded
     action: check_install_page_title
     action: check_breadcrumbs_in_install_overview_page
-    element:
-        selector:
+    elements:
+        - selector:
             xpath: //span[@class='infra-crc-icon-text' and text()='Powered by Red Hat CodeReady Containers']
+        - selector:
+            xpath: //h3[@class='pf-c-title pf-m-2xl' and text()='Select an infrastructure provider']
 required_install_page_items_loaded:
     elements:
         - selector:
             xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and text()='Select an infrastructure provider']
+            timeout: 30
 check_install_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | Infrastructure Provider'
@@ -121,117 +122,89 @@ click_download_installer_button:
         selector:
             xpath: //a[text()='Download installer']/../../div/select
         op: click
-check_linux_download_installer_button_in_install_page:
+check_download_installer_button_in_install_page:
     action: click_download_installer_button
     elements:
         - selector:
-            xpath: //a[text()='Download installer']/../../div/select/option[text()='Linux']
+            xpath: //a[text()='Download installer']/../../div/select/option[text()='<os_name>']
           op: click
         - selector:
-            xpath: //a[text()='Download installer' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz']
-check_macos_download_installer_button_in_install_page:
-    action: click_download_installer_button
-    elements:
-        - selector:
-            xpath: //a[text()='Download installer']/../../div/select/option[text()='MacOS']
-          op: click
-        - selector:
-            xpath: //a[text()='Download installer' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-mac.tar.gz']
-check_download_installer_part_in_install_page:
-    action: check_linux_download_installer_button_in_install_page
-    action: check_macos_download_installer_button_in_install_page
-    elements:
-        - selector:
-            xpath: //h3[text()='OpenShift installer']
-check_linux_download_installer_button_in_dev_preview:
-    action: click_download_installer_button
-    elements:
-        - selector:
-            xpath: //a[text()='Download installer']/../../div/select/option[text()='Linux']
-          op: click
-        - selector:
-            xpath: //a[text()='Download installer' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/openshift-install-linux.tar.gz']
-check_macos_download_installer_button_in_dev_preview:
-    action: click_download_installer_button
-    elements:
-        - selector:
-            xpath: //a[text()='Download installer']/../../div/select/option[text()='MacOS']
-          op: click
-        - selector:
-            xpath: //a[text()='Download installer' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/openshift-install-mac.tar.gz']
-check_download_installer_part_in_dev_preview:
-    action: check_linux_download_installer_button_in_dev_preview
-    action: check_macos_download_installer_button_in_dev_preview
-    elements:
-        - selector:
-            xpath: //h3[text()='OpenShift installer']
+            xpath: //a[text()='Download installer' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-<os_link>.tar.gz']
 click_download_cli_button:
     element:
         selector:
             xpath: //a[text()='Download command-line tools']/../../div/select
         op: click
-check_linux_download_cli_button_in_install_page:
+check_download_cli_button_in_install_page:
     action: click_download_cli_button
     elements:
         - selector:
-            xpath: //a[text()='Download command-line tools']/../../div/select/option[text()='Linux']
+            xpath: //a[text()='Download command-line tools']/../../div/select/option[text()='<os_name>']
           op: click
         - selector:
-            xpath: //a[text()='Download command-line tools' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz']
-check_macos_download_cli_button_in_install_page:
-    action: click_download_cli_button
+            xpath: //a[text()='Download command-line tools' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-<os_link>.tar.gz']
+check_linux_download_button_in_install_page:
+    params:
+        os_name: Linux
+        os_link: linux
+    action: check_download_installer_button_in_install_page
+    action: check_download_cli_button_in_install_page
+check_macos_download_button_in_install_page:
+    params:
+        os_name: MacOS
+        os_link: mac
+    action: check_download_installer_button_in_install_page
+    action: check_download_cli_button_in_install_page
+check_windows_download_button_in_install_page:
+    params:
+        os_name: Windows
+        os_link: windows
+    action: check_download_cli_button_in_install_page
+check_download_part_in_normal_install_page:
+    params:
+        installer_type: clients/ocp/latest
+    action: check_linux_download_button_in_install_page
+    action: check_macos_download_button_in_install_page
+    action: check_windows_download_button_in_install_page
     elements:
         - selector:
-            xpath: //a[text()='Download command-line tools']/../../div/select/option[text()='MacOS']
-          op: click
-        - selector:
-            xpath: //a[text()='Download command-line tools' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-mac.tar.gz']
-check_windows_download_cli_button_in_install_page:
-    action: click_download_cli_button
-    elements:
-        - selector:
-            xpath: //a[text()='Download command-line tools']/../../div/select/option[text()='Windows']
-          op: click
-        - selector:
-            xpath: //a[text()='Download command-line tools' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-windows.zip']
-check_download_cli_part_in_install_page:
-    action: check_linux_download_cli_button_in_install_page
-    action: check_macos_download_cli_button_in_install_page
-    action: check_windows_download_cli_button_in_install_page
-    elements:
+            xpath: //h3[text()='OpenShift installer']
         - selector:
             xpath: //h3[text()='Command-line interface']
-check_linux_download_cli_button_in_dev_preview:
-    action: click_download_cli_button
+check_download_part_in_dev_preview_install_page:
+    params:
+        installer_type: x86_64/clients/ocp-dev-preview/pre-release
+    action: check_linux_download_button_in_install_page
+    action: check_macos_download_button_in_install_page
+    action: check_windows_download_button_in_install_page
     elements:
         - selector:
-            xpath: //a[text()='Download command-line tools']/../../div/select/option[text()='Linux']
-          op: click
-        - selector:
-            xpath: //a[text()='Download command-line tools' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/openshift-client-linux.tar.gz']
-check_macos_download_cli_button_in_dev_preview:
-    action: click_download_cli_button
-    elements:
-        - selector:
-            xpath: //a[text()='Download command-line tools']/../../div/select/option[text()='MacOS']
-          op: click
-        - selector:
-            xpath: //a[text()='Download command-line tools' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/openshift-client-mac.tar.gz']
-check_windows_download_cli_button_in_dev_preview:
-    action: click_download_cli_button
-    elements:
-        - selector:
-            xpath: //a[text()='Download command-line tools']/../../div/select/option[text()='Windows']
-          op: click
-        - selector:
-            xpath: //a[text()='Download command-line tools' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest-4.4/openshift-client-windows.zip']
-check_download_cli_part_in_dev_preview:
-    action: check_linux_download_cli_button_in_dev_preview
-    action: check_macos_download_cli_button_in_dev_preview
-    action: check_windows_download_cli_button_in_dev_preview
-    elements:
+            xpath: //h3[text()='OpenShift installer']
         - selector:
             xpath: //h3[text()='Command-line interface']
+check_download_part_in_s390x_install_page:
+    params:
+        installer_type: s390x/clients/ocp/latest
+    action: check_linux_download_button_in_install_page
+    action: check_macos_download_button_in_install_page
+    action: check_windows_download_button_in_install_page
+    elements:
+        - selector:
+            xpath: //h3[text()='OpenShift installer']
+        - selector:
+            xpath: //h3[text()='Command-line interface']
+check_download_part_in_ppc64le_install_page:
+    params:
+        installer_type: ppc64le/clients/ocp/latest
+    action: check_linux_download_button_in_install_page
+    action: check_macos_download_button_in_install_page
+    action: check_windows_download_button_in_install_page
+    elements:
+        - selector:
+            xpath: //h3[text()='OpenShift installer']
+        - selector:
+            xpath: //h3[text()='Command-line interface']
+
 click_copyPullSecret_button:
     element:
         selector:
@@ -543,32 +516,27 @@ check_bare_metal_page_title:
       expect_result: true
 
 check_ibm_z_install_page:
-    action: required_ibm_z_install_items_loaded
+    action: required_install_page_items_loaded
     action: check_ibm_z_page_title
     action: check_evaluation_notification_in_install_page
     action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_install_page
+    action: check_download_part_in_s390x_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_install_page
     elements:
+        - selector:
+            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on IBM Z with user-provisioned infrastructure')]
         - selector:
             xpath: //a[contains(@href, '/latest/support/remote_health_monitoring/about-remote-health-monitoring.html') and contains(., 'Learn more')]
         - selector:
             xpath: //p[contains(., 'install a cluster on IBM Z infrastructure')]
         - selector:
-            xpath: //*[contains(@href, '/4.2/installing/installing_ibm_z/installing-ibm-z.html') and contains(.,'official documentation')]
+            xpath: //*[contains(@href, '4.3/installing/installing_ibm_z/installing-ibm-z.html') and contains(.,'official documentation')]
         - selector:
-            xpath: //a[contains(@href, '/4.2/installing/installing_ibm_z/installing-ibm-z.html') and text()='Get started']
+            xpath: //a[contains(@href, '4.3/installing/installing_ibm_z/installing-ibm-z.html') and text()='Get started']
         - selector:
-            xpath: //a[contains(@href, '/4.2/installing/installing_ibm_z/installing-ibm-z.html#installation-user-infra-machines-iso-ibm-z_installing-ibm-z') and contains(., 'Learn more')]
+            xpath: //a[contains(@href, '4.3/installing/installing_ibm_z/installing-ibm-z.html#installation-user-infra-machines-iso-ibm-z_installing-ibm-z') and contains(., 'Learn more')]
         - selector:
-            xpath: //a[@href='https://mirror.openshift.com/pub/openshift-v4/s390x/dependencies/rhcos/4.2/latest/' and text()='Download RHCOS']
-required_ibm_z_install_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on IBM Z with user-provisioned infrastructure')]
+            xpath: //a[@href='https://mirror.openshift.com/pub/openshift-v4/s390x/dependencies/rhcos/latest/latest/' and text()='Download RHCOS']
 check_ibm_z_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | IBM Z'
@@ -604,55 +572,73 @@ check_openstack_ipi_page_title:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | OpenStack Installer-Provisioned Infrastructure'
       expect_result: true
 check_openstack_upi_install_page:
+    action: required_install_page_items_loaded
     action: check_openstack_upi_page_title
-    action: check_developer_preview_bar_in_install_page
+    action: check_evaluation_notification_in_install_page
     action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_dev_preview
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_dev_preview
     elements:
         - selector:
             xpath: //p[contains(., 'install a cluster on Red Hat OpenStack Platform using infrastructure')]
         - selector:
-            xpath: //*[contains(@href, '/docs/user/openstack/install_upi.md') and contains(.,'official documentation')]
+            xpath: //*[contains(@href, '/installing_openstack/installing-openstack-user.html') and contains(.,'official documentation')]
         - selector:
-            xpath: //a[contains(@href, '/docs/user/openstack/install_upi.md') and text()='Get started']
+            xpath: //a[contains(@href, '/installing_openstack/installing-openstack-user.html') and text()='Get started']
         - selector:
             xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
         - selector:
             xpath: //a[contains(@href, '/install/pre-release') and text()='pre-release builds']
         - selector:
-            xpath: //a[contains(@href, '/openstack/install_upi.md#red-hat-enterprise-linux-coreos-rhcos') and text()='Learn more']
+            xpath: //a[contains(@href, '/installing_openstack/installing-openstack-user.html#installation-osp-creating-image_installing-openstack-user') and text()='Learn more']
         - selector:
-            xpath: //a[contains(@href, '/rhcos/pre-release/latest/') and text()='Download RHCOS']
+            xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
 check_openstack_upi_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | OpenStack User-Provisioned Infrastructure'
       expect_result: true
 check_rhv_install_page:
-    action: required_rhv_install_items_loaded
+    action: required_install_page_items_loaded
     action: check_rhv_page_title
-    action: check_developer_preview_bar_in_install_page
+    action: check_evaluation_notification_in_install_page
     action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_dev_preview
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_dev_preview
     elements:
+        - selector:
+            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Red Hat Virtualization with installer-provisioned infrastructure')]
         - selector:
             xpath: //p[contains(., 'install a cluster on Red Hat Virtualization using infrastructure')]
         - selector:
-            xpath: //*[contains(@href, 'https://access.redhat.com/articles/4903411') and contains(.,'official documentation')]
+            xpath: //*[contains(@href, '/installing_rhv/installing-rhv-creating-custom-vm.html') and contains(.,'official documentation')]
         - selector:
-            xpath: //a[contains(@href, 'https://access.redhat.com/articles/4903411') and text()='Get started']
-required_rhv_install_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Red Hat Virtualization with installer-provisioned infrastructure')]
+            xpath: //a[contains(@href, '/installing_rhv/installing-rhv-creating-custom-vm.html') and text()='Get started']
 check_rhv_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | Red Hat Virtualization'
+      expect_result: true
+
+check_power_install_page:
+    action: required_install_page_items_loaded
+    action: check_power_page_title
+    action: check_evaluation_notification_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_download_part_in_ppc64le_install_page
+    action: check_pull_secret_part_in_install_page
+    elements:
+        - selector:
+            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Power with user-provisioned infrastructure')]
+        - selector:
+            xpath: //p[contains(., 'install a cluster on Power infrastructure that you provide')]
+        - selector:
+            xpath: //*[contains(@href, '4.3/installing/installing_ibm_power/installing-ibm-power.html') and contains(.,'official documentation')]
+        - selector:
+            xpath: //a[contains(@href, '4.3/installing/installing_ibm_power/installing-ibm-power.html') and text()='Get started']
+        - selector:
+            xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/ppc64le/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
+check_power_page_title:
+    scripts:
+    - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | Power'
       expect_result: true
 
 check_codeready_install_page:
