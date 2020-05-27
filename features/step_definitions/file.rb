@@ -1,4 +1,21 @@
-Given /^I save the (output|response) to file>(.+)$/ do |part, filepath| 
+Given /^I obtain test data file #{QUOTED}$/ do |path|
+  accepted_roots = [
+    "#{BushSlicer::HOME}/testdata",
+    "#{BushSlicer::HOME}/features/tierN/testdata",
+  ]
+  tried_paths = []
+  found = accepted_roots.any? do |root|
+    test_file = "#{root}/#{path}"
+    tried_paths << test_file
+    if File.exist? test_file
+      FileUtils.cp(test_file, File.basename(path))
+      cb.test_file = File.absolute_path(File.basename(path))
+    end
+  end
+  raise "could not find test file in '#{tried_paths}'" unless found
+end
+
+Given /^I save the (output|response) to file>(.+)$/ do |part, filepath|
   part = part == "response"? :response : :stdout
   File.write(File.expand_path(filepath.strip), @result[part])
 end

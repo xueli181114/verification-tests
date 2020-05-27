@@ -9,6 +9,7 @@ goto_resource_page_under_default_project:
   url: k8s/ns/default/<resource_url_name>
 goto_project_resources_page:
   url: k8s/cluster/projects/<project_name>/workloads
+  action: wait_box_loaded
 goto_project_details_page:
   params:
     button_text: Dashboard
@@ -32,6 +33,9 @@ goto_builds_page:
   url: k8s/ns/<project_name>/builds
 goto_one_build_page:
   url: k8s/ns/<project_name>/builds/<build_name>
+goto_one_build_environment_page:
+  url: k8s/ns/<project_name>/builds/<build_name>/environment
+  action: wait_box_loaded
 
 # configmaps
 goto_configmaps_page:
@@ -58,6 +62,7 @@ goto_project_events:
 # environment page
 goto_resource_environment_page:
   url: k8s/ns/<project_name>/<resource_type>/<resource_name>/environment
+  action: wait_box_loaded
 
 # secrets
 goto_secrets_page:
@@ -70,6 +75,18 @@ goto_one_secret_page:
 #serviceaccounts
 goto_serviceaccounts_page:
   url: k8s/ns/<project_name>/serviceaccounts
+goto_namespace_role_rolebinding_page:
+  url: k8s/ns/<project_name>/roles/<role_name>/bindings
+  action: wait_box_loaded
+goto_cluster_role_rolebinding_page:
+  url: k8s/cluster/clusterroles/<role_name>/bindings
+  action: wait_box_loaded
+goto_rolebinding_list_page:
+  url: k8s/ns/<project_name>/rolebindings
+  action: wait_box_loaded
+goto_rolebinding_creation_page:
+  url: k8s/cluster/rolebindings/~new
+  action: wait_form_loaded
 
 # storageclass
 goto_storageclass_page:
@@ -96,10 +113,14 @@ goto_one_pod_page:
   url: k8s/ns/<project_name>/pods/<resource_name>
 goto_project_pods_list_page:
   url: k8s/ns/<project_name>/pods
+  action: wait_box_loaded
 goto_cluster_oauth_configuration_page:
   url: k8s/cluster/config.openshift.io~v1~OAuth/cluster
 goto_one_pod_log_page:
   url: k8s/ns/<project_name>/pods/<pod_name>/logs
+goto_one_pod_environment_page:
+  url: k8s/ns/<project_name>/pods/<pod_name>/environment
+  action: wait_box_loaded
 
 #replica sets
 goto_replica_sets_page:
@@ -110,6 +131,8 @@ goto_routes_page:
   url: k8s/ns/<project_name>/routes
 goto_one_route_page:
   url: k8s/ns/<project_name>/routes/<route_name>
+goto_route_creation_page:
+  url: k8s/ns/<project_name>/routes/~new/form
 
 #imagestream
 goto_imagestreams_page:
@@ -172,6 +195,9 @@ goto_crds_page:
   url: k8s/cluster/customresourcedefinitions
 goto_crd_instances_page:
   url: k8s/cluster/customresourcedefinitions/<crd_definition>/instances
+goto_csv_detail_page:
+  url: k8s/ns/<project_name>/operators.coreos.com~v1alpha1~ClusterServiceVersion/<csv_name>
+  action: wait_box_loaded
 
 # quota
 goto_quotas_page:
@@ -181,3 +207,9 @@ goto_all_machines_page:
   url: k8s/all-namespaces/machine.openshift.io~v1beta1~Machine
 goto_all_machine_sets_page: 
   url: k8s/all-namespaces/machine.openshift.io~v1beta1~MachineSet
+
+#hpa
+goto_hpas_page:
+  url: k8s/ns/<project_name>/horizontalpodautoscalers
+goto_one_hpa_page:
+  url: k8s/ns/<project_name>/horizontalpodautoscalers/<hpa_name>

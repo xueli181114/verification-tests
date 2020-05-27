@@ -9,8 +9,9 @@ Given /^I have a NFS service in the(?: "([^ ]+?)")? project$/ do |project_name|
   end
 
   step %Q/SCC "privileged" is added to the "system:serviceaccounts:<%= project.name %>" group/
+  step 'I obtain test data file "storage/nfs/nfs-server.yaml"'
   step %Q{I run the :create client command with:}, table(%{
-    | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/nfs-server.yaml |
+    | f | <%= BushSlicer::HOME %>/testdata/storage/nfs/nfs-server.yaml |
   })
   step %Q/the step should succeed/
 
@@ -81,7 +82,7 @@ Given /^I have a efs-provisioner(?: with fsid "(.+)")?(?: of region "(.+)")? in 
   _deployment = deployment("efs-provisioner", _project)
   _deployment.ensure_deleted(user: admin)
   #Create configmap,secret,sa,deployment
-  step %Q{I download a file from "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/configmap/efsconfigm.yaml"}
+  step %Q{I obtain test data file "configmap/efsconfigm.yaml"}
   cm = YAML.load(@result[:response])
   path = @result[:abs_path]
   cm["data"]["file.system.id"] = fsid if fsid
@@ -176,7 +177,7 @@ Given /^I have an ssh-git service in the(?: "([^ ]+?)")? project$/ do |project_n
     raise "project #{project_name} does not exist"
   end
 
-  @result = user.cli_exec(:run, name: "git-server", image: "aosqe/ssh-git-server-openshift")
+  @result = user.cli_exec(:create, f: "#{ENV['BUSHSLICER_HOME']}/testdata/templates/ssh-git/ssh-git-dc.yaml")
   raise "cannot run the ssh-git-server pod" unless @result[:success]
 
   @result = user.cli_exec(:set_probe, resource: "dc/git-server", readiness: true, open_tcp: "2022")
@@ -187,7 +188,7 @@ Given /^I have an ssh-git service in the(?: "([^ ]+?)")? project$/ do |project_n
 
   # wait to become available
   @result = BushSlicer::Pod.wait_for_labeled("deployment-config=git-server",
-                                            "run=git-server",
+                                            "name=git-server",
                                             count: 1,
                                             user: user,
                                             project: project,
@@ -240,7 +241,7 @@ Given /^I have an http-git service in the(?: "([^ ]+?)")? project$/ do |project_
     raise "project #{project_name} does not exist"
   end
 
-  @result = user.cli_exec(:create, f: "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/image/gitserver/gitserver-ephemeral.yaml")
+  @result = user.cli_exec(:create, f: "#{ENV['BUSHSLICER_HOME']}/testdata/image/gitserver/gitserver-ephemeral.yaml")
   # @result = user.cli_exec(:run, name: "gitserver", image: "openshift/origin-gitserver", env: 'GIT_HOME=/var/lib/git')
   raise "could not create the http-git-server" unless @result[:success]
 
@@ -321,7 +322,7 @@ Given /^I have a pod-for-ping in the#{OPT_QUOTED} project$/ do |project_name|
     raise "project #{project_name} does not exist"
   end
 
-  @result = user.cli_exec(:create, f: "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/networking/aosqe-pod-for-ping.json")
+  @result = user.cli_exec(:create, f: "#{ENV['BUSHSLICER_HOME']}/testdata/networking/aosqe-pod-for-ping.json")
   raise "could not create a pod-for-ping" unless @result[:success]
 
   cb.ping_pod = pod("hello-pod")
@@ -336,11 +337,11 @@ Given /^I have a header test service in the#{OPT_QUOTED} project$/ do |project_n
     raise "project #{project_name} does not exist"
   end
 
-  @result = user.cli_exec(:create, f: "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/routing/header-test/dc.json")
+  @result = user.cli_exec(:create, f: "#{ENV['BUSHSLICER_HOME']}/testdata/routing/header-test/dc.json")
   raise "could not create header test dc" unless @result[:success]
   cb.header_test_dc = dc("header-test")
 
-  @result = user.cli_exec(:create, f: "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/routing/header-test/insecure-service.json")
+  @result = user.cli_exec(:create, f: "#{ENV['BUSHSLICER_HOME']}/testdata/routing/header-test/insecure-service.json")
   raise "could not create header test svc" unless @result[:success]
   cb.header_test_svc = service("header-test-insecure")
 
@@ -371,7 +372,7 @@ Given /^I have a skopeo pod in the(?: "([^ ]+?)")? project$/ do |project_name|
     raise "project #{project_name} does not exist"
   end
 
-  @result = user.cli_exec(:create, f: "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/skopeo-deployment.json")
+  @result = user.cli_exec(:create, f: "#{ENV['BUSHSLICER_HOME']}/testdata/deployment/skopeo-deployment.json")
   raise "could not create a skopeo" unless @result[:success]
 
   step %Q/a pod becomes ready with labels:/, table(%{
@@ -386,7 +387,7 @@ end
 Given /^CA trust is added to the pod-for-ping$/ do
   @result = cb.ping_pod.exec(
     "bash", "-c",
-    "wget https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/routing/ca.pem -O /tmp/ca.pem -T 10 -t 3",
+    "wget https://raw.githubusercontent.com/openshift/verification-tests/master/testdata/routing/ca.pem -O /tmp/ca.pem -T 10 -t 3",
     as: user
   )
   raise "cannot get ca cert" unless @result[:success]
@@ -484,7 +485,7 @@ Given /^I have a iSCSI setup in the environment$/ do
       res = host.exec_admin(*setup_commands)
       raise "iSCSI initiator setup commands error" unless res[:success]
     end
-    @result = admin.cli_exec(:create, n: _project.name, f: 'https://raw.githubusercontent.com/openshift-qe/docker-iscsi/master/iscsi-target.json')
+    @result = admin.cli_exec(:create, n: _project.name, f: "#{BushSlicer::HOME}/testdata/storage/iscsi/iscsi-target.json")
     raise "could not create iSCSI pod" unless @result[:success]
   end
 
@@ -607,8 +608,7 @@ Given /^I have a registry with htpasswd authentication enabled in my project$/ d
   step %Q/a pod becomes ready with labels:/, table(%{
        | deploymentconfig=registry |
   })
-  step %Q{I download a file from "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/registry/htpasswd"}
-  @result = user.cli_exec(:create_secret, secret_type: "generic", name: "htpasswd-secret", from_file: "./htpasswd", namespace: project.name)
+  @result = user.cli_exec(:create_secret, secret_type: "generic", name: "htpasswd-secret", from_file: "#{ENV['BUSHSLICER_HOME']}/testdata/registry/htpasswd", namespace: project.name)
   step %Q/I run the :set_volume client command with:/, table(%{
     | resource    | dc/registry     |
     | add         | true            |
@@ -648,7 +648,7 @@ end
 
 Given /^I have a logstash service in the project for kubernetes audit$/ do
   cb.logstash = OpenStruct.new
-  @result = user.cli_exec(:create, f: "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/audit/configmap-simple-logstash.yml")
+  @result = user.cli_exec(:create, f: "#{ENV['BUSHSLICER_HOME']}/testdata/audit/configmap-simple-logstash.yml")
   unless @result[:success]
     raise "could not create logstash config map, see log"
   end
@@ -704,12 +704,12 @@ Given /^I have a cluster-capacity pod in my project$/ do
   step 'a secret is created for admin kubeconfig in current project'
   # tested pod yaml files
   step %Q/I run the :create client command with:/, table(%{
-    | f         | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/infrastructure/cluster-capacity/cluster-capacity-configmap.yaml  |
+    | f         | #{ENV['BUSHSLICER_HOME']}/testdata/infrastructure/cluster-capacity/cluster-capacity-configmap.yaml  |
     | namespace | #{project.name} |
   })
   step 'the step should succeed'
   # cluster-capacity as a target pod
-  step "I run oc create over ERB URL: https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/infrastructure/cluster-capacity/cluster-capacity-pod.yaml"
+  step 'I run oc create over ERB test file: infrastructure/cluster-capacity/cluster-capacity-pod.yaml'
   step 'the step should succeed'
   step 'the pod named "cluster-capacity" becomes ready'
 end
