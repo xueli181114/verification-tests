@@ -37,6 +37,7 @@ click_create_ocp_button:
     element:
         selector:
             xpath: //a[@class='infra-card pf-c-card create-cluster-card' and contains(@href, '/openshift/install')]
+        op: click
 
 check_osd_button_disable:
     elements:
