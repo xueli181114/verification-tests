@@ -32,7 +32,18 @@ go_to_aro_pull_secret_page:
     url: /openshift/install/azure/aro-provisioned
 go_to_pull_secret_page:
     url: /openshift/install/pull-secret
-
+    
+check_breadcrumbs_in_install_page:
+    elements:
+        - selector:
+            xpath: //li[contains(@href, '/openshift/')]/a[text()='Clusters']
+        - selector:
+            xpath: //a[contains(@href, '/openshift/create') and text()='Create']
+        - selector:
+            xpath: //a[contains(@href, '/openshift/install') and text()='OpenShift Container Platform']
+        - selector:
+            xpath: //li[@class='pf-c-breadcrumb__item' and text()='<provider_name>']
+            
 check_common_part:
     action: check_cluster_list_page_title
     action: check_account_username

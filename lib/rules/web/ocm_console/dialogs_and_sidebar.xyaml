@@ -400,6 +400,7 @@ edit_cluster_registration_dialog_missing:
             xpath: //div[@role='dialog' and @aria-label='Edit Cluster Registration']
         missing: true
         timeout: 10
+
 check_compute_node_count_field_in_scale_dialog:
   elements:
   - selector:

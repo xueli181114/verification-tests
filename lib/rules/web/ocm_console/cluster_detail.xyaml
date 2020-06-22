@@ -155,6 +155,7 @@ total_sockets_loaded:
     element:
         selector:
             xpath: //div[@class='pf-l-grid']/div[2]//dt[3][text()='Total Sockets']
+
 check_total_vcpu_value:
     element:
         selector:

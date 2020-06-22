@@ -84,6 +84,7 @@ check_scale_cluster_button_in_dropdown_missing:
     selector:
       xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Scale Cluster']
     missing: true
+
 check_edit_cluster_registration_button_in_dropdown_missing:
   element:
     selector:
