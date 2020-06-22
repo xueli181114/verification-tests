@@ -2,6 +2,10 @@
 cluster_detail_page_loaded:
     action: overview_tab_loaded
     action: monitoring_tab_loaded
+check_disabled_actions_on_cluster_detail_page:
+    element:
+        selector:
+            xpath: //button[@disabled='']/span[text()='Actions']
 add_console_url_button_on_cluster_detail_page_loaded:
     element: &add_console_url_on_detail_page
         selector:
@@ -45,7 +49,7 @@ resource_usage_loaded:
 cpu_chart_loaded:
     elements:
         - selector:
-            xpath: //section[@id='overviewTabContent']//h4[@class='pf-c-title pf-m-xl metrics-chart' and text()='vCPU']
+            xpath: //section[@id='overviewTabContent']//h4[text()='vCPU']
 
 overview_tab_loaded:
     elements:
@@ -151,6 +155,36 @@ total_sockets_loaded:
     element:
         selector:
             xpath: //div[@class='pf-l-grid']/div[2]//dt[3][text()='Total Sockets']
+check_total_vcpu_value:
+    element:
+        selector:
+            xpath: //div[@class='pf-l-grid']/div[2]//dd[2][contains(text(),<total_vcpu_value>)]
+check_total_sockets_value:
+    element:
+        selector:
+            xpath: //div[@class='pf-l-grid']/div[2]//dd[3][contains(text(),<total_sockets_value>)]
+check_total_memory_value:
+    element:
+        selector:
+            xpath: //div[@class='pf-l-grid']/div[2]//dd[contains(text(),<total_memory_value>)]
+check_compute_node_value:
+    element:
+        selector:
+            xpath: //div[@class='pf-l-grid']/div[2]//dd[4]/dl[2]/dd[contains(text(),<total_node_value>)]
+check_cluster_metrics:
+    action:
+        if_param: total_node_value
+        ref: check_compute_node_value
+    action:
+        if_param: total_memory_value
+        ref: check_total_memory_value
+    action:
+        if_param: total_sockets_value
+        ref: check_total_sockets_value
+    action:
+        if_param: total_vcpu_value
+        ref: check_total_vcpu_value
+        
 actions_button_disabled_on_cluster_detail_page:
   element:
     selector:
@@ -190,13 +224,13 @@ check_ocp_tab_in_detail_page:
 check_ocp_usage_in_detail_page:
     elements:
         - selector:
-            xpath: //h2[@class='pf-c-title pf-m-3xl' and text()='Resource Usage']
+            xpath: //h2[@class='pf-c-title card-title' and text()='Resource Usage']
         - selector:
             xpath: //p[text()='The cluster currently does not have any metrics data. Try again later.']
 check_ocp_details_in_detail_page:
     elements:
         - selector:
-            xpath: //h2[@class='pf-c-title pf-m-3xl' and text()='Details']
+            xpath: //h2[@class='pf-c-title card-title' and text()='Details']
         - selector:
             xpath: //dl[@class='cluster-details-item left']/dt[text()='Cluster ID']
         - selector:
@@ -271,7 +305,7 @@ check_osd_tab_in_detail_page:
 check_osd_usage_in_detail_page:
     elements:
         - selector:
-            xpath: //h2[@class='pf-c-title pf-m-3xl' and text()='Resource Usage']
+            xpath: //h2[@class='pf-c-title card-title' and text()='Resource Usage']
         - selector:
             xpath: //h4[@class='pf-c-title pf-m-xl metrics-chart' and text()='vCPU']
         - selector:
@@ -281,7 +315,7 @@ check_osd_usage_in_detail_page:
 check_osd_details_in_detail_page:
     elements:
         - selector:
-            xpath: //h2[@class='pf-c-title pf-m-3xl' and text()='Details']
+            xpath: //h2[@class='pf-c-title card-title' and text()='Details']
         - selector:
             xpath: //dl[@class='cluster-details-item left']/dt[text()='Cluster ID']
         - selector:
@@ -353,11 +387,13 @@ check_osd_actions_behind_open_console_button:
             xpath: //button[text()='Delete Cluster']
 close_actions_behind_open_console_button:
     action: expand_actions_behind_open_console_button
+    
 check_load_balancer_on_detail_page:
   element:
     selector:
       xpath: //div[@class='pf-c-card__body']//dt[text()='Load Balancers']/following-sibling::dd[text()='<load_balancer_value>']
     timeout: 50
+    
 check_persistent_storage_on_detail_page:
   element:
     selector:
@@ -371,3 +407,9 @@ scale_persistent_quota_from_cluster_detail_page:
   action: cluster_detail_page_loaded
   action: go_to_scale_cluster_dialog_on_cluster_detail_page
   action: choose_persistent_quota_in_dialog
+
+check_edit_subscription_settings_link:
+    element:
+        selector:
+            xpath: //dl[@class='cluster-details-item left']/dd/button[text()='Edit subscription settings']
+

@@ -7,23 +7,21 @@ Feature: Cluster Autoscaler Tests
   Scenario: Cluster should automatically scale up and scale down with clusterautoscaler deployed
     Given I have an IPI deployment
     And I switch to cluster admin pseudo user
+    And I use the "openshift-machine-api" project
+    And admin ensures machine number is restored after scenario
 
-    Given I store the number of machines in the :num_to_restore clipboard
-    And admin ensures node number is restored to "<%= cb.num_to_restore %>" after scenario
-
-    Given I clone a machineset named "machineset-clone-28108"
+    Given I clone a machineset and name it "machineset-clone-28108"
 
     # Create clusterautoscaler
-    Given I use the "openshift-machine-api" project
     When I run the :create admin command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/cloud/cluster-autoscaler.yml |
+      | f | <%= BushSlicer::HOME %>/testdata/cloud/cluster-autoscaler.yml |
     Then the step should succeed
     And admin ensures "default" clusterautoscaler is deleted after scenario
     And 1 pods become ready with labels:
       | cluster-autoscaler=default,k8s-app=cluster-autoscaler |
 
     # Create machineautoscaler
-    When I run oc create over "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/cloud/machine-autoscaler.yml" replacing paths:
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/cloud/machine-autoscaler.yml" replacing paths:
       | ["metadata"]["name"]               | maotest                 |
       | ["spec"]["minReplicas"]            | 1                       |
       | ["spec"]["maxReplicas"]            | 3                       |
@@ -33,22 +31,23 @@ Feature: Cluster Autoscaler Tests
 
     # Create workload
     When I run the :create admin command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/cloud/autoscaler-auto-tmpl.yml |
+      | f | <%= BushSlicer::HOME %>/testdata/cloud/autoscaler-auto-tmpl.yml |
     Then the step should succeed
+    And admin ensures "workload" job is deleted from the "openshift-machine-api" project after scenario
 
     # Verify machineset has scaled
-    Given I wait up to 60 seconds for the steps to pass:
+    Given I wait up to 300 seconds for the steps to pass:
     """
-    the expression should be true> machine_set.desired_replicas(cached: false) == 3
+    Then the expression should be true> machine_set.desired_replicas(cached: false) == 3
     """
     Then the machineset should have expected number of running machines
 
     # Delete workload
     Given admin ensures "workload" job is deleted from the "openshift-machine-api" project
     # Check cluster auto scales down
-    And I wait up to 120 seconds for the steps to pass:
+    And I wait up to 300 seconds for the steps to pass:
     """
-    the expression should be true> machine_set.desired_replicas(cached: false) == 1
+    Then the expression should be true> machine_set.desired_replicas(cached: false) == 1
     """
     Then the machineset should have expected number of running machines
 
@@ -59,9 +58,10 @@ Feature: Cluster Autoscaler Tests
   Scenario: Cao listens and deploys cluster-autoscaler based on ClusterAutoscaler resource
     Given I have an IPI deployment
     And I switch to cluster admin pseudo user
+    And I use the "openshift-machine-api" project
 
     When I run the :create admin command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/cloud/cluster-autoscaler.yml |
+      | f | <%= BushSlicer::HOME %>/testdata/cloud/cluster-autoscaler.yml |
     Then the step should succeed
     And admin ensures "default" clusterautoscaler is deleted after scenario
     And 1 pods become ready with labels:
@@ -74,13 +74,11 @@ Feature: Cluster Autoscaler Tests
   Scenario: CAO listens and annotations machineSets based on MachineAutoscaler resource
     Given I have an IPI deployment
     And I switch to cluster admin pseudo user
+    And I use the "openshift-machine-api" project
+    And admin ensures machine number is restored after scenario
 
-    Given I store the number of machines in the :num_to_restore clipboard
-    And admin ensures node number is restored to "<%= cb.num_to_restore %>" after scenario
-
-    Given I use the "openshift-machine-api" project
-    Given I clone a machineset named "machineset-clone-21517"
-    When I run oc create over "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/cloud/machine-autoscaler.yml" replacing paths:
+    Given I clone a machineset and name it "machineset-clone-21517"
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/cloud/machine-autoscaler.yml" replacing paths:
       | ["metadata"]["name"]               | maotest                 |
       | ["spec"]["minReplicas"]            | 1                       |
       | ["spec"]["maxReplicas"]            | 3                       |
@@ -102,7 +100,7 @@ Feature: Cluster Autoscaler Tests
       | resource | machineset              |
       | name     | <%= machine_set.name %> |
     Then the step should succeed
-    And the output should match "Annotations:\s+<none>"
+    And the output should not match "autoscaling.openshift.io/machineautoscaler"
 
   # @author zhsun@redhat.com
   # @case_id OCP-22102
@@ -111,17 +109,15 @@ Feature: Cluster Autoscaler Tests
   Scenario: Update machineAutoscaler to reference a different MachineSet
     Given I have an IPI deployment
     And I switch to cluster admin pseudo user
+    And I use the "openshift-machine-api" project
+    And admin ensures machine number is restored after scenario
 
-    Given I store the number of machines in the :num_to_restore clipboard
-    And admin ensures node number is restored to "<%= cb.num_to_restore %>" after scenario
-
-    Given I use the "openshift-machine-api" project
-    Given I clone a machineset named "machineset-clone-22102"
+    Given I clone a machineset and name it "machineset-clone-22102"
     And evaluation of `machine_set.name` is stored in the :machineset_clone_22102 clipboard
-    Given I clone a machineset named "machineset-clone-22102-2"
+    Given I clone a machineset and name it "machineset-clone-22102-2"
     And evaluation of `machine_set.name` is stored in the :machineset_clone_22102_2 clipboard
 
-    When I run oc create over "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/cloud/machine-autoscaler.yml" replacing paths:
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/cloud/machine-autoscaler.yml" replacing paths:
       | ["metadata"]["name"]               | maotest0                         |
       | ["spec"]["scaleTargetRef"]["name"] | <%= cb.machineset_clone_22102 %> |
     Then the step should succeed
@@ -141,14 +137,14 @@ Feature: Cluster Autoscaler Tests
       | resource | machineset                       |
       | name     | <%= cb.machineset_clone_22102 %> |
     Then the step should succeed
-    And the output should match "Annotations:\s+<none>"
+    And the output should not match "autoscaling.openshift.io/machineautoscaler"
     When I run the :describe admin command with:
       | resource | machineset                         |
       | name     | <%= cb.machineset_clone_22102_2 %> |
     Then the step should succeed
     And the output should match "Annotations:\s+autoscaling.openshift.io/machineautoscaler: openshift-machine-api/maotest0"
 
-    When I run oc create over "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/cloud/machine-autoscaler.yml" replacing paths:
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/cloud/machine-autoscaler.yml" replacing paths:
       | ["metadata"]["name"]               | maotest1                         |
       | ["spec"]["scaleTargetRef"]["name"] | <%= cb.machineset_clone_22102 %> |
     Then the step should succeed
@@ -173,5 +169,22 @@ Feature: Cluster Autoscaler Tests
       | resource | machineset                         |
       | name     | <%= cb.machineset_clone_22102_2 %> |
     Then the step should succeed
-    And the output should match "Annotations:\s+<none>"
+    And the output should not match "autoscaling.openshift.io/machineautoscaler"
 
+  # @author zhsun@redhat.com
+  # @case_id OCP-23745
+  @admin
+  @destructive
+  Scenario: Machineautoscaler can be deleted when its referenced machineset does not exist
+    Given I have an IPI deployment
+    And I switch to cluster admin pseudo user
+    And I use the "openshift-machine-api" project
+    And admin ensures machine number is restored after scenario
+
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/cloud/machine-autoscaler.yml" replacing paths:
+      | ["metadata"]["name"]               | maotest |
+      | ["spec"]["minReplicas"]            | 1       |
+      | ["spec"]["maxReplicas"]            | 3       |
+      | ["spec"]["scaleTargetRef"]["name"] | invalid |
+    Then the step should succeed
+    And admin ensures "maotest" machineautoscaler is deleted

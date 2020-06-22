@@ -1,0 +1,49 @@
+{
+  "kind": "Pod",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "grace0",
+    "creationTimestamp": null,
+    "labels": {
+      "name": "graceful"
+    }
+  },
+  "spec": {
+    "containers": [
+      {
+        "name": "sleep",
+        "image": "quay.io/openshifttest/sigcapture@sha256:e9c7ecf75c57def20f1964a119e858a7a45de9d3b21a384f5a32d9562a15270b",
+        "ports": [
+          {
+            "containerPort": 8080,
+            "protocol": "TCP"
+          }
+        ],
+        "resources": {},
+        "volumeMounts": [
+          {
+            "name":"tmp",
+            "mountPath":"/tmp"
+          }
+        ],
+        "terminationMessagePath": "/dev/termination-log",
+        "imagePullPolicy": "IfNotPresent",
+        "securityContext": {
+          "capabilities": {},
+          "privileged": false
+        }
+      }
+    ],
+    "volumes": [
+      {
+        "name":"tmp",
+        "emptyDir": {}
+      }
+    ],
+    "restartPolicy": "Always",
+    "dnsPolicy": "ClusterFirst",
+    "terminationGracePeriodSeconds": 0,
+    "serviceAccount": ""
+  },
+  "status": {}
+}

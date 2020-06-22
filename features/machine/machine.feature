@@ -30,11 +30,10 @@ Feature: Machine features testing
   Scenario: Scale up and scale down a machineSet
     Given I have an IPI deployment
     And I switch to cluster admin pseudo user
+    And I use the "openshift-machine-api" project
+    And admin ensures machine number is restored after scenario
 
-    Given I store the number of machines in the :num_to_restore clipboard
-    And admin ensures node number is restored to "<%= cb.num_to_restore %>" after scenario
-
-    Given I clone a machineset named "machineset-clone-25436"
+    Given I clone a machineset and name it "machineset-clone-25436"
 
     Given I scale the machineset to +2
     Then the step should succeed
@@ -99,12 +98,15 @@ Feature: Machine features testing
       | type          | merge                                  |
       | n             | openshift-machine-api                  |
     Then the step should succeed
+    And I wait up to 30 seconds for the steps to pass:
+    """
     When I run the :describe admin command with:
       | resource      | machine                                |
       | name          | <%= cb.machine %>                      |
       | n             | openshift-machine-api                  |
     Then the step should succeed
     And the output should match "Provider ID:\s+<%= cb.providerID %>"
+    """
 
   # @author miyadav@redhat.com
   # @case_id OCP-27627
@@ -113,3 +115,85 @@ Feature: Machine features testing
     Given I have an IPI deployment
     And evaluation of `BushSlicer::Machine.list(user: admin, project: project('openshift-machine-api'))` is stored in the :machines clipboard
     Then the expression should be true> cb.machines.select{|m|m.instance_state == m.annotation_instance_state}.count == cb.machines.count
+
+  # @author miyadav@redhat.com
+  # @case_id OCP-27609
+  @admin
+  @destructive
+  Scenario: Scaling a machineset with providerSpec.publicIp set to true
+    Given I have an IPI deployment
+    And I switch to cluster admin pseudo user
+    And I use the "openshift-machine-api" project
+    And admin ensures machine number is restored after scenario
+
+    Given I clone a machineset and name it "machineset-clone-27609"
+    Then as admin I successfully merge patch resource "machineset/machineset-clone-27609" with:
+      | {"spec":{"template": {"spec":{"providerSpec":{"value":{"publicIP": "true"}}}}}} |
+    And I scale the machineset to +2
+    Then the machineset should have expected number of running machines
+
+  # @author miyadav@redhat.com
+  # @case_id OCP-24363
+  @admin
+  @destructive
+  Scenario: [MAO] Reconciling machine taints with nodes
+    Given I have an IPI deployment
+    And I switch to cluster admin pseudo user
+    And I use the "openshift-machine-api" project
+    And admin ensures machine number is restored after scenario
+
+    Given I clone a machineset and name it "machineset-24363"
+    And evaluation of `machine_set.machines.first.node_name` is stored in the :noderef_name clipboard
+    And evaluation of `machine_set.machines.first.name` is stored in the :machine_name clipboard
+
+    Given I saved following keys to list in :taintsid clipboard:
+      | {"spec":{"taints": [{"effect": "NoExecute","key": "role","value": "master"}]}}  | |
+      | {"spec":{"taints": [{"effect": "NoSchedule","key": "role","value": "master"}]}} | |
+
+    And I use the "openshift-machine-api" project
+    Then I repeat the following steps for each :id in cb.taintsid:
+    """
+    Given as admin I successfully merge patch resource "machine/<%= cb.machine_name %>" with:
+      | #{cb.id} |
+    Then the step should succeed
+    """
+    When I run the :describe admin command with:
+      | resource | node                 |
+      | name     |<%= cb.noderef_name %>|
+    Then the output should contain:
+      | role=master:NoExecute |
+      | role=master:NoSchedule|
+
+  # @author zhsun@redhat.com
+  @admin
+  @destructive
+  Scenario Outline: Required configuration should be added to the ProviderSpec to enable spot instances
+    Given I have an IPI deployment
+    And I switch to cluster admin pseudo user
+    And admin ensures machine number is restored after scenario
+
+    #Create a spot machineset
+    Given I use the "openshift-machine-api" project
+    Given I create a spot instance machineset and name it "<machineset_name>" on <iaas_type>
+    And evaluation of `machine_set.machines.first.node_name` is stored in the :noderef_name clipboard
+    And evaluation of `machine_set.machines.first.name` is stored in the :machine_name clipboard
+
+    #Check machine and node were labelled as an `interruptible-instance`
+    When I run the :describe admin command with:
+      | resource | machine                |
+      | name     | <%= cb.machine_name %> |
+    Then the step should succeed
+    And the output should match "machine.openshift.io/interruptible-instance"
+    When I run the :describe admin command with:
+      | resource | node                   |
+      | name     | <%= cb.noderef_name %> |
+    Then the step should succeed
+    And the output should match "machine.openshift.io/interruptible-instance="
+    And "machine-api-termination-handler" daemonset becomes ready in the "openshift-machine-api" project
+    And 1 pods become ready with labels:
+      | k8s-app=termination-handler |
+
+    Examples:
+      | iaas_type | machineset_name  |
+      | aws       | machineset-29199 | # @case_id OCP-29199
+

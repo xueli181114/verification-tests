@@ -5,7 +5,7 @@ Feature: deployment related features
   Scenario: Restart a failed deployment by oc deploy
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/dc-with-pre-mid-post.yaml |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/dc-with-pre-mid-post.yaml |
     Then the step should succeed
     # Wait and make the cancel succeed stably
     And I wait until the status of deployment "hooks" becomes :running
@@ -34,7 +34,7 @@ Feature: deployment related features
   Scenario: Manually make deployment
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/manual.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/manual.json |
     Then the step should succeed
     When I run the :rollout_status client command with:
       | resource | deploymentConfig |
@@ -54,7 +54,7 @@ Feature: deployment related features
     And I check that the "hooks" deployment_config exists in the project
     # Make the edit action
     When I get project dc named "hooks" as JSON
-    And I save the output to file>hooks.json
+    And I save the output to file> hooks.json
     And I replace lines in "hooks.json":
       | Recreate | Rolling |
     When I run the :replace client command with:
@@ -71,10 +71,10 @@ Feature: deployment related features
   Scenario: CLI rollback output to file
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment1.json |
     Then the step should succeed
     When I run the :replace client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/updatev1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/updatev1.json |
     Then the step should succeed
     When I get project dc named "hooks"
     Then the output should match:
@@ -101,7 +101,7 @@ Feature: deployment related features
   Scenario Outline: CLI rollback two more components of deploymentconfig
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment1.json |
     Then the step should succeed
     When I get project dc named "hooks" as JSON
     Then the output should contain:
@@ -111,7 +111,7 @@ Feature: deployment related features
       | "value": "Plqe5Wev"    |
     Given I wait until the status of deployment "hooks" becomes :complete
     When I run the :replace client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/updatev1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/updatev1.json |
     Then the step should succeed
     When I get project dc named "hooks" as JSON
     Then the output should contain:
@@ -150,7 +150,7 @@ Feature: deployment related features
   Scenario: CLI rollback with one component
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment1.json |
     Then the step should succeed
     When I get project dc named "hooks" as JSON
     Then the output should contain:
@@ -159,7 +159,7 @@ Feature: deployment related features
       | "replicas": 1          |
       | "value": "Plqe5Wev"    |
     When I run the :replace client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/updatev1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/updatev1.json |
     Then the step should succeed
     When I get project dc named "hooks" as JSON
     Then the output should contain:
@@ -188,7 +188,7 @@ Feature: deployment related features
   Scenario: Can't stop a deployment in Failed status
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/test-stop-failed-deployment.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/test-stop-failed-deployment.json |
     When the pod named "test-stop-failed-deployment-1-deploy" becomes ready
     When  I run the :rollout_cancel client command with:
       | resource | deploymentConfig            |
@@ -221,7 +221,7 @@ Feature: deployment related features
   Scenario: Stop a "Running" deployment
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/dc-with-pre-mid-post.yaml |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/dc-with-pre-mid-post.yaml |
     And I wait until the status of deployment "hooks" becomes :running
     And I wait up to 60 seconds for the steps to pass:
     """
@@ -242,9 +242,9 @@ Feature: deployment related features
   # @case_id OCP-10648
   Scenario: Rollback via CLI when previous version failed
     Given I have a project
-    When I run the :new_app client command with:
-      | app_repo | aosqe/hello-openshift |
-      | name     | mydc                  |
+    When I run the :create_deploymentconfig client command with:
+      | image | aosqe/hello-openshift |
+      | name  | mydc                  |
     Then the step should succeed
     And I wait until the status of deployment "mydc" becomes :complete
 
@@ -272,7 +272,7 @@ Feature: deployment related features
   Scenario: Make multiple deployment by oc deploy
     Given I have a project
     And I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment1.json |
     Then the step should succeed
     And I check that the "hooks" deployment_config exists in the project
     When I run the :rollout_latest client command with:
@@ -361,6 +361,7 @@ Feature: deployment related features
       | replicas | 1                |
     Then the step should succeed
     Given I wait until number of replicas match "0" for replicationController "ab-example-b-1"
+    Given I wait until number of replicas match "1" for replicationController "ab-example-a-1"
     When I use the "ab-example" service
     Then I wait for a web server to become available via the "ab-example" route
     And the output should contain "shardA"
@@ -402,7 +403,7 @@ Feature: deployment related features
   Scenario: Manually start deployment by oc deploy
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment1.json |
     Then the step should succeed
     And I wait until the status of deployment "hooks" becomes :complete
     When I run the :rollout_latest client command with:
@@ -415,7 +416,7 @@ Feature: deployment related features
   Scenario: Pre and post deployment hooks
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/testhook.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/testhook.json |
     Then the step should succeed
     When the pod named "hooks-1-hook-pre" becomes ready
     And I get project pod named "hooks-1-hook-pre" as YAML
@@ -435,7 +436,7 @@ Feature: deployment related features
   Scenario: deployment hook volume inheritance that volume name was null
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/tc510606/hooks-null-volume.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/tc510606/hooks-null-volume.json |
     Then the step should fail
     And the output should contain "must not be empty"
 
@@ -467,7 +468,7 @@ Feature: deployment related features
   Scenario: start deployment when the latest deployment is completed
     Given I have a project
     And I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment1.json |
     Then the step should succeed
     And I wait until the status of deployment "hooks" becomes :complete
     And I replace resource "dc" named "hooks" saving edit to "tmp_out.yaml":
@@ -482,7 +483,7 @@ Feature: deployment related features
   Scenario: Manual scale dc will update the deploymentconfig's replicas
     Given I have a project
     And I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment1.json |
     Then the step should succeed
     When I run the :scale client command with:
       | resource | dc    |
@@ -506,7 +507,7 @@ Feature: deployment related features
   Scenario: Inline deployer hook logs
     Given I have a project
     And I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/Inline-logs.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/Inline-logs.json |
     And I run the :logs client command with:
       | f             | true     |
       | resource_name | dc/hooks |
@@ -519,27 +520,11 @@ Feature: deployment related features
       | post: Success                        |
 
   # @author yinzhou@redhat.com
-  # @case_id OCP-11070
-  Scenario: Trigger info is retained for deployment caused by image changes
-    Given I have a project
-    When I process and create "https://raw.githubusercontent.com/openshift/origin/master/examples/sample-app/application-template-stibuild.json"
-    Then the step should succeed
-    Given the "ruby-sample-build-1" build was created
-    And the "ruby-sample-build-1" build completed
-    Given I wait until the status of deployment "frontend" becomes :complete
-    When I get project dc named "frontend" as YAML
-    Then the output by order should match:
-      | causes:           |
-      | - imageTrigger:   |
-      | from:             |
-      | type: ImageChange |
-
-  # @author yinzhou@redhat.com
   # @case_id OCP-11769
   Scenario: Start new deployment when deployment running
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/testhook.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/testhook.json |
     Then the step should succeed
     Given I wait until the status of deployment "hooks" becomes :running
     And I replace resource "dc" named "hooks":
@@ -558,7 +543,7 @@ Feature: deployment related features
   Scenario: When the latest deployment failed auto rollback to the active deployment
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment1.json |
     Given a pod becomes ready with labels:
     | deployment=hooks-1 |
     Then I run the :scale client command with:
@@ -610,15 +595,15 @@ Feature: deployment related features
   Scenario: DeploymentConfig should allow valid value of resource requirements
     Given I have a project
     When I run the :create admin command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/quota/limits.yaml |
+      | f | <%= BushSlicer::HOME %>/testdata/quota/limits.yaml |
       | n | <%= project.name %> |
     Then the step should succeed
     When I run the :create admin command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/quota/quota.yaml |
+      | f | <%= BushSlicer::HOME %>/testdata/quota/quota.yaml |
       | n | <%= project.name %> |
     Then the step should succeed
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment-with-resources.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment-with-resources.json |
       | n | <%= project.name %> |
     Then the step should succeed
     And I wait for the steps to pass:
@@ -641,8 +626,9 @@ Feature: deployment related features
   # @case_id OCP-11221
   Scenario: Scale up when deployment running
     Given I have a project
-    When I run the :new_app client command with:
-      | docker_image   | <%= project_docker_repo %>openshift/deployment-example |
+    When I run the :create_deploymentconfig client command with:
+      | image | <%= project_docker_repo %>openshift/deployment-example |
+      | name  | deployment-example                                     |
     Then the step should succeed
     And I wait until the status of deployment "deployment-example" becomes :complete
     When I run the :rollout_latest client command with:
@@ -662,7 +648,7 @@ Feature: deployment related features
   Scenario: configchange triggers deploy automatically
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployment1.json |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/deployment1.json |
     Then the step should succeed
     Given status becomes :succeeded of exactly 1 pods labeled:
       | name=hello-openshift |
@@ -691,7 +677,7 @@ Feature: deployment related features
   Scenario: Support verbs of Deployment in OpenShift
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/extensions/deployment.yaml |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/extensions/deployment.yaml |
     Then the step should succeed
     When I run the :scale client command with:
       | resource | deployment      |
@@ -768,7 +754,7 @@ Feature: deployment related features
   Scenario: Auto cleanup old RCs
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/tc532411/history-limit-dc.yaml |
+      | f | <%= BushSlicer::HOME %>/testdata/deployment/tc532411/history-limit-dc.yaml |
     Then the step should succeed
     When I run the steps 3 times:
     """
@@ -810,4 +796,57 @@ Feature: deployment related features
       | causes:                |
       | - type: ConfigChange   |
       | message: config change |
+
+  # @author yinzhou@redhat.com
+  # @case_id OCP-31200
+  Scenario: A/B Deployment
+    Given the master version >= "4.5"
+    Given I have a project
+    When I run the :new_app client command with:
+      | docker_image         | <%= project_docker_repo %>openshift/deployment-example |
+      | name                 | ab-example-a                                           |
+      | as_deployment_config | true                                                   |
+      | l                    | ab-example=true                                        |
+      | env                  | SUBTITLE=shardA                                        |
+    Then the step should succeed
+    When I run the :expose client command with:
+      | resource      | deploymentconfig |
+      | resource_name | ab-example-a     |
+      | name          | ab-example       |
+      | selector      | ab-example=true  |
+    Then the step should succeed
+    When I expose the "ab-example" service
+    Then I wait for a web server to become available via the "ab-example" route
+    And the output should contain "shardA"
+    When I run the :new_app client command with:
+      | docker_image         | <%= project_docker_repo %>openshift/deployment-example |
+      | name                 | ab-example-b                                           |
+      | as_deployment_config | true                                                   |
+      | l                    | ab-example=true                                        |
+      | env                  | SUBTITLE=shardB                                        |
+    Then the step should succeed
+    Then I run the :scale client command with:
+      | resource | deploymentconfig |
+      | name     | ab-example-a     |
+      | replicas | 0                |
+    Then the step should succeed
+    Given I wait until number of replicas match "0" for replicationController "ab-example-a-1"
+    When I use the "ab-example" service
+    Then I wait for a web server to become available via the "ab-example" route
+    And the output should contain "shardB"
+    Then I run the :scale client command with:
+      | resource | deploymentconfig |
+      | name     | ab-example-b     |
+      | replicas | 0                |
+    Then the step should succeed
+    Then I run the :scale client command with:
+      | resource | deploymentconfig |
+      | name     | ab-example-a     |
+      | replicas | 1                |
+    Then the step should succeed
+    Given I wait until number of replicas match "0" for replicationController "ab-example-b-1"
+    Given I wait until number of replicas match "1" for replicationController "ab-example-a-1"
+    When I use the "ab-example" service
+    Then I wait for a web server to become available via the "ab-example" route
+    And the output should contain "shardA"
 

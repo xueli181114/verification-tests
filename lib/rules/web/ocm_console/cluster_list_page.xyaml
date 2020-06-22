@@ -2,7 +2,7 @@ create_cluster_button_loaded:
     element: &create_cluster_button
         selector:
             xpath: //a[contains(@href, '/openshift/create')]/button[text()='Create cluster']
-
+        timeout: 10
 
 check_cluster_list_page_without_cluster:
     action: create_cluster_button_loaded
@@ -21,8 +21,10 @@ cluster_list_page_loaded:
     elements:
         - selector:
             xpath: //h1[text()='Clusters']
+            timeout: 10
         - selector:
             xpath: //button[@class='pf-c-button pf-m-plain' and text()='Name']
+            timeout: 10
 check_cluster_list_page:
     action: create_cluster_button_loaded
     elements:
@@ -255,7 +257,6 @@ expand_cluster_actions_on_cluster_list_page:
         selector:
             xpath: //td[@data-label='Name']/a[contains(text(),'<cluster_name>')]/../following-sibling::td//button[@aria-label='Actions']
         op: click
-        timeout: 30
 close_cluster_actions_on_cluster_list_page:
     action: expand_cluster_actions_on_cluster_list_page
 check_cluster_actions_on_cluster_list_page_all_enabled:
@@ -403,7 +404,7 @@ click_logout_button:
     op: click
   element:
     selector:
-      xpath: //button[@class='pf-c-dropdown__menu-item' and text()='Logout']
+      xpath: //button[@class='pf-c-dropdown__menu-item' and (text()='Logout' or text()='Log out')]
     op: click
     timeout: 20
 logout_page_loaded:
