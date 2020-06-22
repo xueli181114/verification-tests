@@ -17,11 +17,11 @@ Feature: NoDiskConflict
     And I use the "<%= cb.proj_name %>" project
 
     Given I have a 1 GB volume and save volume id in the :volumeID clipboard
-    When I run oc create over "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/<path_to_file>" replacing paths:
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/storage/<path_to_file>" replacing paths:
       | ["metadata"]["name"]                                      | mypod1 |
       | ["spec"]["volumes"][0]["<storage_type>"]["<volume_name>"] | <%= cb.volumeID %>       |
     Then the step should succeed
-    When I run oc create over "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/<path_to_file>" replacing paths:
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/storage/<path_to_file>" replacing paths:
       | ["metadata"]["name"]                                      | mypod2 |
       | ["spec"]["volumes"][0]["<storage_type>"]["<volume_name>"] | <%= cb.volumeID %>       |
     Then the step should succeed
@@ -42,6 +42,5 @@ Feature: NoDiskConflict
 
     Examples:
       | storage_type         | volume_name | path_to_file |
-      | gcePersistentDisk    | pdName      | gce/pod-NoDiskConflict-1.json              | # @case_id OCP-9927
       | awsElasticBlockStore | volumeID    | ebs/security/ebs-selinux-fsgroup-test.json | # @case_id OCP-9929
 

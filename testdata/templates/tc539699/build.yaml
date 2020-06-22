@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Build
+metadata:
+  name: ruby-hello-world-2
+spec:
+  strategy:
+    sourceStrategy:
+      env:
+      - name: EXAMPLE
+        value: sample-app
+      from:
+        kind: DockerImage
+        name: quay.io/openshifttest/ruby-25-centos7@sha256:575194aa8be12ea066fc3f4aa9103dcb4291d43f9ee32e4afe34e0063051610b 
+    type: Source

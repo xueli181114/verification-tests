@@ -129,3 +129,9 @@ check_missing_actions_in_dropdown:
   action:
     if_param: edit_display_name_button
     ref: check_edit_display_name_button_in_dropdown_missing
+
+check_edit_displayname_button_in_dropdown_missing:
+  element:
+    selector:
+      xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Edit Display Name']
+    missing: true

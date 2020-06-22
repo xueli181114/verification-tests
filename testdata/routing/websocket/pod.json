@@ -1,0 +1,26 @@
+{
+  "kind": "Pod",
+  "apiVersion":"v1",
+
+  "metadata": {
+        "name": "websocket",
+        "labels": {
+                "name": "hello-websocket"
+        }
+  },
+
+  "spec": {
+      "containers": [{
+        "name": "hello-websocket",
+        "image": "quay.io/openshifttest/hello-websocket@sha256:e4bae0a9f7ce0de4c1138d32b8ad671cc9e0a2e1fc43da2024be26ebb9e95575",
+        "ports": [
+          {
+            "containerPort": 9999
+          },
+          {
+            "containerPort": 9443
+          }
+        ]
+      }]
+  }
+}

@@ -561,7 +561,7 @@ module BushSlicer
       cmd = "awk -F . '{print $1}' /proc/uptime"
       res = exec_raw(cmd, timeout: 20)
       if res[:success]
-        return Integer(res[:response])
+        return Integer(res[:stdout])
       else
         raise "failed to get #{self} uptime, see log"
       end
@@ -573,7 +573,13 @@ module BushSlicer
       # date -u +"%Y-%m-%dT%H:%M:%SZ"
       res = exec_raw(cmd, timeout: 20)
       if res[:success]
-        return Time.iso8601(res[:response])
+        # oc debug returns garbage from stderr
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1771549
+        time = res[:response].match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/).to_s
+        if time.empty?
+          raise "could not find time string in output, see log"
+        end
+        return Time.iso8601(time)
       else
         raise "failed to get #{self} current time, see log"
       end
@@ -891,6 +897,22 @@ module BushSlicer
           raise "failed to cat file from node and write locally, see log"
         end
       }
+    end
+
+    def accessible?
+      res = exec_raw("echo Smile more.")
+      unless res[:response].include? "Smile more."
+        res[:success] = false
+      end
+      return res
+    end
+
+    # @return [nil]
+    # @raise [Error] when any error was detected
+    # @note we do not check exit status due to the huge variety of possible
+    #   error messages when node reboots while we are in `oc debug node`
+    def reboot
+      exec_raw('shutdown -r now "BushSlicer triggered reboot"', timeout: 20)
     end
 
     def node

@@ -26,7 +26,7 @@ Feature: cluster-logging-operator related test
     Given I wait for the "fluentd" service_monitor to appear
     Given the expression should be true> service_monitor('fluentd').service_monitor_endpoint_spec(server_name: "fluentd.openshift-logging.svc").port == "metrics"
     And the expression should be true> service_monitor('fluentd').service_monitor_endpoint_spec(server_name: "fluentd.openshift-logging.svc").path == "/metrics"
-    Given I wait up to 180 seconds for the steps to pass:
+    Given I wait up to 360 seconds for the steps to pass:
     """
     When I perform the GET prometheus rest client with:
       | path  | /api/v1/query?                            |
@@ -47,22 +47,17 @@ Feature: cluster-logging-operator related test
   @admin
   @destructive
   Scenario: Scale Elasticsearch nodes by nodeCount 2->3->4 in clusterlogging
-    Given I delete the clusterlogging instance
+    Given I create clusterlogging instance with:
+      | remove_logging_pods | true                                                                   |
+      | crd_yaml            | <%= BushSlicer::HOME %>/testdata/logging/clusterlogging/scalebase.yaml |
+      | check_status        | false                                                                  |
     Then the step should succeed
-    And I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/logging/clusterlogging/scalebase.yaml |
-    Then the step should succeed
-    Given I register clean-up steps:
-    """
-    Given I delete the clusterlogging instance
-    """
-    # Given admin ensures "instance" cluster_logging is deleted from the "openshift-logging" project after scenario
-    And I wait for the "elasticsearch" elasticsearches to appear
+    And I wait for the "elasticsearch" elasticsearches to appear up to 300 seconds
     And the expression should be true> cluster_logging('instance').logstore_node_count == 2
     And the expression should be true> elasticsearch('elasticsearch').nodes[0]['nodeCount'] == 2
     Given evaluation of `elasticsearch('elasticsearch').nodes[0]['genUUID']` is stored in the :gen_uuid_1 clipboard
-    Then I wait for the "elasticsearch-cdm-<%= cb.gen_uuid_1 %>-1" deployment to appear
-    And I wait for the "elasticsearch-cdm-<%= cb.gen_uuid_1 %>-2" deployment to appear
+    Then I wait for the "elasticsearch-cdm-<%= cb.gen_uuid_1 %>-1" deployment to appear up to 300 seconds
+    And I wait for the "elasticsearch-cdm-<%= cb.gen_uuid_1 %>-2" deployment to appear up to 300 seconds
     When I run the :patch client command with:
       | resource      | clusterlogging                                          |
       | resource_name | instance                                                |
@@ -74,7 +69,7 @@ Feature: cluster-logging-operator related test
     """
     And the expression should be true> elasticsearch('elasticsearch').nodes[0]['nodeCount'] == 3
     """
-    And I wait for the "elasticsearch-cdm-<%= cb.gen_uuid_1%>-3" deployment to appear
+    And I wait for the "elasticsearch-cdm-<%= cb.gen_uuid_1%>-3" deployment to appear up to 300 seconds
     When I run the :patch client command with:
       | resource      | clusterlogging                                          |
       | resource_name | instance                                                |
@@ -91,7 +86,7 @@ Feature: cluster-logging-operator related test
     Given evaluation of `elasticsearch('elasticsearch').nodes[1]['genUUID']` is stored in the :gen_uuid_2 clipboard
     And the expression should be true> cb.gen_uuid_2 != nil
     """
-    And I wait for the "elasticsearch-cd-<%= cb.gen_uuid_2 %>-1" deployment to appear
+    And I wait for the "elasticsearch-cd-<%= cb.gen_uuid_2 %>-1" deployment to appear up to 300 seconds
 
   # @author qitang@redhat.com
   # @case_id OCP-23738
@@ -100,9 +95,8 @@ Feature: cluster-logging-operator related test
   Scenario: Fluentd alert rule: FluentdNodeDown
     Given the master version >= "4.2"
     Given I create clusterlogging instance with:
-      | remove_logging_pods | true                                                                                                   |
-      | crd_yaml            | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/logging/clusterlogging/example.yaml |
-      | log_collector       | fluentd                                                                                                |
+      | remove_logging_pods | true                                                                 |
+      | crd_yaml            | <%= BushSlicer::HOME %>/testdata/logging/clusterlogging/example.yaml |
     Then the step should succeed
     Given I wait for the "fluentd" prometheus_rule to appear
     And I wait for the "fluentd" service_monitor to appear

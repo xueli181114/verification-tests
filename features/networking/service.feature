@@ -8,7 +8,7 @@ Feature: Service related networking scenarios
     Given the env is using multitenant network
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/networking/list_for_pods.json |
+      | f | <%= BushSlicer::HOME %>/testdata/networking/list_for_pods.json |
     Then the step should succeed
     And a pod becomes ready with labels:
       | name=test-pods |
@@ -20,7 +20,7 @@ Feature: Service related networking scenarios
     Given I switch to the second user
     And I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/networking/list_for_pods.json |
+      | f | <%= BushSlicer::HOME %>/testdata/networking/list_for_pods.json |
     Then the step should succeed
     And a pod becomes ready with labels:
       | name=test-pods |
@@ -42,42 +42,6 @@ Feature: Service related networking scenarios
       | Hello OpenShift |
 
   # @author yadu@redhat.com
-  # @case_id OCP-9977
-  @admin
-  @destructive
-  Scenario: Create service with external IP
-    Given master config is merged with the following hash:
-    """
-    networkConfig:
-      externalIPNetworkCIDRs:
-      - 10.5.0.0/24
-    """
-    And the master service is restarted on all master nodes
-    Given I have a project
-    And I wait up to 30 seconds for the steps to pass:
-    """
-    When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/routing/caddy-docker.json  |
-    Then the step should succeed
-    """
-    And the pod named "caddy-docker" becomes ready
-    When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/networking/externalip_service1.json |
-    Then the step should succeed
-    When I run the :get client command with:
-      | resource      | service          |
-      | resource_name | service-unsecure |
-    Then the step should succeed
-    And the output should contain:
-      | 10.5.0.1 |
-    Given I have a pod-for-ping in the project
-    When I execute on the pod:
-      | /usr/bin/curl | --connect-timeout | 4 | 10.5.0.1:27017 |
-    Then the step should succeed
-    And the output should contain:
-      | Hello-OpenShift |
-
-  # @author yadu@redhat.com
   # @case_id OCP-15032
   @admin
   Scenario: The openflow list will be cleaned after delete the services
@@ -86,7 +50,7 @@ Feature: Service related networking scenarios
       | multitenant |
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/routing/unsecure/service_unsecure.json |
+      | f | <%= BushSlicer::HOME %>/testdata/routing/unsecure/service_unsecure.json |
     Then the step should succeed
     Given I use the "service-unsecure" service
     And evaluation of `service.ip(user: user)` is stored in the :service_ip clipboard
@@ -137,7 +101,7 @@ Feature: Service related networking scenarios
   Scenario: The headless service can publish the pods even if they are not ready
     Given I have a project
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/networking/headless_notreadypod.json |
+      | f | <%= BushSlicer::HOME %>/testdata/networking/headless_notreadypod.json |
     Then the step should succeed
     Given I wait up to 30 seconds for the steps to pass:
     """
@@ -153,4 +117,297 @@ Feature: Service related networking scenarios
       | resource_name | test-service |
     Then the step should succeed
     And the output should contain:
-      | 8080 |
+	    | 8080 |
+
+  # @author weliang@redhat.com
+  # @case_id OCP-24668
+  Scenario: externalIP defined in service but no spec.externalIP defined	
+    Given I have a project 
+    # Create a service with a externalIP
+    When I run the :create client command with:
+      | f | <%= BushSlicer::HOME %>/testdata/networking/externalip_service1.json | 
+    Then the step should fail
+
+  # @author weliang@redhat.com
+  # @case_id OCP-24669
+  @admin
+  @destructive
+  Scenario: externalIP defined in service with set ExternalIP in allowedCIDRs	
+    Given I have a project
+    And SCC "privileged" is added to the "system:serviceaccounts:<%= project.name %>" group
+    Given I store the schedulable nodes in the :nodes clipboard
+    And the Internal IP of node "<%= cb.nodes[0].name %>" is stored in the :hostip clipboard
+   
+    # Create additional network through CNO
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy":{"allowedCIDRs":["<%= cb.hostip %>/24"]}}}} |
+
+    # Clean-up required to erase above externalIP policy after testing done
+    Given I register clean-up steps:
+    """
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy":{"allowedCIDRs": null}}}} |
+    """
+
+    # Create a svc with externalIP
+    Given I switch to the first user
+    And I wait up to 300 seconds for the steps to pass:
+    """
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/networking/externalip_service1.json" replacing paths:
+      | ["spec"]["externalIPs"][0] | <%= cb.hostip %> |
+    Then the step should succeed
+    """ 
+    
+    # Create a pod
+    When I run the :create client command with:
+      | f | <%= BushSlicer::HOME %>/testdata/routing/caddy-docker.json |
+    Then the step should succeed
+    And the pod named "caddy-docker" becomes ready
+ 
+    # Curl externalIP:portnumber should pass
+    When I execute on the pod:
+      | /usr/bin/curl | --connect-timeout | 10 | <%= cb.hostip %>:27017 |
+    Then the output should contain:
+      | Hello-OpenShift-1 http-8080 |
+
+  # @author weliang@redhat.com
+  # @case_id OCP-24692
+  @admin
+  @destructive
+  Scenario: A rejectedCIDRs inside an allowedCIDRs	 
+    # Create additional network through CNO
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy":{"allowedCIDRs":["22.2.2.0/24"],"rejectedCIDRs":["22.2.2.0/25"]}}}} |
+
+    # Clean-up required to erase above externalIP policy after testing done
+    Given I register clean-up steps:
+    """
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy": {"allowedCIDRs": null, "rejectedCIDRs": null}}}}  |
+    """
+
+    # Create a svc with externalIP/22.2.2.10 which is in 22.2.2.0/25
+    Given I have a project 
+    And I wait up to 300 seconds for the steps to pass:
+    """
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/networking/externalip_service1.json" replacing paths:
+      | ["spec"]["externalIPs"][0] | 22.2.2.10 |
+    Then the step should fail
+    """
+
+    # Create a svc with externalIP/22.2.2.130 which is not in 22.2.2.0/25
+    And I wait up to 300 seconds for the steps to pass:
+    """
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/networking/externalip_service1.json" replacing paths:
+      | ["spec"]["externalIPs"][0] | 22.2.2.130 |
+    Then the step should succeed
+    """
+ 
+    # Create a pod
+    When I run the :create client command with:
+      | f | <%= BushSlicer::HOME %>/testdata/routing/caddy-docker.json |
+    Then the step should succeed
+    And the pod named "caddy-docker" becomes ready
+ 
+    # Curl externalIP:portnumber on new pod 
+    When I execute on the pod:
+      | /usr/bin/curl | -k | 22.2.2.130:27017 |
+    Then the output should contain:
+      | Hello-OpenShift-1 http-8080 |
+
+  # @author weliang@redhat.com
+  # @case_id OCP-24670
+  @admin
+  @destructive
+  Scenario: externalIP defined in service with set ExternalIP in rejectedCIDRs
+    Given I have a project
+    And SCC "privileged" is added to the "system:serviceaccounts:<%= project.name %>" group
+    Given I store the schedulable nodes in the :nodes clipboard
+    And the Internal IP of node "<%= cb.nodes[0].name %>" is stored in the :hostip clipboard
+   
+    # Create additional network through CNO
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy":{"rejectedCIDRs":["<%= cb.hostip %>/24"]}}}} |
+ 
+    # Clean-up required to erase above externalIP policy after testing done
+    Given I register clean-up steps:
+    """
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy":{"rejectedCIDRs": null}}}} |
+    """
+
+    # Create a svc with externalIP
+    Given I switch to the first user
+    And I wait up to 300 seconds for the steps to pass:
+    """
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/networking/externalip_service1.json" replacing paths:
+      | ["spec"]["externalIPs"][0] | <%= cb.hostip %> |
+    Then the step should fail
+    """
+
+  # @author weliang@redhat.com
+  # @case_id OCP-24739
+  @admin
+  @destructive
+  Scenario: An allowedCIDRs inside an rejectedCIDRs	 
+    # Create additional network through CNO
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy":{"allowedCIDRs":["22.2.2.0/25"],"rejectedCIDRs":["22.2.2.0/24"]}}}} |                                                                                  
+   
+    # Clean-up required to erase above externalIP policy after testing done
+    Given I register clean-up steps:
+    """
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy": {"allowedCIDRs": null, "rejectedCIDRs": null}}}} |
+    """
+
+    # Create a svc with externalIP/22.2.2.10 which is in rejectedCIDRs
+    Given I have a project 
+    And I wait up to 300 seconds for the steps to pass:
+    """
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/networking/externalip_service1.json" replacing paths:
+      | ["spec"]["externalIPs"][0] | 22.2.2.10 |
+    Then the step should fail
+    """
+
+    # Create a svc with externalIP/22.2.2.130 which is in rejectedCIDRs
+    And I wait up to 300 seconds for the steps to pass:
+    """
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/networking/externalip_service1.json" replacing paths:
+      | ["spec"]["externalIPs"][0] | 22.2.2.130 |
+    Then the step should fail
+    """
+
+  # @author weliang@redhat.com
+  # @case_id OCP-24691
+  @admin
+  @destructive
+  Scenario: Defined Multiple allowedCIDRs 
+    Given I have a project
+    And SCC "privileged" is added to the "system:serviceaccounts:<%= project.name %>" group
+    Given I store the schedulable nodes in the :nodes clipboard
+    And the Internal IP of node "<%= cb.nodes[0].name %>" is stored in the :host1ip clipboard
+    And the Internal IP of node "<%= cb.nodes[1].name %>" is stored in the :host2ip clipboard
+    
+    # Create additional network through CNO
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy":{"allowedCIDRs":["<%= cb.host1ip %>/24","<%= cb.host2ip %>/24"]}}}} |
+  
+    # Clean-up required to erase above externalIP policy after testing done
+    Given I register clean-up steps:
+    """
+    Given as admin I successfully merge patch resource "networks.config.openshift.io/cluster" with:
+      | {"spec":{"externalIP":{"policy":{"allowedCIDRs":null }}}} |
+    """
+    
+    # Create a svc with externalIP
+    Given I switch to the first user
+    And I wait up to 300 seconds for the steps to pass:
+    """
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/networking/externalip_service1.json" replacing paths:
+      | ["spec"]["externalIPs"][0] | <%= cb.host1ip %> |
+    Then the step should succeed
+    """
+
+    # Create a pod
+    When I run the :create client command with:
+      | f | <%= BushSlicer::HOME %>/testdata/routing/caddy-docker.json |
+    Then the step should succeed
+    And the pod named "caddy-docker" becomes ready
+ 
+    # Curl externalIP:portnumber from pod 
+    When I execute on the pod:
+      | /usr/bin/curl | --connect-timeout | 10 | <%= cb.host1ip %>:27017 |
+    Then the output should contain:
+      | Hello-OpenShift-1 http-8080 |
+    
+    # Delete created pod and svc
+    When I run the :delete client command with:
+      | object_type | all |
+      | all         |     |
+    Then the step should succeed
+
+    # Create a svc with second externalIP
+    And I wait up to 300 seconds for the steps to pass:
+    """
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/networking/externalip_service1.json" replacing paths:
+      | ["spec"]["externalIPs"][0] | <%= cb.host2ip %> |
+    Then the step should succeed
+    """
+    
+    # Create a pod
+    When I run the :create client command with:
+      | f | <%= BushSlicer::HOME %>/testdata/routing/caddy-docker.json |
+    Then the step should succeed
+    And the pod named "caddy-docker" becomes ready
+ 
+    # Curl externalIP:portnumber on new pod 
+    When I execute on the pod:
+      | /usr/bin/curl | --connect-timeout | 10 | <%= cb.host2ip %>:27017 |
+    Then the output should contain:
+      | Hello-OpenShift-1 http-8080 |
+
+  # @author anusaxen@redhat.com
+  # @case_id OCP-26035
+  @admin
+  Scenario: Idling/Unidling services on OVN
+  Given the env is using "OVNKubernetes" networkType
+  And I have a project
+  When I run the :create client command with:
+    | f | <%= BushSlicer::HOME %>/testdata/networking/list_for_pods.json |
+  Then the step should succeed
+  And a pod becomes ready with labels:
+    | name=test-pods |
+  Given I use the "test-service" service
+  And evaluation of `service.ip(user: user)` is stored in the :service_ip clipboard
+  # Checking idling unidling manually to make sure it works fine
+  When I run the :idle client command with:
+    | svc_name | test-service |
+  Then the step should succeed
+  And the output should contain:
+    | The service "<%= project.name %>/test-service" has been marked as idled |
+  Given I have a pod-for-ping in the project
+  When I execute on the pod:
+    | /usr/bin/curl | --connect-timeout | 30 | <%= cb.service_ip %>:27017 |
+  Then the step should succeed
+  And the output should contain:
+    | Hello OpenShift |
+
+  # @author huirwang@redhat.com
+  # @case_id OCP-11645
+  Scenario: Create loadbalancer service
+    Given I have a project
+    When I run the :create client command with:
+      | f | <%= BushSlicer::HOME %>/testdata/networking/ping_for_pod_containerPort.json |
+    Then the step should succeed
+
+    # Create loadbalancer service
+    When I run the :create_service_loadbalancer client command with:
+      | name | hello-pod |
+      | tcp  | 5678:8080 |
+    Then the step should succeed
+
+    # Get the external ip of the loadbaclancer service
+    And I wait up to 60 seconds for the steps to pass:
+    """
+    When I run the :get client command with:
+      | resource      | svc                                        |
+      | resource_name | hello-pod                                  |
+      | template      | {{(index .status.loadBalancer.ingress 0)}} |
+    Then the step should succeed
+    """
+    And evaluation of `@result[:response].match(/:(.*)]/)[1]` is stored in the :service_hostname clipboard
+
+    # check the external:ip of loadbalancer can be accessed
+    When I run oc create over "<%= BushSlicer::HOME %>/testdata/networking/list_for_pods.json" replacing paths:
+      | ["items"][0]["spec"]["replicas"] | 1 |
+    Then the step should succeed
+    Given 1 pods become ready with labels:
+      | name=test-pods |
+    And I wait up to 90 seconds for the steps to pass:
+    """
+    When I execute on the pod:
+      | curl | -s | --connect-timeout | 2 | <%= cb.service_hostname %>:5678 |
+    Then the step should succeed
+    And the output should contain "Hello OpenShift"
+    """
