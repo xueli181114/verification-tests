@@ -403,7 +403,7 @@ click_logout_button:
     op: click
   element:
     selector:
-      xpath: //button[@class='pf-c-dropdown__menu-item' and text()='Logout']
+      xpath: //button[@class='pf-c-dropdown__menu-item' and (text()='Logout' or text()='Log out')]
     op: click
     timeout: 20
 logout_page_loaded:
