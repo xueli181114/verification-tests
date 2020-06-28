@@ -7,10 +7,10 @@ Feature: build related upgrade check
     When I run the :new_project client command with:
       | project_name | build-upgrade |
     Then the step should succeed
-    When I run the :new_app client command with:
+    When I run the :new_app_as_dc client command with:
       | app_repo | openshift/ruby~https://github.com/openshift/ruby-ex |
     Then the step should succeed
-    When I run the :new_app client command with:
+    When I run the :new_app_as_dc client command with:
       | app_repo | openshift/ruby:2.5~https://github.com/openshift/ruby-hello-world |
       | strategy | docker                                                           |
     Then the step should succeed

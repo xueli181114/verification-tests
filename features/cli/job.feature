@@ -4,8 +4,9 @@ Feature: job.feature
   # @case_id OCP-11206
   Scenario: Create job with multiple completions
     Given I have a project
+    Given I obtain test data file "templates/tc511597/job.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/templates/tc511597/job.yaml |
+      | f | job.yaml |
     Then the step should succeed
     Given 5 pods become ready with labels:
       | app=pi |
@@ -33,11 +34,13 @@ Feature: job.feature
     Then the step should succeed
     And the output should not contain "pi-"
     """
-    When I run oc create over "<%= BushSlicer::HOME %>/testdata/templates/tc511597/job.yaml" replacing paths:
+    Given I obtain test data file "templates/tc511597/job.yaml"
+    When I run oc create over "job.yaml" replacing paths:
       | ["spec"]["completions"] | -1 |
     Then the step should fail
     And the output should contain "must be greater than or equal to 0"
-    When I run oc create over "<%= BushSlicer::HOME %>/testdata/templates/tc511597/job.yaml" replacing paths:
+    Given I obtain test data file "templates/tc511597/job.yaml"
+    When I run oc create over "job.yaml" replacing paths:
       | ["spec"]["completions"] | 0.1 |
     Then the step should fail
 
@@ -45,12 +48,13 @@ Feature: job.feature
   # @case_id OCP-11539
   Scenario: Create job with pod parallelism
     Given I have a project
-    When I run oc create over "<%= BushSlicer::HOME %>/testdata/job/job_with_0_activeDeadlineSeconds.yaml" replacing paths:
+    Given I obtain test data file "job/job_with_0_activeDeadlineSeconds.yaml"
+    When I run oc create over "job_with_0_activeDeadlineSeconds.yaml" replacing paths:
       | ["spec"]["parallelism"]           | 1    |
       | ["spec"]["completions"]           | null |
       | ["spec"]["activeDeadlineSeconds"] | null |
     Then the step should succeed
-    Given 1 pods become ready with labels:
+    Given a pod becomes ready with labels:
       | app=pi |
     When I get project pods with labels:
       | app=pi |
@@ -75,7 +79,8 @@ Feature: job.feature
     Then the expression should be true> cb.pods.empty?
     """
     # Create a job with invalid completions valuse
-    When I run oc create over "<%= BushSlicer::HOME %>/testdata/job/job_with_0_activeDeadlineSeconds.yaml" replacing paths:
+    Given I obtain test data file "job/job_with_0_activeDeadlineSeconds.yaml"
+    When I run oc create over "job_with_0_activeDeadlineSeconds.yaml" replacing paths:
       | ["spec"]["parallelism"]           | -1   |
       | ["spec"]["completions"]           | null |
       | ["spec"]["activeDeadlineSeconds"] | null |
@@ -83,13 +88,15 @@ Feature: job.feature
     And the output should contain:
       | spec.parallelism |
       | must be greater than or equal to 0 |
-    When I run oc create over "<%= BushSlicer::HOME %>/testdata/job/job_with_0_activeDeadlineSeconds.yaml" replacing paths:
+    Given I obtain test data file "job/job_with_0_activeDeadlineSeconds.yaml"
+    When I run oc create over "job_with_0_activeDeadlineSeconds.yaml" replacing paths:
       | ["spec"]["parallelism"]           | 0.1  |
       | ["spec"]["completions"]           | null |
       | ["spec"]["activeDeadlineSeconds"] | null |
     Then the step should fail
     # Create a job with both "parallelism" < "completions"
-    When I run oc create over "<%= BushSlicer::HOME %>/testdata/job/job_with_0_activeDeadlineSeconds.yaml" replacing paths:
+    Given I obtain test data file "job/job_with_0_activeDeadlineSeconds.yaml"
+    When I run oc create over "job_with_0_activeDeadlineSeconds.yaml" replacing paths:
       | ["spec"]["parallelism"]           | 2    |
       | ["spec"]["completions"]           | 3    |
       | ["spec"]["activeDeadlineSeconds"] | null |
@@ -115,7 +122,8 @@ Feature: job.feature
       | app=pi |
     Then the expression should be true> cb.pods.empty?
     """
-    When I run oc create over "<%= BushSlicer::HOME %>/testdata/job/job_with_0_activeDeadlineSeconds.yaml" replacing paths:
+    Given I obtain test data file "job/job_with_0_activeDeadlineSeconds.yaml"
+    When I run oc create over "job_with_0_activeDeadlineSeconds.yaml" replacing paths:
       | ["spec"]["parallelism"]           | 3    |
       | ["spec"]["completions"]           | 2    |
       | ["spec"]["activeDeadlineSeconds"] | null |
@@ -135,8 +143,9 @@ Feature: job.feature
   # @case_id OCP-9948
   Scenario: Create job with activeDeadlineSeconds
     Given I have a project
+    Given I obtain test data file "job/job_with_lessthan_runtime_activeDeadlineSeconds.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/job/job_with_lessthan_runtime_activeDeadlineSeconds.yaml |
+      | f | job_with_lessthan_runtime_activeDeadlineSeconds.yaml |
     Then the step should succeed
     When I get project job
     Then the output should match:
@@ -155,14 +164,16 @@ Feature: job.feature
   # @case_id OCP-9952
   Scenario: Specifying your own pod selector for job
     Given I have a project
+    Given I obtain test data file "job/job-manualselector.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/job/job-manualselector.yaml |
+      | f | job-manualselector.yaml |
     Then the step should succeed
     When I run the :describe client command with:
       | resource | job |
       | name     | pi  |
     Then the output should contain "controller-uid=64e92bd2-078d-11e6-a269-fa163e15bd57"
-    When I run oc create over "<%= BushSlicer::HOME %>/testdata/job/job_with_0_activeDeadlineSeconds.yaml" replacing paths:
+    Given I obtain test data file "job/job_with_0_activeDeadlineSeconds.yaml"
+    When I run oc create over "job_with_0_activeDeadlineSeconds.yaml" replacing paths:
       | ["spec"]["manualSelector"] | false |
     Then the step should fail
     And the output should contain:
@@ -279,8 +290,9 @@ Feature: job.feature
   # @case_id OCP-10781
   Scenario: Create job with specific deadline
     Given I have a project
+    Given I obtain test data file "job/job_with_0_activeDeadlineSeconds.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/job/job_with_0_activeDeadlineSeconds.yaml |
+      | f | job_with_0_activeDeadlineSeconds.yaml |
     Then the step should succeed
     When I run the :get client command with:
       | resource      | job  |
@@ -291,19 +303,23 @@ Feature: job.feature
       | object_type       | job  |
       | object_name_or_id | zero |
     Then the step should succeed
+    Given I obtain test data file "job/job_with_negative_activeDeadlineSeconds.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/job/job_with_negative_activeDeadlineSeconds.yaml |
+      | f | job_with_negative_activeDeadlineSeconds.yaml |
     Then the step should fail
     And the output should contain:
       | Invalid value: |
+    Given I obtain test data file "job/job_with_string_activeDeadlineSeconds.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/job/job_with_string_activeDeadlineSeconds.yaml  |
+      | f | job_with_string_activeDeadlineSeconds.yaml  |
     Then the step should fail
+    Given I obtain test data file "job/job_with_float_activeDeadlineSeconds.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/job/job_with_float_activeDeadlineSeconds.yaml |
+      | f | job_with_float_activeDeadlineSeconds.yaml |
     Then the step should fail
+    Given I obtain test data file "job/job_with_lessthan_runtime_activeDeadlineSeconds.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/job/job_with_lessthan_runtime_activeDeadlineSeconds.yaml |
+      | f | job_with_lessthan_runtime_activeDeadlineSeconds.yaml |
     Then the step should succeed
     And I wait up to 120 seconds for the steps to pass:
     """
@@ -317,8 +333,9 @@ Feature: job.feature
       | object_type       | job |
       | object_name_or_id | pi  |
     Then the step should succeed
+    Given I obtain test data file "job/job_with_long_activeDeadlineSeconds.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/job/job_with_long_activeDeadlineSeconds.yaml |
+      | f | job_with_long_activeDeadlineSeconds.yaml |
     Then the step should succeed
     And I wait until job "pi" completes
 
@@ -326,12 +343,14 @@ Feature: job.feature
   # @case_id OCP-17515
   Scenario: User can schedule a Cronjob execution with cron format time
     Given I have a project
-    When I run the :run client command with:
-       | name     | sj3       |
-       | image    | busybox   |
-       | restart  | Never     |
-       | schedule | * * * * * |
-       | sleep    | 300	     |
+    When I run the :create_cronjob client command with:
+       | name             | sj3       |
+       | image            | busybox   |
+       | restart          | Never     |
+       | schedule         | * * * * * |
+       | oc_opts_end      |           |
+       | exec_command     | sleep     |
+       | exec_command_arg | 300       |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |
@@ -339,12 +358,14 @@ Feature: job.feature
     And the output should contain:
        | NAME     | sj3        |
        | SCHEDULE | * * * * *  |
-    When I run the :run client command with:
-       | name     | sj4       |
-       | image    | busybox   |
-       | restart  | Never     |
-       | schedule | 0 * * * * |
-       | sleep    | 300       |
+    When I run the :create_cronjob client command with:
+       | name             | sj4       |
+       | image            | busybox   |
+       | restart          | Never     |
+       | schedule         | 0 * * * * |
+       | oc_opts_end      |           |
+       | exec_command     | sleep     |
+       | exec_command_arg | 300       |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |
@@ -352,12 +373,14 @@ Feature: job.feature
     And the output should contain:
        | NAME     | sj4       |
        | SCHEDULE | 0 * * * * |
-    When I run the :run client command with:
-       | name     | sj5        |
-       | image    | busybox    |
-       | restart  | Never      |
-       | schedule | * 12 * * * |
-       | sleep    | 300        |
+    When I run the :create_cronjob client command with:
+       | name             | sj5        |
+       | image            | busybox    |
+       | restart          | Never      |
+       | schedule         | * 12 * * * |
+       | oc_opts_end      |            |
+       | exec_command     | sleep      |
+       | exec_command_arg | 300        |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |
@@ -365,12 +388,14 @@ Feature: job.feature
     And the output should contain:
        | NAME     | sj5        |
        | SCHEDULE | * 12 * * * |
-    When I run the :run client command with:
-       | name     | sj6       |
-       | image    | busybox   |
-       | restart  | Never     |
-       | schedule | * * 1 * * |
-       | sleep    | 300       |
+    When I run the :create_cronjob client command with:
+       | name             | sj6       |
+       | image            | busybox   |
+       | restart          | Never     |
+       | schedule         | * * 1 * * |
+       | oc_opts_end      |           |
+       | exec_command     | sleep     |
+       | exec_command_arg | 300       |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |
@@ -378,12 +403,14 @@ Feature: job.feature
     And the output should contain:
        | NAME     | sj6       |
        | SCHEDULE | * * 1 * * |
-    When I run the :run client command with:
-       | name     | sj7       |
-       | image    | busybox   |
-       | restart  | Never     |
-       | schedule | * * * 4 * |
-       | sleep    | 300       |
+    When I run the :create_cronjob client command with:
+       | name             | sj7       |
+       | image            | busybox   |
+       | restart          | Never     |
+       | schedule         | * * * 4 * |
+       | oc_opts_end      |           |
+       | exec_command     | sleep     |
+       | exec_command_arg | 300       |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |
@@ -391,12 +418,14 @@ Feature: job.feature
     And the output should contain:
        | NAME     | sj7       |
        | SCHEDULE | * * * 4 * |
-    When I run the :run client command with:
-       | name     | sj8       |
-       | image    | busybox   |
-       | restart  | Never     |
-       | schedule | * * * * 3 |
-       | sleep    | 300       |
+    When I run the :create_cronjob client command with:
+       | name             | sj8       |
+       | image            | busybox   |
+       | restart          | Never     |
+       | schedule         | * * * * 3 |
+       | oc_opts_end      |           |
+       | exec_command     | sleep     |
+       | exec_command_arg | 300       |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |
@@ -404,12 +433,14 @@ Feature: job.feature
     And the output should contain:
        | NAME     | sj8       |
        | SCHEDULE | * * * * 3 |
-    When I run the :run client command with:
-       | name     | sja        |
-       | image    | busybox    |
-       | restart  | Never      |
-       | schedule | 0 12 * * * |
-       | sleep    | 300        |
+    When I run the :create_cronjob client command with:
+       | name             | sja        |
+       | image            | busybox    |
+       | restart          | Never      |
+       | schedule         | 0 12 * * * |
+       | oc_opts_end      |            |
+       | exec_command     | sleep      |
+       | exec_command_arg | 300        |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |
@@ -417,12 +448,14 @@ Feature: job.feature
     And the output should contain:
        | NAME     | sja        |
        | SCHEDULE | 0 12 * * * |
-    When I run the :run client command with:
-       | name     | sjb          |
-       | image    | busybox      |
-       | restart  | Never        |
-       | schedule | 0 12 15 11 3 |
-       | sleep    | 300          |
+    When I run the :create_cronjob client command with:
+       | name             | sjb          |
+       | image            | busybox      |
+       | restart          | Never        |
+       | schedule         | 0 12 15 11 3 |
+       | oc_opts_end      |              |
+       | exec_command     | sleep        |
+       | exec_command_arg | 300          |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |
@@ -430,57 +463,69 @@ Feature: job.feature
     And the output should contain:
        | NAME     | sjb          |
        | SCHEDULE | 0 12 15 11 3 |
-    When I run the :run client command with:
-       | name     | sjc           |
-       | image    | busybox       |
-       | restart  | Never         |
-       | schedule | 70 12 15 11 3 |
-       | sleep    | 300           |
+    When I run the :create_cronjob client command with:
+       | name             | sjc           |
+       | image            | busybox       |
+       | restart          | Never         |
+       | schedule         | 70 12 15 11 3 |
+       | oc_opts_end      |               |
+       | exec_command     | sleep         |
+       | exec_command_arg | 300           |
     Then the step should fail
     And the output should contain:
        | Invalid value: "70 12 15 11 3": End of range (70) above maximum (59): 70 |
-    When I run the :run client command with:
-       | name     | sjc          |
-       | image    | busybox      |
-       | restart  | Never        |
-       | schedule | 30 25 15 1 3 |
-       | sleep    | 300          |
+    When I run the :create_cronjob client command with:
+       | name             | sjc          |
+       | image            | busybox      |
+       | restart          | Never        |
+       | schedule         | 30 25 15 1 3 |
+       | oc_opts_end      |              |
+       | exec_command     | sleep        |
+       | exec_command_arg | 300          |
     Then the step should fail
     And the output should contain: 
        | Invalid value: "30 25 15 1 3": End of range (25) above maximum (23): 25 |
-    When I run the :run client command with:
-       | name     | sjc          |
-       | image    | busybox      |
-       | restart  | Never        |
-       | schedule | 30 8 35 11 3 |
-       | sleep    | 300          |
+    When I run the :create_cronjob client command with:
+       | name             | sjc          |
+       | image            | busybox      |
+       | restart          | Never        |
+       | schedule         | 30 8 35 11 3 |
+       | oc_opts_end      |              |
+       | exec_command     | sleep        |
+       | exec_command_arg | 300          |
     Then the step should fail
     And the output should contain:
        | Invalid value: "30 8 35 11 3": End of range (35) above maximum (31): 35 |
-    When I run the :run client command with:
-       | name     | sjc         |
-       | image    | busybox     |
-       | restart  | Never       |
-       | schedule | 30 8 1 13 3 |
-       | sleep    | 300         |
+    When I run the :create_cronjob client command with:
+       | name             | sjc         |
+       | image            | busybox     |
+       | restart          | Never       |
+       | schedule         | 30 8 1 13 3 |
+       | oc_opts_end      |             |
+       | exec_command     | sleep       |
+       | exec_command_arg | 300         |
     Then the step should fail
     And the output should contain:
        | Invalid value: "30 8 1 13 3": End of range (13) above maximum (12): 13 |
-    When I run the :run client command with:
-       | name     | sjc        |
-       | image    | busybox    |
-       | restart  | Never      |
-       | schedule | 30 8 1 8 7 |
-       | sleep    | 300        |
+    When I run the :create_cronjob client command with:
+       | name             | sjc        |
+       | image            | busybox    |
+       | restart          | Never      |
+       | schedule         | 30 8 1 8 7 |
+       | oc_opts_end      |            |
+       | exec_command     | sleep      |
+       | exec_command_arg | 300        |
     Then the step should fail
     And the output should contain:
        | Invalid value: "30 8 1 8 7": End of range (7) above maximum (6): 7 |
-    When I run the :run client command with:
-       | name     | sjd       |
-       | image    | busybox   |
-       | restart  | Never     |
-       | schedule | @every 5m |
-       | sleep    | 300       |
+    When I run the :create_cronjob client command with:
+       | name             | sjd       |
+       | image            | busybox   |
+       | restart          | Never     |
+       | schedule         | @every 5m |
+       | oc_opts_end      |           |
+       | exec_command     | sleep     |
+       | exec_command_arg | 300       |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |
@@ -488,12 +533,14 @@ Feature: job.feature
     And the output should contain:
        | NAME     | sjd       |
        | SCHEDULE | @every 5m |
-    When I run the :run client command with:
-       | name     | sje     |
-       | image    | busybox |
-       | restart  | Never   |
-       | schedule | @daily  |
-       | sleep    | 300     |
+    When I run the :create_cronjob client command with:
+       | name             | sje     |
+       | image            | busybox |
+       | restart          | Never   |
+       | schedule         | @daily  |
+       | oc_opts_end      |         |
+       | exec_command     | sleep   |
+       | exec_command_arg | 300     |
     Then the step should succeed
     When I run the :get client command with:
        | resource | cronjob |

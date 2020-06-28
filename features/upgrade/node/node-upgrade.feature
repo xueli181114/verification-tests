@@ -9,8 +9,9 @@ Feature: Node components upgrade tests
       | name     | master                    |
       | key_val  | custom-kubelet=small-pods |
     Then the step should succeed
+    Given I obtain test data file "customresource/custom_kubelet.yaml"
     When I run the :create client command with:
-      | f | <%= BushSlicer::HOME %>/testdata/customresource/custom_kubelet.yaml |
+      | f | custom_kubelet.yaml |
     Then the step should succeed
     And I wait up to 30 seconds for the steps to pass:
     """
@@ -32,12 +33,12 @@ Feature: Node components upgrade tests
       | cat /etc/kubernetes/kubelet.conf |
     Then the step should succeed
     And the output should contain:
-      | "imageMinimumGCAge":"5m0s"       |
-      | "imageGCHighThresholdPercent":80 |
-      | "maxPods":240                    |
+      | "imageMinimumGCAge": "5m0s"       |
+      | "imageGCHighThresholdPercent": 80 |
+      | "maxPods": 240                    |
 
   # @author minmli@redhat.com
-  # @case_id OCP-13032
+  # @case_id OCP-13022
   @upgrade-check
   @admin
   Scenario: Make sure nodeConfig is not changed after upgrade
@@ -54,7 +55,7 @@ Feature: Node components upgrade tests
       | cat /etc/kubernetes/kubelet.conf | 
     Then the step should succeed
     And the output should contain:
-      | "imageMinimumGCAge":"5m0s"       |
-      | "imageGCHighThresholdPercent":80 |
-      | "maxPods":240                    |
+      | "imageMinimumGCAge": "5m0s"       |
+      | "imageGCHighThresholdPercent": 80 |
+      | "maxPods": 240                    |
 
