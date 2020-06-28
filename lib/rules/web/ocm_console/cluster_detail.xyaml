@@ -387,6 +387,26 @@ check_osd_actions_behind_open_console_button:
             xpath: //button[text()='Delete Cluster']
 close_actions_behind_open_console_button:
     action: expand_actions_behind_open_console_button
+    
+check_load_balancer_on_detail_page:
+  element:
+    selector:
+      xpath: //div[@class='pf-c-card__body']//dt[text()='Load Balancers']/following-sibling::dd[text()='<load_balancer_value>']
+    timeout: 50
+    
+check_persistent_storage_on_detail_page:
+  element:
+    selector:
+      xpath: //div[@class='pf-c-card__body']//dt[text()='Persistent Storage']/following-sibling::dd[text()='<persistent_storage_value>']
+    timeout: 50
+scale_load_balancer_from_cluster_detail_page:
+  action: cluster_detail_page_loaded
+  action: go_to_scale_cluster_dialog_on_cluster_detail_page
+  action: choose_loadbalancer_in_dialog
+scale_persistent_quota_from_cluster_detail_page:
+  action: cluster_detail_page_loaded
+  action: go_to_scale_cluster_dialog_on_cluster_detail_page
+  action: choose_persistent_quota_in_dialog
 
 check_edit_subscription_settings_link:
     element:
