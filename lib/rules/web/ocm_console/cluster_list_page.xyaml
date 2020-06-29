@@ -153,7 +153,7 @@ filter_dropdown_menu_loaded:
     - selector:
         xpath: //label[@class='pf-c-check__label' and text()='Unknown']
     - selector:
-        xpath: //label[@class='pf-c-dropdown__group-title' and text()='Cluster Type']
+        xpath: //label[@class='pf-c-dropdown__group-title' and text()='Cluster type']
     - selector:
         xpath: //label[@class='pf-c-check__label' and text()='OSD']
     - selector:
@@ -273,22 +273,22 @@ check_cluster_actions_on_cluster_list_page_partial_enabled:
 click_launch_console_button_on_cluster_list_page:
     element:
         selector:
-            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Launch Console']
+            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Open console']
         op: click
 click_edit_display_name_button_on_cluster_list_page:
     element:
         selector:
-            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Edit Display Name']
+            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Edit display name']
         op: click
 click_scale_cluster_button_on_cluster_list_page:
     element:
         selector:
-            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Scale Cluster']
+            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Scale cluster']
         op: click
 click_delete_cluster_button_on_cluster_list_page:
     element:
         selector:
-            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Delete Cluster']
+            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Delete cluster']
         op: click
 click_clear_filters_button:
     element:
@@ -307,32 +307,32 @@ click_clear_spec_filter:
         op: click
 disabled_launch_console_button_on_cluster_list_page_loaded:
     element:
-        xpath: //button[@class='pf-m-disabled pf-c-dropdown__menu-item' and text()='Launch Console']
+        xpath: //button[@class='pf-m-disabled pf-c-dropdown__menu-item' and text()='Open console']
 disabled_scale_cluster_button_on_cluster_list_page_loaded:
     element:
         selector:
-            xpath: "//button[@class='pf-c-dropdown__menu-item pf-m-disabled' and text()='Scale Cluster']"
+            xpath: "//button[@class='pf-c-dropdown__menu-item pf-m-disabled' and text()='Scale cluster']"
 enabled_delete_cluster_button_on_cluster_list_page_loaded:
     element:
         selector:
-            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Delete Cluster']
+            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Delete cluster']
 enabled_edit_display_name_button_on_cluster_list_page_loaded:
     element:
         selector:
-            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Edit Display Name']
+            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Edit display name']
 enabled_scale_cluster_button_on_cluster_list_page_loaded:
     element:
         selector:
-            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Scale Cluster']
+            xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Scale cluster']
 enabled_launch_console_button_on_cluster_list_page_loaded:
     element:
         selector:
-            xpath: //a[@class='pf-c-dropdown__menu-item' and text()='Launch Console']
+            xpath: //a[@class='pf-c-dropdown__menu-item' and text()='Open console']
 click_archive_button_on_cluster_list_page:
     action: expand_cluster_actions_on_cluster_list_page
     element:
         selector:
-            xpath: //button[@class='pf-c-dropdown__menu-item' and text()='Archive Cluster']
+            xpath: //button[text()='Archive cluster']
         op: click
 go_to_archived_cluster_page:
     action: expand_actions_behind_create_button
@@ -363,7 +363,7 @@ go_to_disconnected_cluster_register_page:
 click_scale_cluster_in_action_dropdown:
   element:
     selector:
-      xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Scale Cluster']
+      xpath: //*[@class='pf-c-dropdown__menu-item' and text()='Scale cluster']
     op: click
 go_to_scale_cluster_dialog_on_cluster_list_page:
   action: expand_cluster_actions_on_cluster_list_page

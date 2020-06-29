@@ -121,7 +121,7 @@ check_client_secret_field:
   action: check_client_secret_input
   elements:
   - selector:
-      xpath: //div[@role='dialog']//label[@for='client_secret']//span[text()='Client Secret']
+      xpath: //div[@role='dialog']//label[@for='client_secret']//span[text()='Client secret']
   - selector:
       xpath: //div[@role='dialog']//label[@for='client_secret']//span[text()='*']
 check_client_secret_input:
@@ -193,7 +193,7 @@ check_hostname_helper_message:
 check_github_ca_file_field:
   elements:
   - selector:
-      xpath: //div[@role='dialog']//label[@for='github_ca']/span[text()='CA File']
+      xpath: //div[@role='dialog']//label[@for='github_ca']/span[text()='CA file']
   - selector:
       xpath: //div[@role='dialog']//input[@id='github_ca' and @readonly]/following-sibling::span[text()='Browse…']
   - selector:
@@ -304,22 +304,22 @@ check_idp_advanced_options_collapsed:
   - selector:
       xpath: //div[@role='dialog']//span[text()='Show Advanced Options']/../*[name()='svg']
   - selector:
-      xpath: //div[@role='dialog']//button/span[text()='Show Advanced Options']
+      xpath: //div[@role='dialog']//button/span[text()='Show advanced options']
 click_the_advanced_options_button:
   element:
     selector:
-      xpath: //div[@role='dialog']//button/span[text()='Show Advanced Options']
+      xpath: //div[@role='dialog']//button/span[text()='Show advanced options']
     op: click
 check_idp_advanced_options_expanded:
   elements:
   - selector:
       xpath: //div[@role='dialog']//button[@aria-expanded='true']/*[name()='svg']
   - selector:
-      xpath: //div[@role='dialog']//button[@aria-expanded='true']/span[text()='Hide Advanced Options']
+      xpath: //div[@role='dialog']//button[@aria-expanded='true']/span[text()='Hide advanced options']
 check_openid_ca_file_field:
   elements:
   - selector:
-      xpath: //div[@role='dialog']//label[@for='openid_ca']/span[text()='CA File']
+      xpath: //div[@role='dialog']//label[@for='openid_ca']/span[text()='CA file']
   - selector:
       xpath: //div[@role='dialog']//input[@id='openid_ca' and @readonly]/following-sibling::span[text()='Browse…']
   - selector:
@@ -328,7 +328,7 @@ check_openid_additional_scope_field:
   action: check_openid_additional_scope_input
   element:
     selector:
-      xpath: //div[@role='dialog']//label[@for='openid_extra_scopes']/span[text()='Additional Scopes']
+      xpath: //div[@role='dialog']//label[@for='openid_extra_scopes']/span[text()='Additional scopes']
 check_openid_additional_scope_input:
   element: &openid_additional_scope_input
     selector:
@@ -345,7 +345,7 @@ check_ldap_url_field:
   action: check_ldap_url_input
   elements:
   - selector:
-      xpath: //div[@role='dialog']//label[@for='ldap_url']/span[text()='LDAP url']
+      xpath: //div[@role='dialog']//label[@for='ldap_url']/span[text()='LDAP URL']
   - selector:
       xpath: //div[@role='dialog']//div[@id='ldap_url-helper' and text()='An RFC 2255 URL which specifies the LDAP search parameters to use.']
 check_ldap_url_input:
@@ -366,7 +366,7 @@ check_ldap_bind_dn_input:
 check_ldap_bind_password_field:
   elements:
   - selector:
-      xpath: //div[@role='dialog']//label[@for='bind_password']/span[text()='Bind Password']
+      xpath: //div[@role='dialog']//label[@for='bind_password']/span[text()='Bind password']
   - selector:
       xpath: //div[@role='dialog']//input[@id='bind_password' and @disabled]
   - selector:
@@ -394,7 +394,7 @@ check_ldap_id_field:
 check_ldap_preferred_username_field:
   elements:
   - selector:
-      xpath: //div[@role='dialog']//p[@id='field-array-label' and text()='Preferred Username']/following-sibling::p[@id='field-array-help-text' and text()='The list of attributes whose values should be used as the preferred username.']
+      xpath: //div[@role='dialog']//p[@id='field-array-label' and text()='Preferred username']/following-sibling::p[@id='field-array-help-text' and text()='The list of attributes whose values should be used as the preferred username.']
   - selector:
       xpath: //div[@role='dialog']//input[@id='ldap_preferred_username[0].ldap_preferred_username' and @value='uid']/../../following-sibling::div[1]/button/span/*[name()='svg']
   - selector:
@@ -424,7 +424,7 @@ check_ldap_idp_advanced_options:
 check_ldap_ca_file_field:
   elements:
   - selector:
-      xpath: //div[@role='dialog']//label[@for='ldap_ca']/span[text()='CA File']
+      xpath: //div[@role='dialog']//label[@for='ldap_ca']/span[text()='CA file']
   - selector:
       xpath: //div[@role='dialog']//input[@id='ldap_ca' and @readonly]/following-sibling::span[text()='Browse…']
   - selector:

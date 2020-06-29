@@ -13,7 +13,7 @@ check_elements_on_user_card:
 check_user_card_title:
   element:
     selector:
-      xpath: //section[@id='accessControlTabContent']/div[@class='cluster-details-user-tab-contents']/article/div[@class='pf-c-card__body']/h3[text()='Cluster Administrative Users']
+      xpath: //section[@id='accessControlTabContent']/div[@class='cluster-details-user-tab-contents']/article/div[@class='pf-c-card__body']/h3[text()='Cluster administrative users']
 check_user_card_description:
   element:
     selector:

@@ -7,11 +7,11 @@ deletion_dialog_loaded:
 archive_dialog_loaded:
     elements:
         - selector:
-            xpath: //div[@class='pf-c-modal-box pf-m-sm' and @aria-label='Archive Cluster']
+            xpath: //div[@role='dialog' and @aria-label='Archive cluster']
         - selector:
             xpath: //button[@class='pf-c-button pf-m-plain' and @aria-label='Close']
         - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl' and text()='Archive Cluster']
+            xpath: //h1[@class='pf-c-title pf-m-2xl' and text()='Archive cluster']
         - selector:
             xpath: //form/p[contains(text(), 'Archiving a cluster will remove it from the cluster list and remove the cluster from subscription management.')]
         - selector:
@@ -72,7 +72,7 @@ unarchive_dialog_loaded:
         - selector:
             xpath: //button[@class='pf-c-button pf-m-plain' and @aria-label='Close']
         - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl' and text()='Unarchive Cluster']
+            xpath: //h1[@class='pf-c-title pf-m-2xl' and text()='Unarchive cluster']
         - selector:
             xpath: //p[text()='Un-archiving a cluster will make it visible in the active (default) cluster list. You may need to manage subscriptions if the cluster is active.']
         - selector:
@@ -109,7 +109,7 @@ hover_archive_succ_promt_message:
 check_display_name_dialog_loaded:
   elements:
     - selector:
-        xpath: //div[@class='pf-c-backdrop']/div/div/h1[text()='Edit Display Name'] 
+        xpath: //div[@class='pf-c-backdrop']/div/div/h1[text()='Edit display name'] 
     - selector:
         xpath: //*[@id='edit-display-name-input' and contains(@value,<original_name>)]
 edit_display_name_in_dialog:
@@ -130,7 +130,7 @@ edit_display_name_in_dialog:
 delete_cluster_dialog_loaded:
     elements:
         - selector:
-            xpath: //h1[text()='Delete Cluster']
+            xpath: //h1[text()='Delete cluster']
         - selector:
             xpath: //p[text()='This action cannot be undone. It will uninstall the cluster, and all data will be deleted.']
         - selector:
@@ -170,7 +170,7 @@ click_delete_button_on_deletion_dialog:
 osd_creation_error_dialog_loaded:
     elements:
         - selector:
-            xpath: //h1[text()='Error Creating Cluster']
+            xpath: //h1[text()='Error creating cluster']
             timeout: 30
         - selector:
             xpath: //h1/*[name()='svg']
@@ -224,7 +224,7 @@ click_add_url_button:
 customer_cloud_subscription_prompt_message_loaded:
     elements:
         - selector:
-            xpath: //h1[text()='Customer Cloud Subscription']
+            xpath: //h1[text()='Customer cloud subscription']
         - selector:
             text: "With this subscription option, the cluster will be provisioned in an AWS account owned by you or your company. This allows you to pay AWS directly for public cloud costs, leveraging your existing relationship."
         - selector:
@@ -234,19 +234,19 @@ customer_cloud_subscription_prompt_message_loaded:
         - selector:
             xpath: //*[contains(text(),"Your AWS account has no services deployed in it.")]
         - selector:
-            text: "Your AWS account has an Enterprise Support Plan attached."
+            text: "Your AWS account has no services deployed in it."
         - selector:
             xpath: //*[contains(text(),"Your AWS account has the necessary limits to support the desired cluster size.")]
         - selector:
-            xpath: //a[@href='https://www.openshift.com/dedicated/byoc' and text()=' See resource requirements.']
+            xpath: //a[@href='https://www.openshift.com/dedicated/ccs' and text()=' See resource requirements.']
         - selector:
             xpath: //li[contains(text(),'osdCcsAdmin')]
         - selector:
             xpath: //li[contains(text(),'An Organization Service Control Policy (SCP) is set up according to the')]
         - selector:
-            xpath: //a[@href='https://www.openshift.com/dedicated/byoc' and text()='documentation.']
+            xpath: //a[@href='https://www.openshift.com/dedicated/ccs' and text()='documentation.']
         - selector:
-            xpath: //div[text()[1]='Refer to the']
+            xpath: //div[contains(text()[1],'Refer to the')]
 
 close_customer_cloud_subscription_prompt_message:
     action: customer_cloud_subscription_prompt_message_loaded
@@ -397,7 +397,7 @@ edit_cluster_registration:
 edit_cluster_registration_dialog_missing:
     element:
         selector:
-            xpath: //div[@role='dialog' and @aria-label='Edit Cluster Registration']
+            xpath: //div[@role='dialog' and @aria-label='Edit cluster registration']
         missing: true
         timeout: 10
 check_compute_node_count_field_in_scale_dialog:

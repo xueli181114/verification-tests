@@ -16,6 +16,7 @@ empty_table_loaded:
     element:
         selector:
             xpath: //p[@class='notfound' and text()='No results match the filter criteria.']
+        timeout: 30
 archived_cluster_list_table_loaded:
     elements:
         - selector:
