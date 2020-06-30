@@ -471,4 +471,25 @@ check_loadbalancer_scaledown_warning_message_missing:
     selector:
       xpath: //select[@name='load_balancers']/../following-sibling::div[@aria-label='Warning Alert']
     missing: true
+change_settings_button_on_dialog_enabled:
+    element: &change_settings_button_on_dialog
+        selector:
+            xpath: //button[text()='Change settings' and @type='submit']
 
+check_change_cluster_privacy_settings_dialog:
+    elements:
+        - selector:
+            xpath: //h1[text()='Change cluster privacy settings?']
+        - selector:
+            xpath: //div[contains(.,'Changes may be required in AWS to maintain access. It may take up to one hour for the settings to become effective.')]
+        - selector:
+            xpath: //a[@href='https://docs.openshift.com/dedicated/4/cloud_infrastructure_access/dedicated-aws-private-cluster.html' and text()='Learn more']
+    action: change_settings_button_on_dialog_enabled
+    action: click_cancel_button
+
+check_change_cluster_privacy_settings_with_warning_dialog:
+    element:
+        selector:
+            xpath: //h4[text()='All routers will be exposed publicly because there is no label match on the additional application router. This is a potential security risk.']
+    action: check_change_cluster_privacy_settings_dialog
+    
