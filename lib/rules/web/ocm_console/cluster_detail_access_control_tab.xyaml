@@ -1,7 +1,7 @@
 check_access_control_tab:
   element: &access_control_tab
     selector:
-      xpath: //section[@id='clusterdetails-content']//div[@class='pf-c-tabs']/ul[@class='pf-c-tabs__list']//li/button[@class='pf-c-tabs__button' and text()='Access Control']
+      xpath: //section[@id='clusterdetails-content']//div[@class='pf-c-tabs']/ul[@class='pf-c-tabs__list']//li/button[@class='pf-c-tabs__button' and text()='Access control']
 click_access_control_tab:
   element:
     <<: *access_control_tab
@@ -13,7 +13,7 @@ check_elements_on_user_card:
 check_user_card_title:
   element:
     selector:
-      xpath: //section[@id='accessControlTabContent']/div[@class='cluster-details-user-tab-contents']/article/div[@class='pf-c-card__body']/h3[text()='Cluster Administrative Users']
+      xpath: //section[@id='accessControlTabContent']/div[@class='cluster-details-user-tab-contents']/article/div[@class='pf-c-card__body']/h3[text()='Cluster administrative users']
 check_user_card_description:
   element:
     selector:
