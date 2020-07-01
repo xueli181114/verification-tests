@@ -13,11 +13,11 @@ input_cluster_name_on_osd_creation_page:
 creation_page_navigation_displayed:
     elements:
     - selector:
-        xpath: //a[@class='pf-c-breadcrumb__link' and text()='Clusters']
+        xpath: //a[@href='/openshift' and text()='Clusters']
     - selector:
-        xpath: //a[@class='pf-c-breadcrumb__link' and text()='Create']
+        xpath: //a[@href='/openshift/create' and text()='Create']
     - selector:
-        xpath: //li[@class='pf-c-breadcrumb__item' and text()='OpenShift Dedicated']
+        xpath: //a[@href='/openshift/create/osd' and text()='OpenShift Dedicated']
 page_title_displayed:
     elements:
         - selector:
@@ -25,7 +25,7 @@ page_title_displayed:
 cluster_detail_displayed:
     elements:
         - selector:
-            xpath: //h3[@class='osd-page-header' and text()='Cluster Details']
+            xpath: //h3[@class='osd-page-header' and text()='Cluster details']
 cluster_scale_displayed:
     elements:
     - selector:
@@ -55,10 +55,9 @@ click_create_button:
         op: click
 switch_to_osd_creation_page:
     action: switch_to_creation_cards_page
-    element:
-        selector:
-            xpath: //a[contains(@href,'/openshift/create/osd')]
-        op: click
+    action: select_cluster_product_type
+    action: check_cloud_provider_selection_page
+    action: select_cloud_provider
     action: osd_creation_page_loaded
 select_advanced_radio_button:
     element:
@@ -74,26 +73,38 @@ select_basic_radio_button:
 check_networking_configuration:
     elements:
         - selector:
-            xpath: //h3[text()='Networking']
+            xpath: //h4[text()='Networking']
         - selector:
             xpath: //span[text()='Network configuration']
         - selector:
             xpath: //label[text()='Basic']
         - selector:
-            xpath: //label[text()='Basic']/div[text()='Creates a new VPC for your cluster using default values']
+            xpath: //label[text()='Basic']/div[text()='Creates a new VPC for your cluster using default values.']
         - selector:
             xpath: //label[text()='Advanced']
         - selector:
-            xpath: //label[text()='Advanced']/div[text()='Allow clusters to use a new VPC with customizable addresses']
+            xpath: //label[text()='Advanced']/div[text()='Choose this option if you will ever need direct, private network connectivity to your cluster, e.g. VPN or VPC peering.']
 
 check_advanced_elements_loaded:
     elements:
         - selector:
+            xpath: //h4[text()='CIDR ranges may not be changed once the cluster has been created.']
+        - selector:
             xpath: //*[@id='network_machine_cidr' and @placeholder='10.0.0.0/16']
+        - selector:
+            xpath: //div[@id='network_machine_cidr-helper' and text()='Subnet mask must be between 16-23.']
         - selector:
             xpath: //*[@id='network_service_cidr' and @placeholder='172.30.0.0/16']
         - selector:
-            xpath: //*[@id='network_pod_cidr' and @placeholder='10.128.0.0/14']
+            xpath: //div[@id='network_service_cidr-helper' and text()='Subnet mask must be at most 24.']
+        - selector:
+            xpath: //*[@id='network_pod_cidr' and @placeholder='10.128.0.0/16']
+        - selector:
+            xpath: //div[@id='network_pod_cidr-helper' and text()='Subnet mask must be at most 18.']
+        - selector:
+            xpath: //*[@id='network_host_prefix' and @placeholder='/23']
+        - selector:
+            xpath: //div[@id='network_host_prefix-helper' and text()='Must be between 23-26.']
 set_cidr_value:
     element:
         selector:
@@ -106,7 +117,13 @@ check_cidr_error_message:
         selector:
             xpath: //*[contains(text(),"IP address range '<cidr_value>' isn't valid CIDR notation")]
     action: clear_input
-
+check_cidr_inconsistent_error_message:
+    action: set_cidr_value
+    action: click_create_button
+    element:
+        selector:
+            xpath: //*[contains(text(),"This is not a subnet address. The subnet prefix is inconsistent with the subnet mask.")]
+    action: clear_input
 check_machine_cidr_invalid_range_error_message:
     params:
         locator_id: network_machine_cidr
@@ -114,8 +131,40 @@ check_machine_cidr_invalid_range_error_message:
     action: click_create_button
     element:
         selector:
-            xpath: //*[contains(text(),"which provides up to 23 nodes for single-zone clusters or 10 nodes for each zone in a multi-zone clusters")]
+            xpath: //*[contains(text(),"which provides up to 23 nodes.")]
     action: clear_input
+check_machine_cidr_low_mask_error_message:
+    params:
+        locator_id: network_machine_cidr
+    action: set_cidr_value
+    action: click_create_button
+    element:
+        selector:
+            xpath: //*[contains(text(),"Subnet mask must be between 16-23.")]
+    action: clear_input
+
+check_overlap_subnet_error_message:
+    elements:
+        - selector:
+            xpath: //*[@id='network_machine_cidr']
+          op: send_keys <cidr_value>
+        - selector:
+            xpath: //*[@id='network_service_cidr']
+          op: send_keys <cidr_value>
+        - selector:
+            text: "This subnet overlaps with the subnet in the Machine CIDR field."
+        - selector:
+            text: "This subnet overlaps with the subnet in the Service CIDR field."
+        - selector:
+            xpath: //*[@id='network_pod_cidr']
+          op: send_keys <cidr_value>
+        - selector:
+            text: "This subnet overlaps with the subnets in the Service CIDR, Pod CIDR fields."
+        - selector:
+            text: "This subnet overlaps with the subnets in the Machine CIDR, Pod CIDR fields."
+        - selector:
+            text: "This subnet overlaps with the subnets in the Machine CIDR, Service CIDR fields."
+
 check_service_cidr_invalid_range_error_message:
     params:
         locator_id: network_service_cidr
@@ -198,6 +247,7 @@ check_cidr_background_validation_error_message:
     action: click_create_button
     action: osd_creation_error_dialog_loaded
     action: close_error_message_dialog
+    action: clear_input
 fill_in_required_items_on_osd_creation_page:
     action: input_cluster_name_on_osd_creation_page
     action: select_machine_type
@@ -385,3 +435,31 @@ check_lb_popover_message:
   element:
     selector:
       xpath: //div[@class='pf-c-popover__body' and text()='The load balancer quota set on the deployed cluster.']
+byoc_page_loaded:
+    elements:
+        - selector:
+            xpath: //*[text()='The access credentials you provide here may only be used once. They may not be used to create another OpenShift Dedicated cluster.']
+        - selector:
+            xpath: //h3[text()='AWS account details']
+        - selector:
+            xpath: //span[text()='AWS account ID']/../span[text()='*']
+        - selector:
+            xpath: //h4[text()='AWS IAM user credentials']
+        - selector:
+            xpath: //span[text()='AWS access key ID']/../span[text()='*']
+        - selector:
+            xpath: //span[text()='AWS secret access key']/../span[text()='*']
+    action: aws_account_id_textbox_loaded
+    action: aws_access_key_textbox_loaded
+    action: aws_access_secret_textbox_loaded
+
+check_byoc_creation_page:
+    action: byoc_page_loaded
+    action: check_lb_field_in_creation_page_missing
+    action: check_persistent_storage_field_in_creation_page_missing
+    action: cluster_detail_displayed
+    action: cluster_scale_displayed
+    action: check_networking_configuration
+    action: select_advanced_radio_button
+    action: multi_az_radio_button_loaded
+    action: region_dropdown_loaded
