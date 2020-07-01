@@ -1,7 +1,7 @@
 check_access_control_tab:
   element: &access_control_tab
     selector:
-      xpath: //section[@id='clusterdetails-content']//div[@class='pf-c-tabs']/ul[@class='pf-c-tabs__list']//li/button[@class='pf-c-tabs__button' and text()='Access Control']
+      xpath: //section[@id='clusterdetails-content']//div[@class='pf-c-tabs']/ul[@class='pf-c-tabs__list']//li/button[@class='pf-c-tabs__button' and text()='Access control']
 click_access_control_tab:
   element:
     <<: *access_control_tab
