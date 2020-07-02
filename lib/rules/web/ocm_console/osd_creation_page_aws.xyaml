@@ -400,7 +400,7 @@ check_persistent_storage_field_in_creation_page:
   - selector:
       xpath: //select[@name='persistent_storage']
   - selector:
-      xpath: //label[@for='persistent_storage']/following-sibling::*[name()='svg']
+      xpath: //label[@for='persistent_storage']/following-sibling::span/*[name()='svg']
 check_lb_field_in_creation_page:
   elements:
   - selector:
@@ -408,7 +408,7 @@ check_lb_field_in_creation_page:
   - selector:
       xpath: //select[@name='load_balancers']
   - selector:
-      xpath: //label[@for='load_balancers']/following-sibling::*[name()='svg']
+      xpath: //label[@for='load_balancers']/following-sibling::span/*[name()='svg']
 check_persistent_storage_field_in_creation_page_missing:
   element:
     selector:
@@ -422,7 +422,7 @@ check_lb_field_in_creation_page_missing:
 check_persistent_storage_popover_message:
   element:
     selector:
-      xpath: //label[@for='persistent_storage']/following-sibling::*[name()='svg']
+      xpath: //label[@for='persistent_storage']/following-sibling::span/*[name()='svg']
     op: click
   element:
     selector:
@@ -430,7 +430,7 @@ check_persistent_storage_popover_message:
 check_lb_popover_message:
   element:
     selector:
-      xpath: //label[@for='load_balancers']/following-sibling::*[name()='svg']
+      xpath: //label[@for='load_balancers']/following-sibling::span/*[name()='svg']
     op: click
   element:
     selector:

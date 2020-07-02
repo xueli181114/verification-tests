@@ -17,7 +17,7 @@ check_edit_console_button_in_dropdown:
 check_scale_cluster_button_in_dropdown:
   element: &scale_cluster_button_in_dropdown
     selector:
-      xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Scale Cluster' and not(@disabled)]
+      xpath: //ul[@role='menu']//li[@role='menuitem']/button[text()='Scale cluster' and not(@disabled)]
 check_delete_cluster_button_in_dropdown:
   element: &delete_cluster_button_in_dropdown
     selector:
