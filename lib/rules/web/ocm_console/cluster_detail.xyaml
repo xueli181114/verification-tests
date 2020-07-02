@@ -100,6 +100,7 @@ wait_cluster_status_on_detail_page:
     element:
         selector:
             xpath: //div[@class='pf-l-grid__item pf-m-6-col-on-sm']/dl/dd[text()='<cluster_status>']
+        timeout: 3600
 go_to_scale_cluster_dialog_on_cluster_detail_page:
   action: expand_actions_on_cluster_detail_page
   action: click_scale_cluster_button_in_dropdown
@@ -413,3 +414,12 @@ check_edit_subscription_settings_link:
         selector:
             xpath: //dl[@class='cluster-details-item left']/dd/button[text()='Edit subscription settings']
 
+check_install_successfully_message_loaded:
+    element:
+        selector:
+            xpath: //*[text()='Cluster installed successfully']
+check_install_successfully_message_missing:
+    element:
+        selector:
+            xpath: //*[text()='Cluster installed successfully']
+        missing: true
