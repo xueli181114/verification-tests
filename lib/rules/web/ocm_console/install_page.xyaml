@@ -1,5 +1,6 @@
 go_to_install_page:
     url: /openshift/install
+    action: required_install_page_items_loaded    
 go_to_aws_ipi_install_page:
     url: /openshift/install/aws/installer-provisioned
 go_to_aws_upi_install_page:
@@ -24,6 +25,8 @@ go_to_openstack_upi_install_page:
     url: /openshift/install/openstack/user-provisioned
 go_to_rhv_install_page:
     url: /openshift/install/rhv/installer-provisioned
+go_to_power_upi_install_page:
+    url: /openshift/install/power/user-provisioned
 go_to_codeready_install_page:
     url: /openshift/install/crc/installer-provisioned
 go_to_pre_release_page:
@@ -32,17 +35,6 @@ go_to_aro_pull_secret_page:
     url: /openshift/install/azure/aro-provisioned
 go_to_pull_secret_page:
     url: /openshift/install/pull-secret
-    
-check_breadcrumbs_in_install_page:
-    elements:
-        - selector:
-            xpath: //li[contains(@href, '/openshift/')]/a[text()='Clusters']
-        - selector:
-            xpath: //a[contains(@href, '/openshift/create') and text()='Create']
-        - selector:
-            xpath: //a[contains(@href, '/openshift/install') and text()='OpenShift Container Platform']
-        - selector:
-            xpath: //li[@class='pf-c-breadcrumb__item' and text()='<provider_name>']
             
 check_common_part:
     action: check_cluster_list_page_title
@@ -77,13 +69,13 @@ check_account_username:
         - selector:
             xpath: //dt[contains(., 'Username')]
         - selector:
-            xpath: //dt[contains(., 'Account Number')]
+            xpath: //dt[contains(., 'Account number')]
         - selector:
-            xpath: //a[contains(@href, '/usermgt/userList.html') and text()='User management']
+            xpath: //a[contains(@href, '/user-preferences/email') and text()='User Preferences']
         - selector:
-            xpath: //a[contains(@href, '/user') and text()='My profile']
+            xpath: //a[contains(@href, '/personalInfo.html') and text()='My profile']
         - selector:
-            xpath: //button[@type='button' and text()='Logout']
+            xpath: //button[@type='button' and text()='Log out']
 
 check_install_page:
     action: required_install_page_items_loaded
@@ -95,10 +87,10 @@ check_install_page:
         - selector:
             xpath: //h3[@class='pf-c-title pf-m-2xl' and text()='Select an infrastructure provider']
 required_install_page_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-            timeout: 30
+    element:
+        selector:
+            xpath: //h1[text()='Install OpenShift Container Platform 4']
+        timeout: 30
 check_install_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | Infrastructure Provider'
@@ -118,7 +110,7 @@ check_provider_card:
         - selector:
             xpath: //div[@class='pf-c-card__body']/h5[text()='<provider_context>']
         - selector:
-            xpath: //a[@class='infra-card infra-card-cloud-provider' and contains(@href, '/openshift/install/<provider_href>')]
+            xpath: //a[contains(@href, '/openshift/install/<provider_href>')]
 check_preview_bar:
     element:
         selector:
@@ -144,7 +136,7 @@ check_download_installer_button_in_install_page:
             xpath: //a[text()='Download installer']/../../div/select/option[text()='<os_name>']
           op: click
         - selector:
-            xpath: //a[text()='Download installer' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-<os_link>.tar.gz']
+            xpath: //a[text()='Download installer' and @href='https://mirror.openshift.com/pub/openshift-v4/<installer_type>/openshift-install-<os_link>']
 click_download_cli_button:
     element:
         selector:
@@ -157,35 +149,41 @@ check_download_cli_button_in_install_page:
             xpath: //a[text()='Download command-line tools']/../../div/select/option[text()='<os_name>']
           op: click
         - selector:
-            xpath: //a[text()='Download command-line tools' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-<os_link>.tar.gz']
+            xpath: //a[text()='Download command-line tools' and @href='https://mirror.openshift.com/pub/openshift-v4/<installer_type>/openshift-client-<os_link>']
 check_linux_download_button_in_install_page:
     params:
         os_name: Linux
-        os_link: linux
+        os_link: linux.tar.gz
     action: check_download_installer_button_in_install_page
     action: check_download_cli_button_in_install_page
 check_macos_download_button_in_install_page:
     params:
         os_name: MacOS
-        os_link: mac
+        os_link: mac.tar.gz
     action: check_download_installer_button_in_install_page
     action: check_download_cli_button_in_install_page
 check_windows_download_button_in_install_page:
     params:
         os_name: Windows
-        os_link: windows
+        os_link: windows.zip
     action: check_download_cli_button_in_install_page
+check_download_part_commen_items:
+    elements:
+        - selector:
+            xpath: //h3[text()='OpenShift installer']
+        - selector:
+            xpath: //h3[text()='Command line interface']
+        - selector:
+            xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
+        - selector:
+            xpath: //a[contains(@href, '/openshift/install/pre-release') and text()='pre-release builds']
 check_download_part_in_normal_install_page:
     params:
         installer_type: clients/ocp/latest
     action: check_linux_download_button_in_install_page
     action: check_macos_download_button_in_install_page
     action: check_windows_download_button_in_install_page
-    elements:
-        - selector:
-            xpath: //h3[text()='OpenShift installer']
-        - selector:
-            xpath: //h3[text()='Command-line interface']
+    action: check_download_part_commen_items
 check_download_part_in_dev_preview_install_page:
     params:
         installer_type: x86_64/clients/ocp-dev-preview/pre-release
@@ -196,29 +194,21 @@ check_download_part_in_dev_preview_install_page:
         - selector:
             xpath: //h3[text()='OpenShift installer']
         - selector:
-            xpath: //h3[text()='Command-line interface']
+            xpath: //h3[text()='Command line interface']
 check_download_part_in_s390x_install_page:
     params:
         installer_type: s390x/clients/ocp/latest
     action: check_linux_download_button_in_install_page
     action: check_macos_download_button_in_install_page
     action: check_windows_download_button_in_install_page
-    elements:
-        - selector:
-            xpath: //h3[text()='OpenShift installer']
-        - selector:
-            xpath: //h3[text()='Command-line interface']
+    action: check_download_part_commen_items
 check_download_part_in_ppc64le_install_page:
     params:
         installer_type: ppc64le/clients/ocp/latest
     action: check_linux_download_button_in_install_page
     action: check_macos_download_button_in_install_page
     action: check_windows_download_button_in_install_page
-    elements:
-        - selector:
-            xpath: //h3[text()='OpenShift installer']
-        - selector:
-            xpath: //h3[text()='Command-line interface']
+    action: check_download_part_commen_items
 
 click_copyPullSecret_button:
     element:
@@ -242,7 +232,7 @@ check_data_collection_message_in_install_page:
         - selector:
             xpath: //a[contains(@href, '/latest/support/remote_health_monitoring/about-remote-health-monitoring.html') and contains(., 'Learn more')]
         - selector:
-            xpath: //h4[contains(., 'Red Hat collects a limited amount of telemetry data. By installing OpenShift Container Platform 4, you accept our data collection policy.')]
+            xpath: //p[text()='Red Hat collects a limited amount of telemetry data. By installing OpenShift Container Platform 4, you accept our data collection policy.']
 check_breadcrumbs_include_infrastructure_in_install_page:
     elements:
         - selector:
@@ -273,384 +263,302 @@ check_developer_preview_bar_in_install_page:
             xpath: //p[text()='Because these are developer preview builds:']
         - selector:
             xpath: //li[text()='Production use is not permitted.']
+check_install_page_part_three:
+    elements:
+        - selector:
+            xpath: //h2[text()='Subscription and support']
+        - selector:
+            xpath: //span[text()='Choose "Edit subscriptions settings " from the actions menu in the upper right of the cluster details pages.']
+        - selector:
+            xpath: //span[text()='Select the options that apply to your cluster in the dialog and save.']
+required_specific_provider_install_items_loaded:
+    element:
+        selector:
+            xpath: //h1[text()='<title>']
+        timeout: 30
 
 check_aws_ipi_install_page:
-    action: required_aws_ipi_install_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_aws_ipi_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_install_page
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //p[contains(., 'install a cluster on Amazon Web Services (AWS) using infrastructure')]
+            xpath: //h2[text()='Follow the documentation to configure your AWS account and run the installer']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_aws/installing-aws-account.html') and contains(.,'official documentation')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_aws/installing-aws-account.html') and text()='Configure an AWS account']
-        - selector:
-            xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
-        - selector:
-            xpath: //a[contains(@href, '/openshift/install/pre-release') and text()='pre-release builds']
-        - selector:
-            xpath: //code[text()='install-config.yaml']
-        - selector:
-            xpath: //pre[text()='./openshift-install create install-config --dir=<installation_directory>']
-        - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_aws/installing-aws-customizations.html#installation-configuration-parameters_installing-aws-customizations') and text()='Installation configuration parameters for AWS']
-        - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_aws/installing-aws-customizations.html#installation-aws-config-yaml_installing-aws-customizations') and text()='Sample customized install-config.yaml file for AWS']
-        - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_aws/installing-aws-network-customizations.html') and text()='Customizing your network configuration']
-        - selector:
-            xpath: //pre[text()='./openshift-install create cluster --dir=<installation_directory>']
-        - selector:
-            xpath: //button[@class='popover-hover buttonHref' and text()='Do you need to troubleshoot your installation?']
-        - selector:
-            xpath: //pre[text()='export KUBECONFIG=<installation_directory>/auth/kubeconfig' and text()='oc whoami' and text()='system:admin']
-        - selector:
-            xpath: //a[contains(@href, '/latest/welcome/index.html') and text()='Learn more']
-required_aws_ipi_install_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on AWS with an installer-provisioned infrastructure')]
+            xpath: //a[contains(@href, 'installing_aws/installing-aws-account.html') and text()='Get started']
 check_aws_ipi_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | AWS Installer-Provisioned Infrastructure'
       expect_result: true
 
 check_aws_upi_install_page:
-    action: required_aws_upi_install_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_aws_upi_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_install_page
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //p[contains(., 'install a cluster on Amazon Web Services (AWS) using infrastructure')]
+            xpath: //h2[text()='Follow the documentation to configure your AWS account and run the installer']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_aws/installing-aws-user-infra.html') and contains(.,'official documentation')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_aws/installing-aws-user-infra.html') and text()='Get started']
-        - selector:
-            xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
-        - selector:
-            xpath: //a[contains(@href, '/openshift/install/pre-release') and text()='pre-release builds']
-required_aws_upi_install_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on AWS with user-provisioned infrastructure')]
+            xpath: //a[contains(@href, 'installing_aws/installing-aws-user-infra.html') and text()='Get started']
 check_aws_upi_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | AWS User-Provisioned Infrastructure'
       expect_result: true
+
 check_azure_ipi_install_page:
-    action: required_azure_ipi_install_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_azure_ipi_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_install_page
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //*[contains(., 'install a cluster on Microsoft Azure using infrastructure')]
+            xpath: //h2[text()='Follow the documentation to configure your Azure account and run the installer']
         - selector:
-            xpath: //*[contains(@href, '/latest/installing/installing_azure/installing-azure-default.html') and contains(.,'official documentation')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_azure/installing-azure-default.html') and text()='Get started']
-        - selector:
-            xpath: //a[contains(@href, '/openshift/install/pre-release') and text()='pre-release builds']
-required_azure_ipi_install_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Azure with installer-provisioned infrastructure')]
+            xpath: //a[contains(@href, 'installing_azure/installing-azure-default.html') and text()='Get started']
 check_azure_ipi_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | Azure Installer-Provisioned Infrastructure'
       expect_result: true
+
 check_azure_upi_install_page:
+    action: required_specific_provider_install_items_loaded 
     action: check_azure_upi_page_title
-    action: check_developer_preview_bar_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_dev_preview
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_dev_preview
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
+            xpath: //h2[text()='Follow the documentation to configure your Azure account and run the installer']
         - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Microsoft Azure with user-provisioned infrastructure')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //*[contains(., 'install a cluster on Microsoft Azure using infrastructure that you provide')]
-        - selector:
-            xpath: //*[contains(@href, 'https://github.com/openshift/installer/blob/master/docs/user/azure/install_upi.md') and contains(.,'official documentation')]
-        - selector:
-            xpath: //a[contains(@href, 'https://github.com/openshift/installer/blob/master/docs/user/azure/install_upi.md') and text()='Get started']
-        - selector:
-            xpath: //a[contains(@href, '/openshift/install/pre-release') and text()='pre-release builds']
+            xpath: //a[contains(@href, 'installing_azure/installing-azure-default.html') and text()='Get started']
 check_azure_upi_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | Azure User-Provisioned Infrastructure'
       expect_result: true
+
 check_gcp_ipi_install_page:
-    action: required_gcp_ipi_install_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_gcp_ipi_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_install_page
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //a[contains(@href, '/latest/support/remote_health_monitoring/about-remote-health-monitoring.html') and contains(., 'Learn more')]
+            xpath: //h2[text()='Follow the documentation to configure your GCP account and run the installer']
         - selector:
-            xpath: //p[contains(., 'install a cluster on GCP using infrastructure')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //*[contains(@href, '/latest/installing/installing_gcp/installing-gcp-account.html') and contains(.,'official documentation')]
-        - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_gcp/installing-gcp-account.html') and text()='Get started']
-        - selector:
-            xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
-        - selector:
-            xpath: //a[contains(@href, '/install/pre-release') and text()='pre-release builds']
-required_gcp_ipi_install_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on GCP with installer-provisioned infrastructure')]
+            xpath: //a[contains(@href, 'installing_gcp/installing-gcp-account.html') and text()='Get started']
 check_gcp_ipi_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | GCP Installer-Provisioned Infrastructure'
       expect_result: true
+
 check_gcp_upi_install_page:
+    action: required_specific_provider_install_items_loaded 
     action: check_gcp_upi_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_install_page
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //p[contains(., 'install a cluster on Google Cloud Platform (GCP) using infrastructure')]
+            xpath: //h2[text()='Follow the documentation to configure your GCP account and run the installer']
         - selector:
-            xpath: //*[contains(@href, '/latest/installing/installing_gcp/installing-gcp-user-infra.html') and contains(.,'official documentation')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_gcp/installing-gcp-user-infra.html') and text()='Get started']
+            xpath: //a[contains(@href, 'installing_gcp/installing-gcp-user-infra.html') and text()='Get started']
         - selector:
-            xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
+            xpath: //h3[text()='Red Hat Enterprise Linux CoreOS (RHCOS)']
         - selector:
-            xpath: //a[contains(@href, '/install/pre-release') and text()='pre-release builds']
+            xpath: //p[text()='Download RHCOS to create machines for your cluster to use during installation.']
         - selector:
-            xpath: //a[text()='Download RHCOS' and contains(@href, '/rhcos/latest/')]
+            xpath: //a[contains(@href, '/installing-gcp-user-infra.html#installation-gcp-user-infra-rhcos_installing-gcp-user-infra') and text()='Learn more']
         - selector:
-            xpath: //a[text()='Learn more' and contains(@href, 'installation-gcp-user-infra-rhcos')]
+            xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
 check_gcp_upi_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | GCP User-Provisioned Infrastructure'
       expect_result: true
+
 check_vsphere_install_page:
-    action: required_vsphere_install_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_vsphere_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_install_page
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //p[contains(., 'install a cluster on vSphere using infrastructure')]
+            xpath: //h2[text()='Follow the instructions to configure your environment and install your cluster']
         - selector:
-            xpath: //*[contains(@href, '/latest/installing/installing_vsphere/installing-vsphere.html') and contains(.,'official documentation')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_vsphere/installing-vsphere.html') and text()='Get started']
+            xpath: //a[contains(@href, 'installing_vsphere/installing-vsphere.html') and text()='Get started']
         - selector:
-            xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
+            xpath: //h3[text()='Red Hat Enterprise Linux CoreOS (RHCOS)']
         - selector:
-            xpath: //a[contains(@href, '/install/pre-release') and text()='pre-release builds']
+            xpath: //p[text()='Download RHCOS to create machines for your cluster to use during installation.']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_vsphere/installing-vsphere.html#installation-vsphere-machines_installing-vsphere') and contains(., 'Learn more')]
+            xpath: //a[contains(@href, 'installing-vsphere.html#installation-vsphere-machines_installing-vsphere') and text()='Learn more']
         - selector:
-            xpath: //a[@href='https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/' and text()='Download RHCOS']
-required_vsphere_install_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on vSphere with user-provisioned infrastructure')]
+            xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
 check_vsphere_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | vSphere'
       expect_result: true
 
 check_bare_metal_install_page:
-    action: required_bare_metal_install_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_bare_metal_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_install_page
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //a[contains(@href, '/latest/support/remote_health_monitoring/about-remote-health-monitoring.html') and contains(., 'Learn more')]
+            xpath: //h2[text()='Follow the instructions to configure your environment and install your cluster']
         - selector:
-            xpath: //p[contains(., 'install a cluster on bare metal using infrastructure')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //*[contains(@href, '/latest/installing/installing_bare_metal/installing-bare-metal.html') and contains(.,'official documentation')]
+            xpath: //a[contains(@href, 'installing_bare_metal/installing-bare-metal.html') and text()='Get started']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_bare_metal/installing-bare-metal.html') and text()='Get started']
+            xpath: //h3[text()='Red Hat Enterprise Linux CoreOS (RHCOS)']
         - selector:
-            xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
+            xpath: //p[text()='Download RHCOS to create machines for your cluster to use during installation.']
         - selector:
-            xpath: //a[contains(@href, '/install/pre-release') and text()='pre-release builds']
+            xpath: //a[contains(@href, 'installing_bare_metal/installing-bare-metal.html#creating-machines-bare-metal') and text()='Learn more']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_bare_metal/installing-bare-metal.html#creating-machines-bare-metal') and contains(., 'Learn more')]
-        - selector:
-            xpath: //a[@href='https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/' and text()='Download RHCOS']
-required_bare_metal_install_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Bare Metal with user-provisioned infrastructure')]
+            xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
 check_bare_metal_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | Bare Metal'
       expect_result: true
 
 check_ibm_z_install_page:
-    action: required_install_page_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_ibm_z_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
     action: check_download_part_in_s390x_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on IBM Z with user-provisioned infrastructure')]
+            xpath: //h2[text()='Follow the instructions to configure your environment and install your cluster']
         - selector:
-            xpath: //a[contains(@href, '/latest/support/remote_health_monitoring/about-remote-health-monitoring.html') and contains(., 'Learn more')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //p[contains(., 'install a cluster on IBM Z infrastructure')]
+            xpath: //a[contains(@href, 'installing_ibm_z/installing-ibm-z.html') and text()='Get started']
         - selector:
-            xpath: //*[contains(@href, '4.3/installing/installing_ibm_z/installing-ibm-z.html') and contains(.,'official documentation')]
+            xpath: //h3[text()='Red Hat Enterprise Linux CoreOS (RHCOS)']
         - selector:
-            xpath: //a[contains(@href, '4.3/installing/installing_ibm_z/installing-ibm-z.html') and text()='Get started']
+            xpath: //p[text()='Download RHCOS to create machines for your cluster to use during installation.']
         - selector:
-            xpath: //a[contains(@href, '4.3/installing/installing_ibm_z/installing-ibm-z.html#installation-user-infra-machines-iso-ibm-z_installing-ibm-z') and contains(., 'Learn more')]
+            xpath: //a[contains(@href, 'installing-ibm-z.html#installation-user-infra-machines-iso-ibm-z_installing-ibm-z') and text()='Learn more']
         - selector:
-            xpath: //a[@href='https://mirror.openshift.com/pub/openshift-v4/s390x/dependencies/rhcos/latest/latest/' and text()='Download RHCOS']
+            xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
 check_ibm_z_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | IBM Z'
       expect_result: true
 
 check_openstack_ipi_install_page:
-    action: required_openstack_ipi_install_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_openstack_ipi_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_install_page
+    action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //p[contains(., 'install a cluster on Red Hat OpenStack Platform using infrastructure')]
+            xpath: //h2[text()='Follow the instructions to configure your environment and install your cluster']
         - selector:
-            xpath: //*[contains(@href, '/latest/installing/installing_openstack/installing-openstack-installer-custom.html') and contains(.,'official documentation')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //a[contains(@href, '/latest/installing/installing_openstack/installing-openstack-installer-custom.html') and text()='Get started']
-        - selector:
-            xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
-        - selector:
-            xpath: //a[contains(@href, '/install/pre-release') and text()='pre-release builds']
-required_openstack_ipi_install_items_loaded:
-    elements:
-        - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Red Hat OpenStack Platform with installer-provisioned infrastructure')]
+            xpath: //a[contains(@href, 'installing_openstack/installing-openstack-installer-custom.html') and text()='Get started']
 check_openstack_ipi_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | OpenStack Installer-Provisioned Infrastructure'
       expect_result: true
+
 check_openstack_upi_install_page:
-    action: required_install_page_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_openstack_upi_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //p[contains(., 'install a cluster on Red Hat OpenStack Platform using infrastructure')]
+            xpath: //h2[text()='Follow the instructions to configure your environment and install your cluster']
         - selector:
-            xpath: //*[contains(@href, '/installing_openstack/installing-openstack-user.html') and contains(.,'official documentation')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //a[contains(@href, '/installing_openstack/installing-openstack-user.html') and text()='Get started']
+            xpath: //a[contains(@href, 'installing_openstack/installing-openstack-user.html') and text()='Get started']
         - selector:
-            xpath: //span[@class='pf-c-label pf-m-compact dev-preview-label' and contains(., 'Developer Preview')]
+            xpath: //h3[text()='Red Hat Enterprise Linux CoreOS (RHCOS)']
         - selector:
-            xpath: //a[contains(@href, '/install/pre-release') and text()='pre-release builds']
+            xpath: //p[text()='Download RHCOS to create machines for your cluster to use during installation.']
         - selector:
-            xpath: //a[contains(@href, '/installing_openstack/installing-openstack-user.html#installation-osp-creating-image_installing-openstack-user') and text()='Learn more']
+            xpath: //a[contains(@href, 'installing-openstack-user.html#installation-osp-creating-image_installing-openstack-user') and text()='Learn more']
         - selector:
             xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
 check_openstack_upi_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | OpenStack User-Provisioned Infrastructure'
       expect_result: true
+
 check_rhv_install_page:
-    action: required_install_page_items_loaded
+    action: required_specific_provider_install_items_loaded 
     action: check_rhv_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Red Hat Virtualization with installer-provisioned infrastructure')]
+            xpath: //h2[text()='Follow the instructions to configure your environment and install your cluster']
         - selector:
-            xpath: //p[contains(., 'install a cluster on Red Hat Virtualization using infrastructure')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //*[contains(@href, '/installing_rhv/installing-rhv-creating-custom-vm.html') and contains(.,'official documentation')]
-        - selector:
-            xpath: //a[contains(@href, '/installing_rhv/installing-rhv-creating-custom-vm.html') and text()='Get started']
+            xpath: //a[contains(@href, 'installing_rhv/installing-rhv-default.html') and text()='Get started']
 check_rhv_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | Red Hat Virtualization'
       expect_result: true
 
-check_power_install_page:
-    action: required_install_page_items_loaded
+check_power_upi_install_page:
+    action: required_specific_provider_install_items_loaded 
     action: check_power_page_title
-    action: check_evaluation_notification_in_install_page
-    action: check_data_collection_message_in_install_page
     action: check_download_part_in_ppc64le_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_data_collection_message_in_install_page
+    action: check_install_page_part_three
     elements:
         - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Power with user-provisioned infrastructure')]
+            xpath: //h2[text()='Follow the instructions to configure your environment and install your cluster']
         - selector:
-            xpath: //p[contains(., 'install a cluster on Power infrastructure that you provide')]
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
         - selector:
-            xpath: //*[contains(@href, '4.3/installing/installing_ibm_power/installing-ibm-power.html') and contains(.,'official documentation')]
-        - selector:
-            xpath: //a[contains(@href, '4.3/installing/installing_ibm_power/installing-ibm-power.html') and text()='Get started']
-        - selector:
-            xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/ppc64le/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
+            xpath: //a[contains(@href, 'installing_ibm_power/installing-ibm-power.html') and text()='Get started']
 check_power_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | Power'
@@ -692,15 +600,17 @@ check_pre_release_page:
     action: required_pre_release_page_items_loaded
     action: check_pre_release_page_title
     action: check_developer_preview_bar_in_install_page
-    action: check_data_collection_message_in_install_page
-    action: check_download_installer_part_in_dev_preview
+    action: check_download_part_in_dev_preview_install_page
     action: check_pull_secret_part_in_install_page
-    action: check_download_cli_part_in_dev_preview
     elements:
+        - selector:
+            xpath: //a[contains(@href, '/latest/support/remote_health_monitoring/about-remote-health-monitoring.html') and contains(., 'Learn more')]
+        - selector:
+            xpath: //h3[text()='Feature Completion in Nightly Builds']
         - selector:
             xpath: //p[contains(., 'the latest pre-release nightly builds')]
         - selector:
-            xpath: //a[@href='https://bugzilla.redhat.com/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=POST&bug_status=MODIFIED&columnlist=bug_status%2Ccomponent%2Cshort_desc%2Cassigned_to_realname%2Creporter_realname%2Cchangeddate&keywords=TestBlocker&keywords_type=allwords&known_name=OCP4-3-blocker&list_id=10675364&product=OpenShift%20Container%20Platform&query_based_on=OCP4-4-blocker&query_format=advanced&target_release=4.4.0' and text()='test blocker bug list']
+            xpath: //a[contains(@href, 'query_based_on=OCP4-4-blocker&query_format=advanced&target_release=4.5.0') and text()='test blocker bug list']
         - selector:
             xpath: //a[@href='https://github.com/openshift/installer/tree/master/docs/user' and text()='latest installer documentation']
         - selector:
@@ -723,7 +633,7 @@ check_aro_pull_secret_page:
     action: click_copyPullSecret_button
     elements:
         - selector:
-            xpath: //h1[text()='Azure Red Hat Openshift']
+            xpath: //h1[text()='Azure Red Hat OpenShift']
         - selector:
             xpath: //h3[text()='Red Hat content access']
         - selector:
