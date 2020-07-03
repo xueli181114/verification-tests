@@ -210,9 +210,9 @@ check_ocp_title_in_detail_page:
         - selector:
             xpath: //li[@class='pf-c-breadcrumb__item' and text()='<cluster_name>']
         - selector:
-            xpath: //h1[@class='pf-c-title pf-m-4xl vertical-align' and text()='<cluster_name>']
+            xpath: //h1[text()='<cluster_name>']
         - selector:
-            xpath: //button[@class='pf-c-button pf-m-primary' and text()='Open console']
+            xpath: //button[text()='Open console']
         - selector:
             xpath: //button[@aria-label='Refresh']
 check_ocp_tab_in_detail_page:
@@ -224,47 +224,47 @@ check_ocp_tab_in_detail_page:
 check_ocp_usage_in_detail_page:
     elements:
         - selector:
-            xpath: //h2[@class='pf-c-title card-title' and text()='Resource usage']
+            xpath: //h2[text()='Resource usage']
         - selector:
             xpath: //p[text()='The cluster currently does not have any metrics data. Try again later.']
 check_ocp_details_in_detail_page:
     elements:
         - selector:
-            xpath: //h2[@class='pf-c-title card-title' and text()='Details']
+            xpath: //h2[text()='Details']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Cluster ID']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Cluster ID']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Type']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Type']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dd[text()='OCP']
+            xpath: //dl[@class='cluster-details-item']/dd/span[text()='OCP']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Location']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Location']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Provider']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Provider']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Version']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Version']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Operating system']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Operating system']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Created at']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Created at']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Owner']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Owner']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Status']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Status']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Total vCPU']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Total vCPU']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Total memory']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Total memory']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Nodes']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Nodes']
         - selector:
-            xpath: //dl[@class='cluster-details-item-list left']/dt[text()='Master:']
+            xpath: //dl[@class='cluster-details-item-list']/dt[text()='Master:']
         - selector:
-            xpath: //dl[@class='cluster-details-item-list left']/dt[text()='Compute:']
+            xpath: //dl[@class='cluster-details-item-list']/dt[text()='Compute:']
 check_ocp_subscription_settings_in_detail_page:
     elements:
         - selector:
-            xpath: //h2[@class='pf-c-title pf-m-3xl' and text()='Subscription settings']
+            xpath: //h2[text()='Subscription settings']
         - selector:
             xpath: //dl[@class='cluster-details-item left']/dt[text()='SLA']
         - selector:
@@ -276,20 +276,22 @@ check_ocp_subscription_settings_in_detail_page:
         - selector:
             xpath: //dl[@class='cluster-details-item right']/dt[text()='Subscription obligation']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dd/button[text()='Edit subscription settings']
+            xpath: //a[@href='https://www.redhat.com/en/contact' and text()='Contact sales']
+        - selector:
+            xpath: //dd[text()=' to purchase an OpenShift subscription.']
 check_osd_title_in_detail_page:
     action: expand_actions_behind_open_console_button
     action: check_osd_actions_behind_open_console_button
     action: close_actions_behind_open_console_button
     elements:
         - selector:
-            xpath: //a[@class='pf-c-breadcrumb__link' and contains(@href, 'openshift') and text()='Clusters']
+            xpath: //a[contains(@href, 'openshift') and text()='Clusters']
         - selector:
             xpath: //li[@class='pf-c-breadcrumb__item' and text()='<cluster_name>']
         - selector:
-            xpath: //h1[@class='pf-c-title pf-m-4xl vertical-align' and text()='<cluster_name>']
+            xpath: //h1[text()='<cluster_name>']
         - selector:
-            xpath: //button[@class='pf-c-button pf-m-primary' and text()='Open console']
+            xpath: //button[text()='Open console']
         - selector:
             xpath: //button[@aria-label='Refresh']
 check_osd_tab_in_detail_page:
@@ -302,64 +304,66 @@ check_osd_tab_in_detail_page:
             xpath: //button[@class='pf-c-tabs__button' and contains(., 'Access control')]
         - selector:
             xpath: //button[@class='pf-c-tabs__button' and contains(., 'Add-ons')]
+        - selector:
+            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Networking')]
 check_osd_usage_in_detail_page:
     elements:
         - selector:
-            xpath: //h2[@class='pf-c-title card-title' and text()='Resource usage']
+            xpath: //h2[text()='Resource usage']
         - selector:
-            xpath: //h4[@class='pf-c-title pf-m-xl metrics-chart' and text()='vCPU']
+            xpath: //h4[text()='vCPU']
         - selector:
-            xpath: //h4[@class='pf-c-title pf-m-xl metrics-chart' and text()='Memory']
+            xpath: //h4[text()='Memory']
         - selector:
             xpath: //div[@class='metrics-chart']
 check_osd_details_in_detail_page:
     elements:
         - selector:
-            xpath: //h2[@class='pf-c-title card-title' and text()='Details']
+            xpath: //h2[text()='Details']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Cluster ID']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Cluster ID']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Type']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Type']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dd[text()='OSD']
+            xpath: //dl[@class='cluster-details-item']/dd/span[text()='OSD']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Location']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Location']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Provider']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Provider']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Version']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Version']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Operating system']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Operating system']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Created at']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Created at']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Owner']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Owner']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Billing model']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Billing model']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dd[text()='Standard']
+            xpath: //dl[@class='cluster-details-item']/dd[text()='Standard']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Status']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Status']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Total vCPU']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Total vCPU']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Total memory']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Total memory']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Load balancers']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Load balancers']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Persistent storage']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Persistent storage']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Desired nodes']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Desired nodes']
         - selector:
-            xpath: //dl[@class='cluster-details-item-list left']/dt[text()='Master:']
+            xpath: //dl[@class='cluster-details-item-list']/dt[text()='Master:']
         - selector:
-            xpath: //dl[@class='cluster-details-item-list left']/dt[text()='Infra:']
+            xpath: //dl[@class='cluster-details-item-list']/dt[text()='Infra:']
         - selector:
-            xpath: //dl[@class='cluster-details-item-list left']/dt[text()='Compute:']
+            xpath: //dl[@class='cluster-details-item-list']/dt[text()='Compute:']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Actual nodes']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Actual nodes']
         - selector:
-            xpath: //dl[@class='cluster-details-item left']/dt[text()='Network']
+            xpath: //dl[@class='cluster-details-item']/dt[text()='Network']
 expand_actions_behind_open_console_button:
     element:
         selector:
@@ -375,8 +379,6 @@ check_ocp_actions_behind_open_console_button:
             xpath: //button[text()='Archive cluster']
         - selector:
             xpath: //button[text()='Edit cluster registration']
-        - selector:
-            xpath: //button[text()='Edit subscription settings']
 check_osd_actions_behind_open_console_button:
     elements:
         - selector:

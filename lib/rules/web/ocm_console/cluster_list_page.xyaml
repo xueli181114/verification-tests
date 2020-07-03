@@ -21,10 +21,10 @@ cluster_list_page_loaded:
     elements:
         - selector:
             xpath: //h1[text()='Clusters']
-            timeout: 10
+          timeout: 10
         - selector:
             xpath: //button[@class='pf-c-button pf-m-plain' and text()='Name']
-            timeout: 10
+          timeout: 10
 check_cluster_list_page:
     action: create_cluster_button_loaded
     elements:
@@ -400,7 +400,7 @@ go_to_access_control_tab:
 click_logout_button:
   element:
     selector:
-      xpath: //div[@aria-label='Overflow actions']/button[@class='pf-c-dropdown__toggle pf-m-plain']
+      xpath: //div[@aria-label='Overflow actions']/button
     op: click
   element:
     selector:
