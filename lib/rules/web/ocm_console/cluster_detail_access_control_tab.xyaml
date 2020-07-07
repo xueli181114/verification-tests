@@ -154,7 +154,7 @@ check_danger_alert_box_in_user_tab:
       xpath: //div[@class='pf-c-alert pf-m-inline pf-m-danger error-box' and @aria-label='Danger Alert']/div[@class='pf-c-alert__description']/span[contains(.,'<error_massage>')]
   - selector:
       xpath: //div[@class='pf-c-alert pf-m-inline pf-m-danger error-box' and @aria-label='Danger Alert']/div[@class='pf-c-alert__description']/span[contains(.,'Operation ID')]
-click_add_user_button:
+click_add_user_button_on_page:
    element:
      selector:
        xpath: //div[@class='cluster-details-user-tab-contents']//button[text()='Add user']

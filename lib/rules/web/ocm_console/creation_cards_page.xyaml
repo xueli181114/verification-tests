@@ -33,11 +33,6 @@ click_create_osd_button:
         selector:
             xpath: //a[@class='infra-card pf-c-card create-cluster-card' and contains(@href, '/openshift/create/osd')]
         op: click
-click_create_osd_on_aws:
-  element:
-    selector:
-      xpath: //a[@class='aws-ipi-upi-infra-card infra-card pf-c-card' and @href='/openshift/create/osd/aws']
-    op: click
 select_cluster_product_type:
     element:
         selector:
