@@ -91,6 +91,11 @@ check_clusters_list_info:
             xpath: //a[text()='<cluster_name>']/../../td[@data-label='Status']/span[text()='<cluster_status>']
         - selector:
             xpath: //a[text()='<cluster_name>']/../../td[@data-label='Type']/span[text()='<cluster_type>']
+check_clusters_list_info_include_provider:
+    action: check_clusters_list_info
+    element:
+        selector:
+            xpath: //a[text()='<cluster_name>']/../../td[@data-label='Provider (Location)' and text()='<provider>' and contains(., '<location>')]
 check_hover_in_cluster_list:
     elements:
         - selector:
