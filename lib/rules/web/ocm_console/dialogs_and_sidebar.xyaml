@@ -452,24 +452,24 @@ select_persistent_quota_in_dialog:
 check_persistent_storage_scaledown_warning_message:
   elements:
   - selector:
-      xpath: //select[@name='persistent_storage']/../following-sibling::div/h4[text()='Scaling below the current limit can cause problems in your environment']
+      xpath: //select[@name='persistent_storage']/../../following-sibling::div/h4[text()='Scaling below the current limit can cause problems in your environment']
   - selector:
-      xpath: //select[@name='persistent_storage']/../following-sibling::div/div//a[text()='Check your usage']
+      xpath: //select[@name='persistent_storage']/../../following-sibling::div/div//a[text()='Check your usage']
 check_persistent_storage_scaledown_warning_message_missing:
   element:
     selector:
-      xpath: //select[@name='persistent_storage']/../following-sibling::div[@aria-label='Warning Alert']
+      xpath: //select[@name='persistent_storage']/../../following-sibling::div[@aria-label='Warning Alert']
     missing: true
 check_loadbalancer_scaledown_warning_message:
   elements:
   - selector:
-      xpath: //select[@name='load_balancers']/../following-sibling::div/h4[text()='Scaling below the current limit can cause problems in your environment']
+      xpath: //select[@name='load_balancers']/../../following-sibling::div/h4[text()='Scaling below the current limit can cause problems in your environment']
   - selector:
-      xpath: //select[@name='load_balancers']/../following-sibling::div/div//a[text()='Check your usage']
+      xpath: //select[@name='load_balancers']/../../following-sibling::div/div//a[text()='Check your usage']
 check_loadbalancer_scaledown_warning_message_missing:
   element:
     selector:
-      xpath: //select[@name='load_balancers']/../following-sibling::div[@aria-label='Warning Alert']
+      xpath: //select[@name='load_balancers']/../../following-sibling::div[@aria-label='Warning Alert']
     missing: true
 change_settings_button_on_dialog_enabled:
     element: &change_settings_button_on_dialog
