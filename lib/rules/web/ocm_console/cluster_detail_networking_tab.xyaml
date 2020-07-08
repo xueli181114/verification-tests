@@ -46,10 +46,14 @@ check_network_configuration:
             xpath: //dl/dd[4][text()='<host_prefix>']
     action: cancel_button_disabled
     action: change_settings_button_disabled
-    action: enable_additional_route
+    action: click_enable_additional_route
     action: additional_route_loaded
     action: check_enabled_route_copy_buttons_tooltip
     action: check_enabled_route_copy_buttons_copied_tooltip
+    action: click_unenable_additional_route
+    action: additional_route_missing
+    action: click_enable_additional_route
+
 check_enabled_route_copy_buttons_tooltip:
     elements:
         - selector:
@@ -99,13 +103,13 @@ click_additional_route_private_checkbox:
         selector:
             xpath: //input[@id='private_additional_router']
         op: click
-enable_additional_route:
-    element: &enable_additional_route
+click_enable_additional_route:
+    element: &enable_additional_route_button
         selector:
             xpath: //span[@id='enable_additional_router-off' and text()='Not enabled']
         op: click
-unenable_additional_route:
-    element: &unenable_additional_route
+click_unenable_additional_route:
+    element: &unenable_additional_route_button
         selector:
             xpath: //span[@id='enable_additional_router-on' and text()='Enabled']
         op: click
@@ -117,6 +121,11 @@ additional_route_loaded:
             xpath: //span[text()='Label match for additional router (optional)']
         - selector:
             xpath: //div[text()='Comma separated pairs in key=value format. If no label is specified, all routes will be exposed on both routers.']
+additional_route_missing:
+    element:
+        selector:
+            xpath: //input[contains(@value,'https://apps2.<trimed_cluster_name>.')]
+        missing: true
 input_additional_route_label:
     params:
         locator_id: labels_additional_router
@@ -157,3 +166,24 @@ check_disabled_buttons_on_networking_tab:
     action: cancel_button_disabled
     action: change_settings_button_disabled
     action: check_network_configuration
+
+change_additional_router:
+    action: click_networking_tab
+    action: networking_tab_loaded
+    action:
+        if_param: enable_additional_router
+        ref: click_enable_additional_route
+    action:
+        if_param: disable_additional_router
+        ref: click_unenable_additional_route
+    action: click_change_settings_button_on_page
+    action: check_change_cluster_privacy_settings_dialog
+    action: click_change_settings_button_on_dialog
+    action:
+        if_param: enable_additional_router
+        ref: additional_route_loaded
+    action:
+        if_param: disable_additional_router
+        ref: additional_route_missing
+    action: change_settings_button_disabled
+

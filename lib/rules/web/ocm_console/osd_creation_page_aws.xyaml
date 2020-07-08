@@ -34,6 +34,15 @@ cluster_scale_displayed:
         xpath: //label[@class='pf-c-form__label' and @for='node_type']/span[@class='pf-c-form__label-required']
     - selector:
         xpath: //div[@class='flat-radio-buttons-flex-container']
+
+select_compute_node_count_on_creation_page:
+    elements:
+        - selector:
+            xpath: //select[@aria-label='Compute nodes' and @name='nodes_compute']
+          op: click
+        - selector:
+            xpath: //option[text()='<node_number>']
+
 specified_machine_type_loaded:
     element: &machine_type_locator
         selector:
@@ -105,11 +114,73 @@ check_advanced_elements_loaded:
             xpath: //*[@id='network_host_prefix' and @placeholder='/23']
         - selector:
             xpath: //div[@id='network_host_prefix-helper' and text()='Must be between 23-26.']
+    action:
+        if_param: privacy_supported
+        ref: check_advanced_privacy_loaded
+        
+check_advanced_privacy_loaded:
+    elements:
+        - selector:
+            xpath: //h4[text()='Cluster privacy']
+        - selector:
+            xpath: //p[text()='Clusters may be created initially with master API endpoint and application routes being all public or all private. More options are available after the initial installation.']
+        - selector:
+            xpath: //label[text()='Public (recommended)']
+        - selector:
+            xpath: //div[text()='Master API endpoint and application routes are accessible from the internet.']
+        - selector:
+            xpath: //label[text()='Private']
+        - selector:
+            xpath: //div[text()='Master API endpoint and application routes are restricted to direct, private connectivity.']
+
 set_cidr_value:
     element:
         selector:
             xpath: //*[@id='<locator_id>']
         op: send_keys <cidr_value>
+set_machine_cidr_value:
+    params:
+        locator_id: network_machine_cidr
+    action: select_advanced_radio_button
+    action: clear_input
+    element:
+        selector:
+            xpath: //*[@id='network_machine_cidr']
+        op: send_keys <machine_cidr>
+set_service_cidr_value:
+    params:
+        locator_id: network_service_cidr
+    action: select_advanced_radio_button
+    action: clear_input
+    element:
+        selector:
+            xpath: //*[@id='network_service_cidr']
+        op: send_keys <service_cidr>
+set_pod_cidr_value:
+    params:
+        locator_id: network_pod_cidr
+    action: select_advanced_radio_button
+    action: clear_input
+    element:
+        selector:
+            xpath: //*[@id='network_pod_cidr']
+        op: send_keys <pod_cidr>
+set_host_prefix_value:
+    params:
+        locator_id: network_host_prefix
+    action: select_advanced_radio_button
+    action: clear_input
+    element:
+        selector:
+            xpath: //*[@id='network_host_prefix']
+        op: send_keys <host_prefix>
+select_privacy:
+    action: select_advanced_radio_button
+    element:
+        selector:
+            xpath: //input[@id='cluster_privacy-<listening>']
+        op: click
+
 check_cidr_error_message:
     action: set_cidr_value
     action: click_create_button
@@ -400,7 +471,15 @@ check_persistent_storage_field_in_creation_page:
   - selector:
       xpath: //select[@name='persistent_storage']
   - selector:
-      xpath: //label[@for='persistent_storage']/following-sibling::span/*[name()='svg']
+      xpath: //label[@for='persistent_storage']/following-sibling::*[name()='svg']
+select_persisten_storage_on_creation_page:
+    elements:
+        - selector:
+            xpath: //select[@aria-label='Persistent Storage' and @name='persistent_storage']
+          op: click
+        - selector:
+            xpath: //option[text()='<storage_quota>']
+          op: click
 check_lb_field_in_creation_page:
   elements:
   - selector:
@@ -408,7 +487,14 @@ check_lb_field_in_creation_page:
   - selector:
       xpath: //select[@name='load_balancers']
   - selector:
-      xpath: //label[@for='load_balancers']/following-sibling::span/*[name()='svg']
+      xpath: //label[@for='load_balancers']/following-sibling::*[name()='svg']
+select_lb_on_creation_page:
+    elements:
+        - selector:
+            xpath: //select[@name='load_balancers' and @aria-label='Load Balancers']
+          op: click
+        - selector:
+            xpath: //option[text()='<lb_quota>']
 check_persistent_storage_field_in_creation_page_missing:
   element:
     selector:
@@ -463,3 +549,9 @@ check_byoc_creation_page:
     action: select_advanced_radio_button
     action: multi_az_radio_button_loaded
     action: region_dropdown_loaded
+check_creation_pending_message:
+    elements:
+        - selector:
+            xpath: //button[@type='submit' and @disabled='' and text()='Create cluster']
+        - selector:
+            xpath: //span[text()='Do not refresh this page. This request may take a moment...']

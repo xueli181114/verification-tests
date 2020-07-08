@@ -475,7 +475,10 @@ change_settings_button_on_dialog_enabled:
     element: &change_settings_button_on_dialog
         selector:
             xpath: //button[text()='Change settings' and @type='submit']
-
+click_change_settings_button_on_dialog:
+    element:
+        <<: *change_settings_button_on_dialog
+        op: click
 check_change_cluster_privacy_settings_dialog:
     elements:
         - selector:
@@ -485,7 +488,9 @@ check_change_cluster_privacy_settings_dialog:
         - selector:
             xpath: //a[@href='https://docs.openshift.com/dedicated/4/cloud_infrastructure_access/dedicated-aws-private-cluster.html' and text()='Learn more']
     action: change_settings_button_on_dialog_enabled
-    action: click_cancel_button
+    action:
+        if_param: cancel_dialog
+        ref: click_cancel_button
 
 check_change_cluster_privacy_settings_with_warning_dialog:
     element:
