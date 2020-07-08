@@ -30,4 +30,10 @@ wait_for_addon_to_status:
         - selector:
             xpath: //div[text()='<addon_name>']/../div/button[@aria-label='Install' and text()='View in console']
         
-        
+check_addons_tab:
+    action: click_add_ons_tab_button
+    elements:
+        - selector:
+            xpath: //article[@class='pf-c-card']
+        - selector:
+            xpath: //article[@class='pf-c-card']/div/button[text()='Install']
