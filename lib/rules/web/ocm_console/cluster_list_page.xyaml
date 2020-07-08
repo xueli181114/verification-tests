@@ -21,10 +21,10 @@ cluster_list_page_loaded:
     elements:
         - selector:
             xpath: //h1[text()='Clusters']
-            timeout: 10
+          timeout: 10
         - selector:
             xpath: //button[@class='pf-c-button pf-m-plain' and text()='Name']
-            timeout: 10
+          timeout: 10
 check_cluster_list_page:
     action: create_cluster_button_loaded
     elements:
@@ -91,6 +91,11 @@ check_clusters_list_info:
             xpath: //a[text()='<cluster_name>']/../../td[@data-label='Status']/span[text()='<cluster_status>']
         - selector:
             xpath: //a[text()='<cluster_name>']/../../td[@data-label='Type']/span[text()='<cluster_type>']
+check_clusters_list_info_include_provider:
+    action: check_clusters_list_info
+    element:
+        selector:
+            xpath: //a[text()='<cluster_name>']/../../td[@data-label='Provider (Location)' and text()='<provider>' and contains(., '<location>')]
 check_hover_in_cluster_list:
     elements:
         - selector:
@@ -400,7 +405,7 @@ go_to_access_control_tab:
 click_logout_button:
   element:
     selector:
-      xpath: //div[@aria-label='Overflow actions']/button[@class='pf-c-dropdown__toggle pf-m-plain']
+      xpath: //div[@aria-label='Overflow actions']/button
     op: click
   element:
     selector:
@@ -411,11 +416,6 @@ logout_page_loaded:
   element:
     selector:
       xpath: //button[contains(., 'Log in to your Red Hat account')]
-go_to_osd_cluster_creation_page:
-  action: click_create_cluster_button
-  action: click_create_osd_button
-  action: osd_creation_page_loaded
-
 scale_loadbalancer_from_cluster_list_page:
   action: go_to_scale_cluster_dialog_on_cluster_list_page
   action: choose_loadbalancer_in_dialog
