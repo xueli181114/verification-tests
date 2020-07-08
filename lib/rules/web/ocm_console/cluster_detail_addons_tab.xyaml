@@ -28,7 +28,7 @@ wait_for_addon_to_status:
             xpath: //div[text()='<addon_name>']/../div/div//span[text()='<wait_status>']
           timeout: 1200
         - selector:
-            xpath: //div[text()='<addon_name>']/../div/button[@aria-label='Install' and text()='View in console']
+            xpath: //div[text()='<addon_name>']/../div/a/button[text()='View in console']
         
 check_addons_tab:
     action: click_add_ons_tab_button
