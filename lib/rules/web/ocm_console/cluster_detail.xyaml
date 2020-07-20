@@ -59,7 +59,7 @@ overview_tab_loaded:
 monitoring_tab_loaded:
     element:
         selector:
-            xpath: //button[@class='pf-c-tabs__button' and text()='Monitoring']
+            xpath: //span[text()='Monitoring']
         timeout: 30
 
 check_actions_on_cluster_detail_page_partial_enabled:
@@ -219,9 +219,9 @@ check_ocp_title_in_detail_page:
 check_ocp_tab_in_detail_page:
     elements:
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Overview')]
+            xpath: //span[text()='Overview']
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Monitoring')]
+            xpath: //span[text()='Monitoring']
 check_ocp_usage_in_detail_page:
     elements:
         - selector:
@@ -275,15 +275,15 @@ check_osd_title_in_detail_page:
 check_osd_tab_in_detail_page:
     elements:
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Overview')]
+            xpath: //span[text()='Overview']
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Monitoring')]
+            xpath: //span[text()='Monitoring']
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Access control')]
+            xpath: //span[text()='Access control']
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Add-ons')]
+            xpath: //span[text()='Add-ons']
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Networking')]
+            xpath: //span[text()='Networking']
 check_osd_usage_in_detail_page:
     elements:
         - selector:
