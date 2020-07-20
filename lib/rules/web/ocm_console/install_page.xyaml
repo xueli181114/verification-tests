@@ -474,7 +474,7 @@ check_ibm_z_install_page:
         - selector:
             xpath: //a[contains(@href, 'installing-ibm-z.html#installation-user-infra-machines-iso-ibm-z_installing-ibm-z') and text()='Learn more']
         - selector:
-            xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
+            xpath: //a[contains(@href, 'https://mirror.openshift.com/pub/openshift-v4/s390x/dependencies/rhcos/latest/latest/') and text()='Download RHCOS']
 check_ibm_z_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | IBM Z'
