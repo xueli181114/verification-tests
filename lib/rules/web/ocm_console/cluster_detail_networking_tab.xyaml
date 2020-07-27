@@ -2,7 +2,7 @@
 click_networking_tab:
     element:
         selector:
-            xpath: //button[@class='pf-c-tabs__button' and text()='Networking']
+            xpath: //button[contains(.,'Networking')]
         op: click
 networking_tab_loaded:
     elements:

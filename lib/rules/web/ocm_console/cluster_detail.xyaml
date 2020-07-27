@@ -59,7 +59,7 @@ overview_tab_loaded:
 monitoring_tab_loaded:
     element:
         selector:
-            xpath: //button[@class='pf-c-tabs__button' and text()='Monitoring']
+            xpath: //button[contains(., 'Monitoring')]
         timeout: 30
 
 check_actions_on_cluster_detail_page_partial_enabled:
@@ -216,12 +216,19 @@ check_ocp_title_in_detail_page:
             xpath: //button[text()='Open console']
         - selector:
             xpath: //button[@aria-label='Refresh']
+refresh_detail_page:
+    element:
+        selector:
+            xpath: //button[@aria-label='Refresh']
+        op: click
+    action: check_osd_details_in_detail_page
+
 check_ocp_tab_in_detail_page:
     elements:
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Overview')]
+            xpath: //button[contains(., 'Overview')]
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Monitoring')]
+            xpath: //button[contains(., 'Monitoring')]
 check_ocp_usage_in_detail_page:
     elements:
         - selector:
@@ -275,25 +282,46 @@ check_osd_title_in_detail_page:
 check_osd_tab_in_detail_page:
     elements:
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Overview')]
+            xpath: //button[contains(., 'Overview')]
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Monitoring')]
+            xpath: //button[contains(., 'Monitoring')]
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Access control')]
+            xpath: //button[contains(., 'Access control')]
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Add-ons')]
+            xpath: //button[contains(., 'Add-ons')]
         - selector:
-            xpath: //button[@class='pf-c-tabs__button' and contains(., 'Networking')]
+            xpath: //button[contains(., 'Networking')]
 check_osd_usage_in_detail_page:
-    elements:
-        - selector:
+    element:
+        selector:
             xpath: //h2[text()='Resource usage']
+    action:
+        if_param: ready
+        ref: check_ready_cluster_usage_message
+    action:
+        if_param: installing
+        ref: check_installing_cluster_usage_message
+    action:
+        if_param: uninstalling
+        ref: check_uninstalling_cluster_usage_message
+check_ready_cluster_usage_message:
+    elements:
         - selector:
             xpath: //h4[text()='vCPU']
         - selector:
             xpath: //h4[text()='Memory']
         - selector:
             xpath: //div[@class='metrics-chart']
+check_installing_cluster_usage_message:
+    element:
+        selector:
+            xpath: //p[text()='This cluster is installing so some data might not be available. This may take a few minutes.']
+
+check_uninstalling_cluster_usage_message:
+    element:
+        selector:
+            xpath: //p[text()='This cluster is being deleted so some data might not be available.']
+
 check_osd_details_in_detail_page:
     action: check_osd_ocp_comman_details_in_detail_page
     elements:

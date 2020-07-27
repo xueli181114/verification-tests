@@ -7,11 +7,11 @@ deletion_dialog_loaded:
 archive_dialog_loaded:
     elements:
         - selector:
-            xpath: //div[@role='dialog' and @aria-label='Archive cluster']
+            xpath: //div[@role='dialog']
         - selector:
             xpath: //button[@class='pf-c-button pf-m-plain' and @aria-label='Close']
         - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl' and text()='Archive cluster']
+            xpath: //h1[text()='Archive cluster']
         - selector:
             xpath: //form/p[contains(text(), 'Archiving a cluster will remove it from the cluster list and remove the cluster from subscription management.')]
         - selector:
@@ -72,7 +72,7 @@ unarchive_dialog_loaded:
         - selector:
             xpath: //button[@class='pf-c-button pf-m-plain' and @aria-label='Close']
         - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl' and text()='Unarchive cluster']
+            xpath: //h1[text()='Unarchive cluster']
         - selector:
             xpath: //p[text()='Un-archiving a cluster will make it visible in the active (default) cluster list. You may need to manage subscriptions if the cluster is active.']
         - selector:
@@ -105,7 +105,16 @@ hover_archive_succ_promt_message:
     element:
         <<: *archive_succ_promt_message
         op: hover
-
+uninstall_succ_prompt_message_displayed:
+    element: &uninstall_succ_prompt_message
+        selector:
+            xpath: //*[text()='Successfully uninstalled cluster <cluster_name>']
+        timeout: 1800
+uninstall_succ_prompt_message_missing:
+    element:
+        <<: *uninstall_succ_prompt_message
+        missing: true
+        timeout:10
 check_display_name_dialog_loaded:
   elements:
     - selector:
@@ -170,10 +179,10 @@ click_delete_button_on_deletion_dialog:
 osd_creation_error_dialog_loaded:
     elements:
         - selector:
-            xpath: //h1[text()='Error creating cluster']
+            xpath: //h2[text()='Error creating cluster']
             timeout: 30
         - selector:
-            xpath: //h1/*[name()='svg']
+            xpath: //h2/*[name()='svg']
             timeout: 30
         - selector:
             xpath: //p[contains(text(),"<error_reason>")]
