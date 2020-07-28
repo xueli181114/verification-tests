@@ -31,22 +31,22 @@ check_cluster_list_page:
         - selector:
             css: input.pf-c-form-control.cluster-list-filter
         - selector:
-            xpath: //div[@class='pf-c-dropdown toolbar-item']/button/span[text()='Filter']
+            xpath: //span[text()='Filter']
         - selector:
-            xpath: //button[text()='Create cluster']/../..//button[@aria-label='Actions']
+            xpath: //button[text()='Create cluster']/../../..//button[@aria-label='Actions']
           op: click
         - selector:
             xpath: //a[text()='Register cluster' and contains(@href, '/openshift/register')]
         - selector:
             xpath: //a[text()='Show archived clusters' and contains(@href, '/openshift/archived')]
         - selector:
-            xpath: //button[text()='Create cluster']/../..//button[@aria-label='Actions']
+            xpath: //button[text()='Create cluster']/../../..//button[@aria-label='Actions']
           op: click
     elements:
         - selector:
             xpath: //div[@id='cluster-list-toolbar']//span[contains(., 'of')]
         - selector:
-            xpath: //div[@id='cluster-list-toolbar']//button[@id='pagination-options-menu-toggle']
+            xpath: //button[@id='pagination-options-menu-toggle-2']
           op: click
         - selector:
             xpath: //ul[@aria-labelledby='pagination-options-menu-toggle']/li/button[@data-action='per-page-10' and text()='10']
@@ -57,7 +57,7 @@ check_cluster_list_page:
         - selector:
             xpath: //ul[@aria-labelledby='pagination-options-menu-toggle']/li/button[@data-action='per-page-100' and text()='100']
         - selector:
-            xpath: //div[@id='cluster-list-toolbar']//button[@id='pagination-options-menu-toggle']
+            xpath: //button[@id='pagination-options-menu-toggle-4']
           op: click
         - selector:
             css: nav.pf-c-pagination__nav
@@ -65,7 +65,7 @@ check_cluster_list_page:
             xpath: //button[@aria-label='Refresh']
     elements:
         - selector:
-            xpath: //button[@class='pf-c-button pf-m-plain' and text()='Name']
+            xpath: //span[text()='Name']
         - selector:
             xpath: //span[@class='pf-c-table__sort-indicator']
         - selector:
@@ -80,9 +80,9 @@ check_cluster_list_page:
             xpath: //th[@data-label='Provider (Location)' and text()='Provider (Location)']
     elements:
         - selector:
-            xpath: //div[@class='pf-c-pagination pf-m-footer']//span[contains(., 'of')]
+            xpath: //div[@class='pf-c-pagination pf-m-bottom']//span[contains(., 'of')]
         - selector:
-            xpath: //div[@class='pf-c-pagination pf-m-footer']//button[@id='pagination-options-menu-toggle']
+            xpath: //button[@id='pagination-options-menu-toggle-3']
 check_clusters_list_info:
     elements:
         - selector: 
@@ -109,7 +109,7 @@ check_hover_in_cluster_list:
         - selector:
             xpath: //div[@class='tippy-popper' and contains(., 'Dedicated')]
         - selector:
-            xpath: //td[@data-label='Name']/a[text()='sdqe-ui-ocp']
+            xpath: //tr[1]/td[@data-label='Name']/a
           op: hover
         - selector:
             xpath: //div[@class='tippy-popper' and contains(., 'cluster name:')]

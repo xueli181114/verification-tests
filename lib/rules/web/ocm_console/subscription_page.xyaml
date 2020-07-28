@@ -14,7 +14,7 @@ check_subscriptions_page:
         - selector:
             xpath: //div[text()='OpenShift Container Platform now uses Subscription Watch to manage subscriptions.']
         - selector:
-            xpath: //a[contains(@href, '/subscriptions/openshift-sw') and text()='Open subscription watch']
+            xpath: //a[contains(@href, '/subscriptions/openshift-sw') and text()='Open Subscription Watch']
     elements:
         - selector:
             xpath: //div[text()='OpenShift Dedicated']
