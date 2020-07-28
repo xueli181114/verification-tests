@@ -114,7 +114,7 @@ uninstall_succ_prompt_message_missing:
     element:
         <<: *uninstall_succ_prompt_message
         missing: true
-        timeout:10
+        timeout: 10
 check_display_name_dialog_loaded:
   elements:
     - selector:
