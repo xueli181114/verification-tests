@@ -109,7 +109,7 @@ check_advanced_elements_loaded:
         - selector:
             xpath: //*[@id='network_pod_cidr' and @placeholder='10.128.0.0/16']
         - selector:
-            xpath: //div[@id='network_pod_cidr-helper' and text()='Subnet mask must be at most 18.']
+            xpath: //div[@id='network_pod_cidr-helper' and text()='Subnet mask must allow for at least 32 nodes.']
         - selector:
             xpath: //*[@id='network_host_prefix' and @placeholder='/23']
         - selector:
@@ -252,7 +252,7 @@ check_pod_cidr_invalid_range_error_message:
     action: click_create_button
     element:
         selector:
-            xpath: //*[contains(text(),"which provides up to 32 nodes")]
+            xpath: //*[contains(text(),"be higher than /21")]
     action: clear_input
 
 
@@ -555,3 +555,11 @@ check_creation_pending_message:
             xpath: //button[@type='submit' and @disabled='' and text()='Create cluster']
         - selector:
             xpath: //span[text()='Do not refresh this page. This request may take a moment...']
+
+check_podcidr_hostprefix_invalid_message:
+    action: set_pod_cidr_value
+    action: set_host_prefix_value
+    action: click_create_button
+    element:
+        selector:
+            xpath: //*[@id='network_pod_cidr-helper'and contains(.,'does not allow for enough nodes. Try changing the host prefix or the pod subnet range.')]

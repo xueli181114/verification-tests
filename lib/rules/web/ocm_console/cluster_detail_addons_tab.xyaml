@@ -1,7 +1,7 @@
 click_add_ons_tab_button:
     element:
         selector:
-            xpath: //button[@aria-controls='addOnsTabContent' and text()='Add-ons']
+            xpath: //button[contains(.,'Add-ons')]
         op: click
 
 addon_install_button_missing:

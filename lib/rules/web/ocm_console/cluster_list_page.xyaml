@@ -23,7 +23,7 @@ cluster_list_page_loaded:
             xpath: //h1[text()='Clusters']
           timeout: 10
         - selector:
-            xpath: //span[text()='Name']
+            xpath: //button[contains(.,'Name')]
           timeout: 10
 check_cluster_list_page:
     action: create_cluster_button_loaded
@@ -178,7 +178,7 @@ click_create_cluster_button:
 click_actions_behind_create_button:
     element:
         selector:
-            xpath: //button[text()='Create cluster']/../../../div[@id='cluster-list-toolbar']//button[@aria-label='Actions']
+            xpath: //button[text()='Create cluster']/../../../div//button[@aria-label='Actions']
         op: click
 actions_behind_create_button_menu_loaded:
     elements:

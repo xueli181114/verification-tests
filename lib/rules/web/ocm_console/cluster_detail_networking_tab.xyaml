@@ -2,7 +2,7 @@
 click_networking_tab:
     element:
         selector:
-            xpath: //button[@class='pf-c-tabs__button' and text()='Networking']
+            xpath: //button[contains(.,'Networking')]
         op: click
 networking_tab_loaded:
     elements:
@@ -17,7 +17,7 @@ networking_tab_loaded:
         - selector:
             xpath: //input[contains(@value,'https://api.<trimed_cluster_name>.')]
         - selector:
-            xpath: //input[contains(@value,'.s1.devshift.org:6443')]
+            xpath: //input[contains(@value,':6443')]
         - selector:
             xpath: //input[contains(@value,'https://apps.<trimed_cluster_name>.')]
         - selector:
