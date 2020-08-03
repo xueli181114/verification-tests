@@ -428,7 +428,7 @@ check_persistent_storage_field_in_creation_page:
   - selector:
       xpath: //select[@name='persistent_storage']
   - selector:
-      xpath: //label[@for='persistent_storage']/following-sibling::*[name()='svg']
+      xpath: //label[@for='persistent_storage']/following-sibling::span/*[name()='svg']
 select_persisten_storage_on_creation_page:
     elements:
         - selector:
@@ -444,7 +444,7 @@ check_lb_field_in_creation_page:
   - selector:
       xpath: //select[@name='load_balancers']
   - selector:
-      xpath: //label[@for='load_balancers']/following-sibling::*[name()='svg']
+      xpath: //label[@for='load_balancers']/following-sibling::span/*[name()='svg']
 select_lb_on_creation_page:
     elements:
         - selector:
