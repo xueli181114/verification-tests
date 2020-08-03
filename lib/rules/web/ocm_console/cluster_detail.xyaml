@@ -55,7 +55,7 @@ overview_tab_loaded:
     elements:
         - selector:
             xpath: //h2[text()='Details']
-
+          timeout: 30
 monitoring_tab_loaded:
     element:
         selector:
