@@ -164,7 +164,6 @@ check_gcp_advanced_elements_loaded:
 set_machine_cidr_value:
     params:
         locator_id: network_machine_cidr
-    action: select_advanced_radio_button
     action: clear_input
     element:
         selector:
@@ -175,7 +174,6 @@ set_machine_cidr_value:
 set_service_cidr_value:
     params:
         locator_id: network_service_cidr
-    action: select_advanced_radio_button
     action: clear_input
     element:
         selector:
@@ -185,7 +183,6 @@ set_service_cidr_value:
 set_pod_cidr_value:
     params:
         locator_id: network_pod_cidr
-    action: select_advanced_radio_button
     action: clear_input
     element:
         selector:
@@ -195,7 +192,6 @@ set_pod_cidr_value:
 set_host_prefix_value:
     params:
         locator_id: network_host_prefix
-    action: select_advanced_radio_button
     action: clear_input
     element:
         selector:
