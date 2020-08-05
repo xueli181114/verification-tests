@@ -3,6 +3,7 @@ click_networking_tab:
     element:
         selector:
             xpath: //button[contains(.,'Networking')]
+        timeout: 300
         op: click
 networking_tab_loaded:
     elements:
