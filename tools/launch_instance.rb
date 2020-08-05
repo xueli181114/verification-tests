@@ -397,7 +397,7 @@ module BushSlicer
           create_opts: launch_opts.dup,
           host_opts: host_opts
         )
-      when BushSlicer::OpenStack, BushSlicer::OpenStack4, BushSlicer::OpenStack10
+      when BushSlicer::OpenStack
         create_opts = {}
         res = iaas.launch_instances(
           names: host_names,
@@ -486,8 +486,10 @@ module BushSlicer
       case extra_vars
       when nil
         extra_vars = []
-      when Array, Hash
+      when Hash
         extra_vars = ["-e", extra_vars.to_json]
+      when Array
+        extra_vars = extra_vars.each_with_object([]) { |i, arr| arr << "-e" << i }
       when String
         extra_vars = ["-e", extra_vars]
       else
@@ -630,8 +632,7 @@ module BushSlicer
       when "playbook"
         inventory_erb = ERB.new(
           readfile(task[:inventory], template_dir),
-          nil,
-          "<"
+          nil
         )
         inventory_erb.filename = task[:inventory]
         inventory_str = inventory_erb.result(erb_binding)
@@ -699,8 +700,7 @@ module BushSlicer
       config_dir = dirname_path_or_url(file_details[:location])
       template = ERB.new(
         readfile(vars[:template], config_dir, details: file_details),
-        nil,
-        "<"
+        nil
       )
       template.filename = file_details[:location]
       erb_binding = Common::BaseHelper.binding_from_hash(launcher_binding,
@@ -712,7 +712,7 @@ module BushSlicer
       # see https://stackoverflow.com/questions/53886078
       erb_binding.local_variable_set :include_erb, lambda { |path, indent=0|
         t = ERB.new(
-          readfile(path, template_dir), nil, "<", rand_str(10, :ruby_variable)
+          readfile(path, template_dir), nil, nil, rand_str(10, :ruby_variable)
         )
         t.filename = path
         t.result(erb_binding).gsub(/^/, " "*indent)
@@ -858,9 +858,11 @@ module BushSlicer
           vars["template"] = join_paths_or_urls(
             template_org_dir, spec[:template]
           )
+          vars["command_terminate"] = true
           vars_file = Tempfile.new("vars_file_", Host.localhost.workdir)
           vars_file.write(vars.to_yaml)
           vars_file.close
+          ENV["BUSHSLICER_VMINFO_YAML"] = "" # avoid initializing the file
           # we launch a template to clean-up whatever it is
           launch_template(
             config: vars_file.path,
@@ -873,6 +875,11 @@ module BushSlicer
         end
       end
     end
+
+    # return name of currently executed command
+    # def active_command
+    #   Commander::Runner.instance.active_command.name
+    # end
   end
 end
 

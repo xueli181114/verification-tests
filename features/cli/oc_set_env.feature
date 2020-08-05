@@ -4,8 +4,9 @@ Feature: oc_set_env.feature
   # @case_id OCP-11248
   Scenario: Set environment variables for resources using oc set env
     Given I have a project
+    Given I obtain test data file "build/tc470422/application-template-stibuild.json"
     When I run the :new_app client command with:
-      | app_repo | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/build/tc470422/application-template-stibuild.json |
+      | app_repo | application-template-stibuild.json |
     And the step succeeded
     # set one enviroment variable
     When I run the :set_env client command with:
@@ -57,8 +58,9 @@ Feature: oc_set_env.feature
   # @case_id OCP-10798
   Scenario: Remove environment variables for resources using oc set env
     Given I have a project
+    Given I obtain test data file "build/tc470422/application-template-stibuild.json"
     When I run the :new_app client command with:
-      | app_repo | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/build/tc470422/application-template-stibuild.json |
+      | app_repo | application-template-stibuild.json |
     And the step succeeded
     # set environment variables
     When I run the :set_env client command with:
@@ -113,7 +115,7 @@ Feature: oc_set_env.feature
       | resource      | dc                 |
       | o             | json               |
     Then the step should succeed
-    When I save the output to file>dc.json
+    When I save the output to file> dc.json
     When I run the :set_env client command with:
       | f        | dc.json   |
       | env_name | FOO- |

@@ -8,18 +8,21 @@ Feature: NFS Persistent Volume
     Given I have a project
     And I have a NFS service in the project
 
-    Given admin creates a PV from "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/auto/pv-retain.json" where:
+    Given I obtain test data file "storage/nfs/auto/pv-retain.json"
+    Given admin creates a PV from "pv-retain.json" where:
       | ["metadata"]["name"]         | pv-<%= project.name %>           |
       | ["spec"]["nfs"]["server"]    | <%= service("nfs-service").ip %> |
       | ["spec"]["storageClassName"] | sc-<%= project.name %>           |
-    And I create a dynamic pvc from "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/auto/pvc-rwx.json" replacing paths:
+    Given I obtain test data file "storage/nfs/auto/pvc-rwx.json"
+    And I create a dynamic pvc from "pvc-rwx.json" replacing paths:
       | ["spec"]["volumeName"]       | <%= pv.name %>         |
       | ["spec"]["storageClassName"] | sc-<%= project.name %> |
     And the PV becomes :bound
 
     # Create a replication controller
+    Given I obtain test data file "storage/nfs/auto/rc.yml"
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/auto/rc.yml |
+      | f | rc.yml |
     Then the step should succeed
 
     # The replication controller creates 2 pods
@@ -33,6 +36,9 @@ Feature: NFS Persistent Volume
     When I execute on the "<%= pod(-2).name %>" pod:
       | touch | /mnt/nfs/testfile_2 |
     Then the step should succeed
+
+    # Delete the rc to ensure the data synced to the nfs server
+    Given I ensure "hellopod" replicationcontroller is deleted
 
     # Finally verify both files created by each pod are under the same export dir in the nfs-server pod
     When I execute on the "nfs-server" pod:
@@ -54,7 +60,8 @@ Feature: NFS Persistent Volume
       | chmod | -R | 770 | /mnt/data |
     Then the step should succeed
 
-    When admin creates a PV from "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/pv-gid.json" where:
+    Given I obtain test data file "storage/nfs/pv-gid.json"
+    When admin creates a PV from "pv-gid.json" where:
       | ["spec"]["nfs"]["server"]                                | <%= service("nfs-service").ip %> |
       | ["spec"]["nfs"]["path"]                                  | /                                |
       | ["spec"]["capacity"]["storage"]                          | 1Gi                              |
@@ -62,7 +69,8 @@ Feature: NFS Persistent Volume
       | ["metadata"]["annotations"]["pv.beta.kubernetes.io/gid"] | "<pv-gid>"                       |
     Then the step should succeed
 
-    When I create a manual pvc from "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/claim-rwx.json" replacing paths:
+    Given I obtain test data file "storage/nfs/claim-rwx.json"
+    When I create a manual pvc from "claim-rwx.json" replacing paths:
       | ["metadata"]["name"]                         | nfsc |
       | ["spec"]["resources"]["requests"]["storage"] | 1Gi  |
     Then the step should succeed
@@ -70,7 +78,8 @@ Feature: NFS Persistent Volume
 
     Given I switch to cluster admin pseudo user
     And I use the "<%= project.name %>" project
-    When I run oc create over "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/security/pod-supplementalgroup.json" replacing paths:
+    Given I obtain test data file "storage/nfs/security/pod-supplementalgroup.json"
+    When I run oc create over "pod-supplementalgroup.json" replacing paths:
       | ["metadata"]["name"]                                         | nfspd |
       | ["spec"]["volumes"][0]["persistentVolumeClaim"]["claimName"] | nfsc  |
     Then the step should succeed
@@ -87,9 +96,13 @@ Feature: NFS Persistent Volume
     Given I execute on the pod:
       | touch | /mnt/nfs/nfs_testfile |
     Then the step should succeed
+    # workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1810971
+    Then I wait up to 30 seconds for the steps to pass:
+    """
     When I execute on the pod:
       | ls | -l | /mnt/nfs/nfs_testfile |
     Then the step should succeed
+    """
 
     Examples:
       | nfs-uid-gid   | pv-gid | pod-gid |
@@ -109,7 +122,8 @@ Feature: NFS Persistent Volume
       | chmod | -R | 770 | /mnt/data |
     Then the step should succeed
 
-    Given admin creates a PV from "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/pv-gid.json" where:
+    Given I obtain test data file "storage/nfs/pv-gid.json"
+    Given admin creates a PV from "pv-gid.json" where:
       | ["spec"]["nfs"]["server"]                                | <%= service("nfs-service").ip %> |
       | ["spec"]["nfs"]["path"]                                  | /                                |
       | ["spec"]["capacity"]["storage"]                          | 1Gi                              |
@@ -117,7 +131,8 @@ Feature: NFS Persistent Volume
       | ["metadata"]["annotations"]["pv.beta.kubernetes.io/gid"] | abc123                           |
     Then the step should succeed
 
-    When I create a manual pvc from "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/claim-rwx.json" replacing paths:
+    Given I obtain test data file "storage/nfs/claim-rwx.json"
+    When I create a manual pvc from "claim-rwx.json" replacing paths:
       | ["metadata"]["name"]                         | mypvc |
       | ["spec"]["resources"]["requests"]["storage"] | 1Gi                      |
     Then the step should succeed
@@ -125,7 +140,8 @@ Feature: NFS Persistent Volume
 
     Given I switch to cluster admin pseudo user
     And I use the "<%= project.name %>" project
-    When I run oc create over "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/nfs/security/pod-supplementalgroup.json" replacing paths:
+    Given I obtain test data file "storage/nfs/security/pod-supplementalgroup.json"
+    When I run oc create over "pod-supplementalgroup.json" replacing paths:
       | ["metadata"]["name"]                                         | mypod |
       | ["spec"]["volumes"][0]["persistentVolumeClaim"]["claimName"] | mypvc  |
     Then the step should succeed

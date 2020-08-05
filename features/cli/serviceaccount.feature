@@ -43,7 +43,8 @@ Feature: ServiceAccount and Policy Managerment
     Then the output should contain:
       | hello-openshift |
     ## this template is to create an application without any build
-    When I process and create "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/deployment/deployments_nobc_cpulimit.json"
+    Given I obtain test data file "deployment/deployments_nobc_cpulimit.json"
+    When I process and create "deployments_nobc_cpulimit.json"
     Then the step should succeed
     When I run the :delete client command with:
       | object_type       | svc             |

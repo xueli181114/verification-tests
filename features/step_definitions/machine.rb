@@ -1,15 +1,13 @@
 Given(/^I have an IPI deployment$/) do
-  machine_sets = BushSlicer::MachineSet.list(user: admin, project: project("openshift-machine-api"))
-  cache_resources *machine_sets
-
-  # Usually UPI deployments do not have machineSets
-  if machine_sets.length == 0
-    raise "Not an IPI deployment, abort test."
+  # In an IPI deployment, machine number equals to node number
+  machines = BushSlicer::Machine.list(user: admin, project: project("openshift-machine-api"))
+  if machines.length == 0
+    raise "Not an IPI deployment, there are no machines"
   end
 
-  machine_sets.each do | machine_set |
-    unless machine_set.ready?
-      raise "Not an IPI deployment or machineSet #{machine_set.name} not fully scaled, abort test."
+  machines.each do | machine |
+    if machine.node_name.nil?
+      raise "machine #{machine.name} has no node ref, this is not a ready IPI deployment."
     end
   end
 end
@@ -55,4 +53,26 @@ Given(/^I wait for the node of machine(?: named "(.+)")? to appear/) do | machin
   end
 
   cb["new_node"] = node_name
+end
+
+Then(/^admin ensures machine number is restored after scenario$/) do
+  ensure_admin_tagged
+  machine_names_orig = BushSlicer::Machine.list(user: admin, project: project("openshift-machine-api")).map(&:name)
+
+  teardown_add {
+    machines = BushSlicer::Machine.list(user: admin, project: project("openshift-machine-api"))
+    machine_names_current = machines.map(&:name)
+    machine_names_waiting_del = machine_names_current - machine_names_orig
+    machine_names_missing = machine_names_orig - machine_names_current
+    machines_waiting_delete = machines.select { |m| machine_names_waiting_del.include?(m.name) }
+
+    unless machine_names_missing.empty?
+      raise "Machines deleted but never restored: #{machine_names_missing}."
+    end
+    
+    machines_waiting_delete.each do | machine |
+      machine.ensure_deleted(user: user, wait: 1200)
+      raise "Unable to delete machine #{machine.name}" if machine.exists?(user: user)
+    end
+  }
 end

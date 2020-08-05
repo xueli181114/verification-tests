@@ -274,8 +274,9 @@ Feature: ONLY ONLINE Imagestreams related scripts in this file
   Scenario Outline: ImageStream annotation and tag function
     Given I have a project
     And I attempt the registry route based on API url and store it in the :registry_route clipboard  
+    Given I obtain test data file "image-streams/<file>"
     When I run the :create client command with:
-      | f | https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/image-streams/<file> |
+      | f | <file> |
     Then the step should succeed  
     When I have a skopeo pod in the project
     Then the step should succeed  

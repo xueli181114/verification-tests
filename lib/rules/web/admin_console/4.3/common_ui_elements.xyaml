@@ -19,11 +19,33 @@ click_edit_yaml_link:
   - selector:
         xpath: //a[text()='Edit YAML']
     op: click
+  - selector:
+      xpath: //div[contains(@class,'view-lines')]
+    timeout: 20
 click_create_button:
   elements:
-  - selector:
+  - selector: &create_button
       xpath: //button[contains(text(),'Create')]
     op: click
+check_create_button_missing:
+  elements:
+  - selector:
+      <<: *create_button
+    missing: true
+check_kebab_items_disabled:
+  elements:
+  - selector:
+      xpath: //button[contains(@class, 'pf-c-dropdown__menu-item') and not(contains(@class, 'pf-m-disabled'))]
+    missing: true
+check_action_button_missing:
+  elements:
+  - selector:
+      xpath: //span[contains(text(), 'Actions')]
+    missing: true
+check_save_button_missing:
+  params:
+    button_text: Save
+  action: check_button_missing
 click_cancel_button:
   elements:
   - selector:
@@ -37,25 +59,48 @@ click_button:
     op: click
 click_button_text:
   element:
-    selector:
+    selector: &button_with_text
       xpath: //button[text()='<button_text>']
     op: click
+check_button_text:
+  element:
+    selector:
+      <<: *button_with_text
+check_button_missing:
+  element:
+    selector:
+      <<: *button_with_text
+    missing: true
 click_button_by_id:
   element:
     selector:
       xpath: //button[contains(@id,'<button_id>')]
     op: click
+click_button_title:
+  element:
+    selector:
+      xpath: //button[@title='<button_title>']
+    op: click
+check_button_title:
+  element:
+    selector:
+      xpath: //button[@title='<button_title>']
 check_table_text_data:
   element:
     selector:
       xpath: //td[text()='<text_data>']
+check_table_line_count:
+  action: wait_table_loaded
+  scripts:
+  - command: return document.querySelectorAll("tbody tr").length == '<line_count>'
+    expect_result: true
 select_resource_item:
   action: click_button_by_id
   action: click_on_resource_name
 click_on_resource_name:
   element:
     selector:
-      xpath: //a[contains(@class,'co-resource-item__resource-name') and text()='<item>']
+      xpath: //a[contains(@class,'co-resource-item__resource-name') and text()='<item>'] | //span[contains(@class,'co-resource-item__resource-name') and text()='<item>']
     op: click
 check_button_disabled:
   element:
@@ -83,11 +128,34 @@ click_overview_tab:
   params:
     tab_name: Overview
   action: click_tab
+click_yaml_tab:
+  params:
+    tab_name: YAML
+  action: click_tab
+check_edit_yaml_enabled:
+  params:
+    button_text: Save
+  action: click_yaml_tab
+  action: check_button_enabled
 click_radio_input:
   element:
     selector:
       xpath: //input[@type='radio' and @value='<radio_text>']
     op: click
+click_close_icon:
+  element:
+    selector:
+      xpath: //button[contains(@aria-label,'Close')]
+    op: click
+click_yaml_create_button:
+  params:
+    button_id: yaml-create
+  action: click_button_by_id
+check_yaml_create_button_missing:
+  elements:
+  - selector:
+      xpath: //button[@id='yaml-create']
+    missing: true
 clear_input_value:
   elements:
   - selector:
@@ -100,6 +168,18 @@ set_input_value:
       xpath: //input[@id='<input_field_id>']
     op: send_keys <input_value>
     type: input
+clear_input_class:
+  element:
+    selector:
+      xpath: //input[contains(@class, '<class_text>')]
+    op: clear
+    type: input
+set_input_class:
+  element:
+    selector:
+      xpath: //input[contains(@class, '<class_text>')]
+    op: send_keys <input_value>
+    type: input
 set_label_input:
   elements:
   - selector: &label_input
@@ -108,6 +188,26 @@ set_label_input:
   - selector:
       <<: *label_input
     op: send_keys <input_value>
+set_label_input_simple:
+  elements:
+  - selector: &label_input_value
+      xpath: //label[text()='<label_text>']/..//input
+    op: clear
+    type: input
+  - selector:
+      <<: *label_input_value
+    op: send_keys <input_value>
+    type: input
+set_placeholder_input:
+  elements:
+  - selector: &placeholder_input
+      xpath: //input[@placeholder='<name>']
+    op: clear
+    type: input
+  - selector:
+      <<: *placeholder_input
+    op: send_keys <input_value>
+    type: input
 check_content_in_yaml_editor:
   element:
     selector:
@@ -138,11 +238,6 @@ click_first_item_from_sub_resource_list_and_check_breadcrumb:
   action: wait_until_no_loading
   action: click_first_sub_item_in_resource_detail_list
   action: check_link_in_breadcrumb
-# click and check the first item from resources listed in grid cell, such as installed operator
-click_first_item_from_gridcell_list_and_check_breadcrumb:
-  action: wait_until_no_loading
-  action: click_first_item_in_grid_cell_list
-  action: check_link_in_breadcrumb
 check_link_in_breadcrumb:
   element:
     selector:
@@ -163,11 +258,16 @@ confirm_deletion:
 check_resource_item:
   elements:
   - selector:
-      xpath: //span[contains(@class,'co-m-resource-icon') and @title='<resource_type>']/parent::span[@class='co-resource-item']//a[@class='co-resource-item__resource-name' and text()='<resource_name>' and @href='<resource_link>']
+      xpath: //span[contains(@class,'co-m-resource-icon') and @title='<resource_type>']/parent::span[contains(@class,'co-resource-item')]//a[@class='co-resource-item__resource-name' and text()='<resource_name>' and @href='<resource_link>']
 check_resources_title_on_page:
   elements:
   - selector:
-      xpath: //span[text()='<resource_title>']     
+      xpath: //span[text()='<resource_title>']
+click_kebab_item:
+  element:
+    selector:
+      xpath: //button[contains(@class,'pf-c-dropdown__menu-item') and not(contains(@class,'pf-m-disabled')) and text()='<kebab_item>']
+    op: click
 click_kebab_of_one_resource:
   elements:
   - selector:
@@ -175,7 +275,7 @@ click_kebab_of_one_resource:
     op: click
 click_one_operation_in_kebab:
   action: click_kebab_of_one_resource
-  action: click_button
+  action: click_kebab_item
 check_column_in_table:
   action: wait_box_loaded
   elements:
@@ -277,10 +377,9 @@ submit_changes:
       xpath: //button[@type='submit' and not(@disabled)]
     op: click
 click_add_more_button:
-  element:
-    selector:
-      xpath: //*[contains(text(),'Add More')]
-    op: click
+  params:
+    button_text: Add More
+  action: click_button
 click_add_dropdown_button:
   element:
     selector:
@@ -310,6 +409,11 @@ click_link_with_text:
   element:
     selector:
       xpath: //a[contains(.,'<text>') and contains(@href,'<link_url>')]
+    op: click
+click_link_with_text_only:
+  element:
+    selector:
+      xpath: //a[text()='<text>']
     op: click
 click_secondary_menu:
   elements:
@@ -386,6 +490,11 @@ wait_until_no_loading:
     selector:
       css: .cos-status-box--loading
     missing: true
+    timeout: 30
+wait_sidebar_loaded:
+  element:
+    selector:
+      css: .co-p-has-sidebar__sidebar-close
     timeout: 30
 wait_table_loaded:
   element:
@@ -520,6 +629,21 @@ check_resource_details:
   action:
     if_param: created_at
     ref: check_created_at
+  action:
+    if_param: scale_target
+    ref: check_scale_target
+  action:
+    if_param: min_replicas
+    ref: check_hpa_min_replicas
+  action:
+    if_param: max_replicas
+    ref: check_hpa_max_replicas
+  action:
+    if_param: current_replicas
+    ref: check_current_replicas
+  action:
+    if_param: desired_replicas
+    ref: check_desired_replicas
 check_resource_details_key_and_value:
   element: &key_value
     selector:
@@ -753,3 +877,28 @@ check_created_at:
   params:
     key: Created At
   action: check_resource_details_key_only
+check_scale_target:
+  params:
+    key: Scale Target
+    value: <scale_target>
+  action: check_resource_details_key_and_value
+check_current_replicas:
+  params:
+    key: Current Replicas
+    value: <current_replicas>
+  action: check_resource_details_key_and_value
+check_desired_replicas:
+  params:
+    key: Desired Replicas
+    value: <desired_replicas>
+  action: check_resource_details_key_and_value
+check_hpa_min_replicas:
+  params:
+    key: Min Replicas
+    value: <min_replicas>
+  action: check_resource_details_key_and_value
+check_hpa_max_replicas:
+  params:
+    key: Max Replicas
+    value: <max_replicas>
+  action: check_resource_details_key_and_value

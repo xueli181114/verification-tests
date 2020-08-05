@@ -17,8 +17,11 @@ create_resource_by_default_yaml:
 click_edit_yaml_link:
   elements:
   - selector:
-        xpath: //a[text()='Edit YAML']
+      xpath: //a[text()='Edit YAML']
     op: click
+  - selector:
+      xpath: //div[contains(@class,'ace_content')]
+    timeout: 20
 click_create_button:
   elements:
   - selector:
@@ -36,9 +39,13 @@ click_button:
     op: click
 click_button_text:
   element:
-    selector:
-      xpath: //a[text()='<button_text>']
+    selector: &button_with_text
+      xpath: //button[text()='<button_text>']
     op: click
+check_button_text:
+  element:
+    selector:
+      <<: *button_with_text
 check_button_disabled:
   element:
     selector:
@@ -70,6 +77,56 @@ set_input_value:
   element:
     selector:
       xpath: //input[@id='<input_field_id>']
+    op: send_keys <input_value>
+    type: input
+set_label_input:
+  elements:
+  - selector: &label_input
+      xpath: (//label[contains(text(),'<label_text>')]/following::input[1] | //label[contains(text(),'<label_text>')]//input[1])[1]
+    op: clear
+  - selector:
+      <<: *label_input
+    op: send_keys <input_value>
+set_label_input_simple:
+  elements:
+  - selector: &label_input_value
+      xpath: //label[text()='<label_text>']/..//input
+    op: clear
+    type: input
+  - selector:
+      <<: *label_input_value
+    op: send_keys <input_value>
+    type: input
+set_placeholder_input:
+  elements:
+  - selector: &placeholder_input
+      xpath: //input[@placeholder='<name>']
+    op: clear
+    type: input
+  - selector:
+      <<: *placeholder_input
+    op: send_keys <input_value>
+    type: input
+set_label_textarea:
+  elements:
+  - selector: &label_textarea
+      xpath: //label[text()='<label_text>']/..//textarea
+    op: clear
+    type: textarea
+  - selector:
+      <<: *label_textarea
+    op: send_keys <input_value>
+    type: textarea
+clear_input_class:
+  element:
+    selector:
+      xpath: //input[contains(@class, '<class_text>')]
+    op: clear
+    type: input
+set_input_class:
+  element:
+    selector:
+      xpath: //input[contains(@class, '<class_text>')]
     op: send_keys <input_value>
     type: input
 check_row_filter_on_page:
@@ -181,10 +238,9 @@ submit_changes:
       xpath: //button[@type='submit']
     op: click
 click_add_more_button:
-  element:
-    selector:
-      xpath: //*[contains(text(),'Add More')]
-    op: click
+  params:
+    button_text: Add More
+  action: click_button
 click_add_dropdown_button:
   element:
     selector:
@@ -209,6 +265,11 @@ click_link_with_text:
   element:
     selector:
       <<: *text_link
+    op: click
+click_link_with_text_only:
+  element:
+    selector:
+      xpath: //a[text()='<text>']
     op: click
 click_secondary_menu:
   elements:
@@ -241,6 +302,11 @@ wait_box_loaded:
     selector:
       css: .loading-box__loaded
     timeout: 20
+check_column_in_table:
+  action: wait_box_loaded
+  elements:
+  - selector:
+      xpath: //a[contains(.,'<field>')]
 ## -------- check resource key and values pairs ------
 check_resource_details:
   action:
@@ -333,6 +399,21 @@ check_resource_details:
   action:
     if_param: current_configuration
     ref: check_current_configuration
+  action:
+    if_param: scale_target
+    ref: check_scale_target
+  action:
+    if_param: min_replicas
+    ref: check_hpa_min_replicas
+  action:
+    if_param: max_replicas
+    ref: check_hpa_max_replicas
+  action:
+    if_param: current_replicas
+    ref: check_current_replicas
+  action:
+    if_param: desired_replicas
+    ref: check_desired_replicas
 check_resource_details_key_and_value:
   element: &key_value
     selector:
@@ -503,4 +584,29 @@ check_current_configuration:
   params:
     key: Current Configuration
     value: <current_configuration>
+  action: check_resource_details_key_and_value
+check_scale_target:
+  params:
+    key: Scale Target
+    value: <scale_target>
+  action: check_resource_details_key_and_value
+check_current_replicas:
+  params:
+    key: Current Pods
+    value: <current_replicas>
+  action: check_resource_details_key_and_value
+check_desired_replicas:
+  params:
+    key: Desired Pods
+    value: <desired_replicas>
+  action: check_resource_details_key_and_value
+check_hpa_min_replicas:
+  params:
+    key: Min Pods
+    value: <min_replicas>
+  action: check_resource_details_key_and_value
+check_hpa_max_replicas:
+  params:
+    key: Max Pods
+    value: <max_replicas>
   action: check_resource_details_key_and_value

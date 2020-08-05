@@ -10,7 +10,8 @@ Feature: Cinder Persistent Volume
     #create test pod
     And I switch to cluster admin pseudo user
     And I use the "<%= project.name %>" project
-    When I run oc create over "https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/storage/cinder/cinder-pod.yaml" replacing paths:
+    Given I obtain test data file "storage/cinder/cinder-pod.yaml"
+    When I run oc create over "cinder-pod.yaml" replacing paths:
       | ['spec']['volumes'][0]['cinder']['volumeID'] | <%= cb.vid %> |
     Then the step should succeed
     And the pod named "cinder" becomes ready

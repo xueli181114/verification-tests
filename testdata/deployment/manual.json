@@ -1,0 +1,85 @@
+{
+    "kind": "DeploymentConfig",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "hooks",
+        "creationTimestamp": null,
+        "labels": {
+            "name": "hello-openshift"
+        }
+    },
+    "spec": {
+        "strategy": {
+            "type": "Recreate",
+            "recreateParams": {
+            },
+            "resources": {}
+        },
+        "triggers": [
+        ],
+        "replicas": 1,
+        "selector": {
+            "name": "hello-openshift"
+        },
+        "template": {
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "name": "hello-openshift"
+                }
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "dataem",
+                        "emptyDir": {
+                           "medium": ""
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "hello-openshift",
+                        "image": "quay.io/openshifttest/hello-openshift@sha256:aaea76ff622d2f8bcb32e538e7b3cd0ef6d291953f3e7c9f556c1ba5baf47e2e",
+                        "ports": [
+                            {
+                                "containerPort": 8080,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "env": [
+                            {
+                                "name": "MYSQL_USER",
+                                "value": "user8Y2"
+                            },
+                            {
+                                "name": "MYSQL_PASSWORD",
+                                "value": "Plqe5Wev"
+                            },
+                            {
+                                "name": "MYSQL_DATABASE",
+                                "value": "root"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "dataem",
+                                "mountPath": "/var/lib/etcd"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "imagePullPolicy": "Always",
+                        "securityContext": {
+                            "capabilities": {},
+                            "privileged": false
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "dnsPolicy": "ClusterFirst"
+            }
+        }
+    },
+    "status": {}
+}

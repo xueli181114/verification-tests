@@ -16,15 +16,36 @@ module BushSlicer
         dig('status', 'nodeRef', 'name')
     end
 
+    def provider_id(user: nil, cached: true, quiet: false)
+      raw_resource(user: user, cached: cached, quiet: quiet).
+        dig('spec', 'providerID')
+    end
+
     def phase(user: nil, cached: true, quiet: false)
       raw_resource(user: user, cached: cached, quiet: quiet).
         dig('status','phase')
+    end
+
+    def instance_state(user: nil, cached: true, quiet: false)
+      rr = raw_resource(user: user, cached: cached, quiet: quiet)
+      rr.dig('status', 'providerStatus', 'instanceState') ||
+      rr.dig('status', 'providerStatus', 'vmState')
+    end
+
+    def annotation_instance_state(user: nil, cached: true, quiet: false)
+      raw_resource(user: user, cached: cached, quiet: quiet).
+          dig('metadata', 'annotations', 'machine.openshift.io/instance-state')
     end
 
     def ready?(user: nil, cached: true, quiet: false)
       instance_state = raw_resource(user: user, cached: cached, quiet: quiet).
         dig('status','providerStatus','instanceState')
       instance_state == 'running'
+    end
+
+    def deleting?(user: nil, cached: true, quiet: false)
+      ! raw_resource(user: user, cached: cached, quiet: quiet).
+          dig('metadata', 'deletionTimestamp').nil?
     end
   end
 end
