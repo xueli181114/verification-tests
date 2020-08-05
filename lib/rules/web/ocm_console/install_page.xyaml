@@ -35,7 +35,7 @@ go_to_aro_pull_secret_page:
     url: /openshift/install/azure/aro-provisioned
 go_to_pull_secret_page:
     url: /openshift/install/pull-secret
-            
+
 check_common_part:
     action: check_cluster_list_page_title
     action: check_account_username
@@ -43,19 +43,19 @@ check_common_part:
         - selector:
             xpath: //a[@class='pf-c-page__header-brand-link' and @href='./']/img[@alt='Red Hat Logo']
         - selector:
-            xpath: //div[@class='pf-l-split__item ins-c-page__home-icon']/a[contains(@href, 'cloud.redhat.com')]
-        - selector:
-            xpath: //div[@class='ins-c-navigation__header-title' and text()='Red Hat OpenShift Cluster Manager']
+            xpath: //span[text()='Red Hat OpenShift Cluster Manager']
         - selector:
             xpath: //a[contains(@href, '/openshift/') and contains(., 'Clusters')]
         - selector:
             xpath: //a[contains(@href, '/openshift/subscriptions') and contains(., 'Subscriptions')]
         - selector:
-            xpath: //a[@href='https://docs.openshift.com/container-platform/latest/' and contains(., 'Documentation')]
+            xpath: //a[@href='https://docs.openshift.com/dedicated/4/' and contains(., 'Documentation')]
         - selector:
             xpath: //a[@href='https://access.redhat.com/support/cases' and contains(., 'Support Cases')]
         - selector:
             xpath: //a[@href='mailto:ocm-feedback@redhat.com' and contains(., 'Cluster Manager Feedback')]
+        - selector:
+            xpath: //a[@href='https://marketplace.redhat.com' and contains(., 'Red Hat Marketplace')]  
 check_cluster_list_page_title:
     scripts:
     - command: return document.title=='Clusters | Red Hat OpenShift Cluster Manager'
