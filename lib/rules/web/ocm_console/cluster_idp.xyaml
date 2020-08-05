@@ -519,7 +519,7 @@ check_empty_idp_info_in_tab:
   action: check_add_identity_provider_button
   elements:
   - selector:
-      xpath: //section[@id='accessControlTabContent']//h1[text()='Identity providers']
+      xpath: //section[@id='accessControlTabContent']//h2[text()='Identity providers']
   - selector:
       xpath: //section[@id='accessControlTabContent']//p[text()='Configure identity providers to allow users to log into the cluster.']
   - selector:
@@ -672,7 +672,7 @@ check_ldap_id_validation:
 check_ldap_ca_file_validation:
   element:
     selector:
-      xpath: //div//span[text()='Browse…']/input[@disabled]/../../../following-sibling::div[@id='ldap_ca-helper' and contains(.,'Cannot be used if insecure is set')]
+      xpath: //div//span[text()='Browse…']/input[@disabled]/../../following-sibling::div[@id='ldap_ca-helper' and contains(.,'Cannot be used if insecure is set')]
 check_idp_hint_missing:
   element:
     selector:
