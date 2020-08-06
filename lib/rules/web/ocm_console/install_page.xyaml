@@ -209,6 +209,38 @@ check_download_part_in_ppc64le_install_page:
     action: check_macos_download_button_in_install_page
     action: check_windows_download_button_in_install_page
     action: check_download_part_commen_items
+click_download_crc_button:
+    element:
+        selector:
+            xpath: //a[text()='Download Code-Ready Containers']/../../div/select
+        op: click
+check_download_crc_button_in_crc_install_page:
+    action: click_download_crc_button
+    elements:
+        - selector:
+            xpath: //a[text()='Download Code-Ready Containers']/../../div/select/option[text()='<os_name>']
+          op: click
+        - selector:
+            xpath: //a[text()='Download Code-Ready Containers' and @href='https://mirror.openshift.com/pub/openshift-v4/clients/crc/latest/<os_link>']
+check_linux_download_crc_button_in_crc_install_page:
+    params:
+        os_name: Linux
+        os_link: crc-linux-amd64.tar.xz
+    action: check_download_crc_button_in_crc_install_page
+check_macos_download_crc_button_in_crc_install_page:
+    params:
+        os_name: MacOS
+        os_link: crc-macos-amd64.tar.xz
+    action: check_download_crc_button_in_crc_install_page
+check_windows_download_crc_button_crc_in_install_page:
+    params:
+        os_name: Windows
+        os_link: crc-windows-amd64.zip
+    action: check_download_crc_button_in_crc_install_page
+check_download_part_for_crc_install_page:
+    action: check_linux_download_crc_button_in_crc_install_page
+    action: check_macos_download_crc_button_in_crc_install_page
+    action: check_windows_download_crc_button_crc_in_install_page
 
 click_copyPullSecret_button:
     element:
@@ -276,12 +308,20 @@ required_specific_provider_install_items_loaded:
         selector:
             xpath: //h1[text()='<title>']
         timeout: 30
-
+check_install_page_common_part_two:
+    elements:
+        - selector:
+            xpath: //p[text()='The installer will take about 45 minutes to run.']
+        - selector:
+            xpath: //div[text()='To quickly create a cluster with the default options, run the following command:']
+        - selector:
+            xpath: //input[@value='./openshift-install create cluster']
 check_aws_ipi_install_page:
     action: required_specific_provider_install_items_loaded 
     action: check_aws_ipi_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -301,6 +341,7 @@ check_aws_upi_install_page:
     action: check_aws_upi_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -320,6 +361,7 @@ check_azure_ipi_install_page:
     action: check_azure_ipi_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -339,6 +381,7 @@ check_azure_upi_install_page:
     action: check_azure_upi_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -358,6 +401,7 @@ check_gcp_ipi_install_page:
     action: check_gcp_ipi_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -377,6 +421,7 @@ check_gcp_upi_install_page:
     action: check_gcp_upi_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -404,6 +449,7 @@ check_vsphere_install_page:
     action: check_vsphere_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -431,6 +477,7 @@ check_bare_metal_install_page:
     action: check_bare_metal_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -458,6 +505,7 @@ check_ibm_z_install_page:
     action: check_ibm_z_page_title
     action: check_download_part_in_s390x_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -485,6 +533,7 @@ check_openstack_ipi_install_page:
     action: check_openstack_ipi_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -504,6 +553,7 @@ check_openstack_upi_install_page:
     action: check_openstack_upi_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -531,6 +581,7 @@ check_rhv_install_page:
     action: check_rhv_page_title
     action: check_download_part_in_normal_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -550,6 +601,7 @@ check_power_upi_install_page:
     action: check_power_page_title
     action: check_download_part_in_ppc64le_install_page
     action: check_pull_secret_part_in_install_page
+    action: check_install_page_common_part_two
     action: check_data_collection_message_in_install_page
     action: check_install_page_part_three
     elements:
@@ -568,29 +620,20 @@ check_codeready_install_page:
     action: required_codeready_install_items_loaded
     action: check_codeready_page_title
     action: check_pull_secret_part_in_install_page
+    action: check_download_part_for_crc_install_page
     elements:
         - selector:
-            xpath: //p[contains(., 'Red Hat CodeReady Containers brings a minimal OpenShift')]
+            xpath: //h3[text()='CodeReady Containers archive']
         - selector:
-            xpath: //*[contains(@href, 'https://access.redhat.com/documentation/en-us/red_hat_codeready_containers') and contains(.,'official documentation')]
+            xpath: //h2[text()='Follow the documentation to install CodeReady containers']
         - selector:
             xpath: //a[contains(@href, 'https://access.redhat.com/documentation/en-us/red_hat_codeready_containers') and text()='Get started']
         - selector:
-            xpath: //p[contains(., 'Windows')]/a[@href='https://mirror.openshift.com/pub/openshift-v4/clients/crc/latest/crc-windows-amd64.zip' and text()='Download (HyperV)']
-        - selector:
-            xpath: //p[contains(., 'macOS')]/a[@href='https://mirror.openshift.com/pub/openshift-v4/clients/crc/latest/crc-macos-amd64.tar.xz' and text()='Download (HyperKit)']
-        - selector:
-            xpath: //p[contains(., 'Linux')]/a[@href='https://mirror.openshift.com/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz' and text()='Download (Libvirt)']
-        - selector:
-            xpath: //button[@type='button' and text()='Download pull secret']
-        - selector:
-            xpath: //button[@id='copyPullSecret' and contains(., 'Copy pull secret')]
+            xpath: //p[contains(., 'Your CodeReady Container cluster will not show in your list of clusters in OpenShift Cluster Manager since it is short-lived and occasionally running')]
 required_codeready_install_items_loaded:
     elements:
         - selector:
-            xpath: //h1[@class='pf-c-title pf-m-2xl ocm-page-title' and contains(., 'Install OpenShift Container Platform 4')]
-        - selector:
-            xpath: //h3[@class='pf-c-title pf-m-2xl' and contains(., 'Install on Laptop') and contains(., 'Red Hat CodeReady Containers')]
+            xpath: //h1[text()="Install OpenShift 4 on a laptop with CodeReady Containers"]
 check_codeready_page_title:
     scripts:
     - command: return document.title=='Install OpenShift 4 | Red Hat OpenShift Cluster Manager | CRC'
