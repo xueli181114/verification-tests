@@ -525,3 +525,71 @@ check_podcidr_hostprefix_invalid_message:
     element:
         selector:
             xpath: //*[@id='network_pod_cidr-helper'and contains(.,'does not allow for enough nodes. Try changing the host prefix or the pod subnet range.')]
+check_aws_compute_node_instances_type:
+    elements:
+        - selector:
+            xpath: //h4[text()='4 vCPU 16 GiB RAM']/../../div/div[text()='m5.xlarge']
+        - selector:
+            xpath: //h4[text()='4 vCPU 16 GiB RAM']/../../div/div[text()='General purpose']
+        - selector:
+            xpath: //h4[text()='8 vCPU 32 GiB RAM']/../../div/div[text()='m5.2xlarge']
+        - selector:
+            xpath: //h4[text()='8 vCPU 32 GiB RAM']/../../div/div[text()='General purpose']
+        - selector:
+            xpath: //h4[text()='16 vCPU 64 GiB RAM']/../../div/div[text()='m5.4xlarge']
+        - selector:
+            xpath: //h4[text()='16 vCPU 64 GiB RAM']/../../div/div[text()='General purpose']
+        - selector:
+            xpath: //h4[text()='4 vCPU 32 GiB RAM']/../../div/div[text()='r5.xlarge']
+        - selector:
+            xpath: //h4[text()='4 vCPU 32 GiB RAM']/../../div/div[text()='Memory optimized']
+        - selector:
+            xpath: //h4[text()='8 vCPU 64 GiB RAM']/../../div/div[text()='r5.2xlarge']
+        - selector:
+            xpath: //h4[text()='8 vCPU 64 GiB RAM']/../../div/div[text()='Memory optimized']
+        - selector:
+            xpath: //h4[text()='16 vCPU 128 GiB RAM']/../../div/div[text()='r5.4xlarge']
+        - selector:
+            xpath: //h4[text()='16 vCPU 128 GiB RAM']/../../div/div[text()='Memory optimized']
+        - selector:
+            xpath: //h4[text()='8 vCPU 16 GiB RAM']/../../div/div[text()='c5.2xlarge']
+        - selector:
+            xpath: //h4[text()='8 vCPU 16 GiB RAM']/../../div/div[text()='Compute optimized']
+        - selector:
+            xpath: //h4[text()='16 vCPU 32 GiB RAM']/../../div/div[text()='c5.4xlarge']
+        - selector:
+            xpath: //h4[text()='16 vCPU 32 GiB RAM']/../../div/div[text()='Compute optimized']
+check_gcp_compute_node_instances_type:
+    elements:
+        - selector:
+            xpath: //h4[text()='4 vCPU 16 GiB RAM']/../../div/div[text()='custom-4-16384']
+        - selector:
+            xpath: //h4[text()='4 vCPU 16 GiB RAM']/../../div/div[text()='General purpose']
+        - selector:
+            xpath: //h4[text()='8 vCPU 32 GiB RAM']/../../div/div[text()='custom-8-32768']
+        - selector:
+            xpath: //h4[text()='8 vCPU 32 GiB RAM']/../../div/div[text()='General purpose']
+        - selector:
+            xpath: //h4[text()='16 vCPU 64 GiB RAM']/../../div/div[text()='custom-16-65536']
+        - selector:
+            xpath: //h4[text()='16 vCPU 64 GiB RAM']/../../div/div[text()='General purpose']
+        - selector:
+            xpath: //h4[text()='4 vCPU 32 GiB RAM']/../../div/div[text()='custom-4-32768-ext']
+        - selector:
+            xpath: //h4[text()='4 vCPU 32 GiB RAM']/../../div/div[text()='Memory optimized']
+        - selector:
+            xpath: //h4[text()='8 vCPU 64 GiB RAM']/../../div/div[text()='custom-8-65536-ext']
+        - selector:
+            xpath: //h4[text()='8 vCPU 64 GiB RAM']/../../div/div[text()='Memory optimized']
+        - selector:
+            xpath: //h4[text()='16 vCPU 128 GiB RAM']/../../div/div[text()='custom-16-131072-ext']
+        - selector:
+            xpath: //h4[text()='16 vCPU 128 GiB RAM']/../../div/div[text()='Memory optimized']
+        - selector:
+            xpath: //h4[text()='8 vCPU 16 GiB RAM']/../../div/div[text()='custom-8-16384']
+        - selector:
+            xpath: //h4[text()='8 vCPU 16 GiB RAM']/../../div/div[text()='Compute optimized']
+        - selector:
+            xpath: //h4[text()='16 vCPU 32 GiB RAM']/../../div/div[text()='custom-16-32768']
+        - selector:
+            xpath: //h4[text()='16 vCPU 32 GiB RAM']/../../div/div[text()='Compute optimized']

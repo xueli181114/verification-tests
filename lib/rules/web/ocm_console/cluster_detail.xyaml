@@ -213,7 +213,7 @@ check_ocp_title_in_detail_page:
         - selector:
             xpath: //h1[text()='<cluster_name>']
         - selector:
-            xpath: //button[text()='Open console']
+            xpath: //button[text()='Add console URL']
         - selector:
             xpath: //button[@aria-label='Refresh']
 refresh_detail_page:
@@ -261,9 +261,7 @@ check_ocp_subscription_settings_in_detail_page:
         - selector:
             xpath: //dl[1]/dt[text()='Subscription obligation']
         - selector:
-            xpath: //a[@href='https://www.redhat.com/en/contact' and text()='Contact sales']
-        - selector:
-            xpath: //dd[text()=' to purchase an OpenShift subscription.']
+            xpath: //button[text()='Edit subscription settings']
 check_osd_title_in_detail_page:
     action: expand_actions_behind_open_console_button
     action: check_osd_actions_behind_open_console_button
@@ -383,11 +381,9 @@ check_ocp_actions_behind_open_console_button:
         - selector:
             xpath: //button[text()='Edit display name']
         - selector:
-            xpath: //button[text()='Edit console URL']
-        - selector:
             xpath: //button[text()='Archive cluster']
         - selector:
-            xpath: //button[text()='Edit cluster registration']
+            xpath: //button[text()='Edit subscription settings']
 check_osd_actions_behind_open_console_button:
     elements:
         - selector:
@@ -433,3 +429,71 @@ check_install_successfully_message_missing:
         selector:
             xpath: //*[text()='Cluster installed successfully']
         missing: true
+check_cluster_history_section_common_part:
+    elements:
+        - selector:
+            xpath: //h2[text()='Cluster history']
+        - selector:
+            xpath: //div[@class='pf-l-split__item']//span[text()='Description']
+        - selector:
+            xpath: //div[@class='pf-l-split__item pf-m-fill']/input[@placeholder='Filter by Description']
+        - selector:
+            xpath: //button[text()='Download history']
+        - selector:
+            xpath: //div[@class='pf-c-table__button-content']/span[text()='Description']
+        - selector:
+            xpath: //div[@class='pf-c-table__button-content']/span[@class='pf-c-table__sort-indicator']
+        - selector:
+            xpath: //div[@class='pf-c-table__button-content']/span[text()='Severity']
+        - selector:
+            xpath: //div[@class='pf-c-table__button-content']/span[text()='Date']
+        - selector:
+            xpath: //div[@class='pf-c-options-menu__toggle pf-m-plain pf-m-text']
+check_default_osd_cluster_history:
+    elements:
+        - selector:
+            xpath: //td[@data-label='Description' and text()='Cluster installed and registered successfully']
+        - selector:
+            xpath: //td[@data-label='Severity' and text()='Info']
+input_description_for_cluster_history:
+    element:
+        selector:
+            xpath: //input[@placeholder='Filter by Description']
+        op: send_keys <filter_keyword>
+        type: input
+clear_description_for_cluster_history:
+    element:
+        selector:
+            xpath: //input[@placeholder='Filter by Description']
+        op: clear
+clear_search_result_of_cluster_history:
+    element:
+        selector:
+            xpath: //button[text()='Clear filters']
+        op: click
+search_cluster_history_by_description:
+    action: clear_description_for_cluster_history
+    action: input_description_for_cluster_history
+    element:
+        selector:
+            xpath: //*[contains(., '<result_keyword>')]
+click_severity_in_cluster_history_section:
+    elements:
+        - selector:
+            xpath: //button[@class='pf-c-dropdown__toggle']
+          op: click
+        - selector:
+            xpath: //button[text()='Severity']
+          op: click
+select_cluster_history_by_severity:
+    action: clear_search_result_of_cluster_history
+    action: click_severity_in_cluster_history_section
+    elements:
+        - selector:
+            xpath: //span[text()='Filter by Severity']/../../../button
+          op: click
+        - selector:
+            xpath: //span[text()='<filter_item>']
+          op: click
+        - selector:
+            xpath: //td[text()='<result_keyword>']
