@@ -429,7 +429,7 @@ check_install_successfully_message_missing:
         selector:
             xpath: //*[text()='Cluster installed successfully']
         missing: true
-check_cluster_history:
+check_cluster_history_section_common_part:
     elements:
         - selector:
             xpath: //h2[text()='Cluster history']
@@ -448,11 +448,13 @@ check_cluster_history:
         - selector:
             xpath: //div[@class='pf-c-table__button-content']/span[text()='Date']
         - selector:
+            xpath: //div[@class='pf-c-options-menu__toggle pf-m-plain pf-m-text']
+check_default_osd_cluster_history:
+    elements:
+        - selector:
             xpath: //td[@data-label='Description' and text()='Cluster installed and registered successfully']
         - selector:
             xpath: //td[@data-label='Severity' and text()='Info']
-        - selector:
-            xpath: //div[@class='pf-c-options-menu__toggle pf-m-plain pf-m-text']
 input_description_for_cluster_history:
     element:
         selector:
