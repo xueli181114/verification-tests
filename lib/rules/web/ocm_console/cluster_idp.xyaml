@@ -531,7 +531,7 @@ delete_idp:
     op: click
   element:
     selector:
-      xpath: //section[@id='accessControlTabContent']//tr/td[@data-label='Name' and text()='<idp_name>']/following-sibling::td/div//li/div[text()='Delete']
+      xpath: //section[@id='accessControlTabContent']//tr/td[@data-label='Name' and text()='<idp_name>']/following-sibling::td/div//li/button[text()='Delete']
     op: click
   action: check_remove_idp_dialog
   action: click_remove_idp_button
