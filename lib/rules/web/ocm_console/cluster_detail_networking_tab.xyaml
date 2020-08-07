@@ -157,17 +157,15 @@ check_invalid_label_error_message:
             xpath: //div[@id='labels_additional_router-helper' and contains(text(), "<error_message>")]
 check_disabled_buttons_on_networking_tab:
     action: networking_tab_loaded
+    action: cancel_button_disabled
+    action: change_settings_button_disabled
     elements:
         - selector:
             xpath: //input[@id='private_api' and @disabled='']
         - selector:
             xpath: //input[@id='private_default_router' and @disabled='']
-        - selector:
-            xpath: //input[@id='enable_additional_router' and @disabled='']
-    action: cancel_button_disabled
-    action: change_settings_button_disabled
-    action: check_network_configuration
-
+    #   - selector:
+    #        xpath: //label[@for='enable_additional_router']/input[@disabled]
 change_additional_router:
     action: click_networking_tab
     action: networking_tab_loaded
