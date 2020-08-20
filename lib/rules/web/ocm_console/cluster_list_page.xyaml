@@ -261,6 +261,7 @@ expand_cluster_actions_on_cluster_list_page:
     element:
         selector:
             xpath: //td[@data-label='Name']/a[contains(text(),'<cluster_name>')]/../following-sibling::td//button[@aria-label='Actions']
+        timeout: 100
         op: click
 close_cluster_actions_on_cluster_list_page:
     action: expand_cluster_actions_on_cluster_list_page

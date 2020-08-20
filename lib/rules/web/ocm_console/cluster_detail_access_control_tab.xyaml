@@ -158,6 +158,7 @@ click_add_user_button_on_page:
    element:
      selector:
        xpath: //div[@class='cluster-details-user-tab-contents']//button[text()='Add user']
+     timeout: 100
      op: click
 click_cancel_add_user_button:
   element:
