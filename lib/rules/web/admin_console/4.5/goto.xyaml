@@ -163,6 +163,10 @@ goto_imagestreams_page:
 goto_one_imagestream_page:
   url: k8s/ns/<project_name>/imagestreams/<imagestream_name>
 
+#templateinstance
+goto_one_templateinstance_page:
+  url: k8s/ns/<project_name>/templateinstances/<templateinstance_name>
+  
 #deploy image
 goto_deploy_image_page:
   url: deploy-image/ns/<project_name>?preselected-ns=<project_name>
@@ -188,6 +192,8 @@ goto_monitoring_alertrules_page:
 goto_alertmanagerconfig_page:
   url: monitoring/alertmanagerconfig
   action: wait_box_loaded
+goto_monitoring_db_k8s_resource_pod:
+  url: monitoring/dashboards/grafana-dashboard-k8s-resources-pod
 
 #node
 goto_node_page:
@@ -316,3 +322,10 @@ goto_cluster_operators:
 goto_global_configuration_page:
   url: settings/cluster/globalconfig
   action: wait_box_loaded 
+
+goto_command_line_tools:
+  url: command-line-tools
+  element:
+    selector:
+      xpath: //div[contains(text(), "Command Line Tools")]
+    timeout: 15

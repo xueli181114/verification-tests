@@ -209,6 +209,7 @@
     :dry_run: --dry-run=<value>
     :image: --image=<value>
     :output: --output <value>
+    :o: -o <value>
     :template: --template=<value>
 :create_job:
   :cmd: oc create job <name> <global_options> <options>
@@ -586,6 +587,7 @@
     :app_repo: <value>
     :code: --code=<value>
     :docker_image: --docker-image=<value>
+    :env: --env=<value>
     :image_stream: --image-stream=<value>
     :labels: --labels=<value>
     :name: --name=<value>

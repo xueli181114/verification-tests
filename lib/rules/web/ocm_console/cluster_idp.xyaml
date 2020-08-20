@@ -531,7 +531,7 @@ delete_idp:
     op: click
   element:
     selector:
-      xpath: //section[@id='accessControlTabContent']//tr/td[@data-label='Name' and text()='<idp_name>']/following-sibling::td/div//li/div[text()='Delete']
+      xpath: //section[@id='accessControlTabContent']//tr/td[@data-label='Name' and text()='<idp_name>']/following-sibling::td/div//li/button[text()='Delete']
     op: click
   action: check_remove_idp_dialog
   action: click_remove_idp_button
@@ -621,15 +621,15 @@ check_openid_issuer_url_validation:
 check_openid_email_validation:
   element:
     selector:
-      xpath: //div//div[@id='openid_email-helper' and text()=' At least one claim is required']
+      xpath: //div/p[text()='Email']/../following-sibling::div[3][text()='At least one claim is required']
 check_openid_name_validation:
   element:
     selector:
-      xpath: //div//div[@id='openid_name-helper' and text()=' At least one claim is required']
+      xpath: //div/p[text()='Name']/../following-sibling::div[3][text()='At least one claim is required']
 check_openid_preferred_username_validation:
   element:
     selector:
-      xpath: //div//div[@id='openid_name-helper' and text()=' At least one claim is required']
+      xpath: //div/p[text()='Preferred username']/../following-sibling::div[3][text()='At least one claim is required']
 check_ldap_idp_validations:
   action: clear_idp_name_field
   action: clear_ldap_id_field

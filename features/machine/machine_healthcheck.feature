@@ -252,11 +252,27 @@ Feature: MachineHealthCheck Test Scenarios
 
     Given I create the 'Ready' unhealthyCondition
 
+    And I wait up to 600 seconds for the steps to pass:
+    """
     When I run the :logs admin command with:
       | resource_name | <%= pod.name %>                |
       | c             | machine-healthcheck-controller |
-    Then the output should match:
-      | maxUnhealthy: 1%             |
-      | Short-circuiting remediation |
+    Then the output should contain:
+      | mhc-<%= machine_set.name %>: total targets: 1,  maxUnhealthy: 1%, unhealthy: 1. Short-circuiting remediation |
+    """
 
+  # @author miyadav@redhat.com
+  # @case_id OCP-33714
+  @admin
+  Scenario: Leverage OpenAPI validation within MHC
+    Given I have an IPI deployment
+    And I switch to cluster admin pseudo user
+    Then I use the "openshift-machine-api" project
+
+    # Create MHC with malformed unhealthy nodes value and empty selectors
+    Given I obtain test data file "cloud/mhc/mhc_malformed.yaml"
+    When I run the :create client command with:
+      | f | mhc_malformed.yaml | 
+    Then the output should contain:
+      | The MachineHealthCheck "mhc-malformed" is invalid: |
 

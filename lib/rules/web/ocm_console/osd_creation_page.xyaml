@@ -486,7 +486,7 @@ check_lb_popover_message:
 byoc_page_loaded:
     elements:
         - selector:
-            xpath: //*[text()='The access credentials you provide here may only be used once. They may not be used to create another OpenShift Dedicated cluster.']
+            xpath: //*[text()='Revoking these credentials in AWS will result in a loss of access to any cluster created with these credentials.']
         - selector:
             xpath: //h3[text()='AWS account details']
         - selector:
