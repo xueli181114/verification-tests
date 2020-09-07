@@ -593,3 +593,13 @@ check_gcp_compute_node_instances_type:
             xpath: //h4[text()='16 vCPU 32 GiB RAM']/../../div/div[text()='custom-16-32768']
         - selector:
             xpath: //h4[text()='16 vCPU 32 GiB RAM']/../../div/div[text()='Compute optimized']
+
+check_aws_account_id_error_message:
+    params:
+        locator_id: account_id
+    action: input_aws_account_id 
+    action: click_create_button
+    element:
+        selector:
+            xpath: //div[contains(text(), '<error_message>')]
+    action: clear_input
