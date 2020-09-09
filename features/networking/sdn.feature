@@ -33,18 +33,40 @@ Feature: SDN related networking scenarios
     And the output should contain "Using userspace Proxier"
     """
 
-  # @author bmeng@redhat.com
+  # @author rbrattai@redhat.com
   # @case_id OCP-11286
   @admin
   @destructive
   Scenario: iptables rules will be repaired automatically once it gets destroyed
+    # we do not detect incomplete rule removal since ~4.3, BZ-1810316
+    # so only test on >= 4.3
+    Given the master version >= "4.3"
     Given I select a random node's host
-    And the node iptables config is verified
+    And the node iptables config is checked
+    And the step succeeded
     And the node service is restarted on the host after scenario
+    And I register clean-up steps:
+    """
+    When the node iptables config is checked
+    Then the step succeeded
+    """
 
-    Given the node standard iptables rules are removed
-    Given 35 seconds have passed
-    Given the node iptables config is verified
+    When the node standard iptables rules are removed
+    # wait full iptablesSyncPeriod, which is 30 seconds by default
+    # This step is a negative check, so we have to wait the full period to make sure the rules were not restored.
+    And 35 seconds have passed
+    When the node iptables config is checked
+    # Removing individual rules will not trigger automatic repair on < 4.3
+    # the check should fail
+    Then the step failed
+    # >= 4.3 we have to flush all the rules and tables to trigger a repair
+    When the node standard iptables rules are completely flushed
+    And I wait up to 60 seconds for the steps to pass:
+    """
+    Given the node iptables config is checked
+    Then the step succeeded
+    """
+
 
   # @author hongli@redhat.com
   # @case_id OCP-13847
@@ -100,6 +122,7 @@ Feature: SDN related networking scenarios
   @admin
   @destructive
   Scenario: The openflow list will be cleaned after deleted the node
+    Given the env is using "OpenShiftSDN" networkType
     Given environment has at least 2 schedulable nodes
     And I store the schedulable workers in the :nodes clipboard
     Given I switch to cluster admin pseudo user
@@ -188,17 +211,14 @@ Feature: SDN related networking scenarios
     Then the step should succeed
     And evaluation of `@result[:response].split("\n")[0]` is stored in the :sdn_pod_rules clipboard
     Then the expression should be true> cb.host_rules==cb.sdn_pod_rules
-    
+
   # @author huirwang@redhat.com
   # @case_id OCP-25707
   @admin
   Scenario: ovs-vswitchd process must be running on all ovs pods
     Given I switch to cluster admin pseudo user
-    And I use the "openshift-sdn" project
-    And all existing pods are ready with labels:
-      | app=ovs |
     When I run cmds on all ovs pods:
-      | bash | -c | pgrep ovs-vswitchd |
+      | pgrep ovs-vswitchd |
     Then the step should succeed
 
   # @author huirwang@redhat.com
@@ -220,11 +240,11 @@ Feature: SDN related networking scenarios
     And evaluation of `pod(1).name` is stored in the :pod2_name clipboard
 
     # Kill ovs process
-    When I run command on the "<%= cb.node_name %>" node's sdn pod:
-      | bash | -c | pgrep ovs-vswitchd |
+    When I run command on the "<%= cb.node_name %>" node's ovs pod:
+      | pgrep | ovs-vswitchd |
     Then the step should succeed
-    When I run command on the "<%= cb.node_name %>" node's sdn pod:
-      | bash | -c | pkill ovs-vswitchd |
+    When I run command on the "<%= cb.node_name %>" node's ovs pod:
+      | pkill | ovs-vswitchd |
     Then the step should succeed
     And I wait up to 60 seconds for the steps to pass:
     """
@@ -243,48 +263,48 @@ Feature: SDN related networking scenarios
     Then the step should succeed
     And the output should contain "Hello OpenShift"
     """
-    
-  # @author weliang@redhat.com	
-  # @case_id OCP-27655	
-  @admin	
-  Scenario: Networking should work on default namespace		
-  #Test for bug https://bugzilla.redhat.com/show_bug.cgi?id=1800324 and https://bugzilla.redhat.com/show_bug.cgi?id=1796157	
-    Given I switch to cluster admin pseudo user	
-    And I use the "default" project	
-    Given I obtain test data file "networking/list_for_pods.json"
-    When I run oc create over "list_for_pods.json" replacing paths:	
-      | ["items"][0]["spec"]["replicas"] | 4 |	
-    Then the step should succeed	
-    And 4 pods become ready with labels:	
-      | name=test-pods |	
-    And evaluation of `pod(0).name` is stored in the :pod1_name clipboard	
-    And evaluation of `pod(0).ip_url` is stored in the :pod1_ip clipboard	
-    And evaluation of `pod(1).ip_url` is stored in the :pod2_ip clipboard	
-    And evaluation of `pod(2).ip_url` is stored in the :pod3_ip clipboard	
-    And evaluation of `pod(3).ip_url` is stored in the :pod4_ip clipboard	
-    And I register clean-up steps:	
-    """	
-    Given I ensure "test-rc" replicationcontroller is deleted	
-    Given I ensure "test-service" service is deleted	
-    """	
 
-    When I execute on the "<%= cb.pod1_name %>" pod:	
-      | curl | --connect-timeout | 5 | <%= cb.pod1_ip %>:8080 |	
-    Then the step should succeed	
-    And the output should contain "Hello OpenShift"	
-    When I execute on the "<%= cb.pod1_name %>" pod:	
-      | curl | --connect-timeout | 5 | <%= cb.pod2_ip %>:8080 |	
-    Then the step should succeed	
-    And the output should contain "Hello OpenShift"	
-    When I execute on the "<%= cb.pod1_name %>" pod:	
-      | curl | --connect-timeout | 5 | <%= cb.pod3_ip %>:8080 |	
-    Then the step should succeed	
-    And the output should contain "Hello OpenShift"	
-    When I execute on the "<%= cb.pod1_name %>" pod:	
-      | curl | --connect-timeout | 5 | <%= cb.pod4_ip %>:8080 |	
-    Then the step should succeed	
+  # @author weliang@redhat.com
+  # @case_id OCP-27655
+  @admin
+  Scenario: Networking should work on default namespace
+  #Test for bug https://bugzilla.redhat.com/show_bug.cgi?id=1800324 and https://bugzilla.redhat.com/show_bug.cgi?id=1796157
+    Given I switch to cluster admin pseudo user
+    And I use the "default" project
+    Given I obtain test data file "networking/list_for_pods.json"
+    When I run oc create over "list_for_pods.json" replacing paths:
+      | ["items"][0]["spec"]["replicas"] | 4 |
+    Then the step should succeed
+    And 4 pods become ready with labels:
+      | name=test-pods |
+    And evaluation of `pod(0).name` is stored in the :pod1_name clipboard
+    And evaluation of `pod(0).ip_url` is stored in the :pod1_ip clipboard
+    And evaluation of `pod(1).ip_url` is stored in the :pod2_ip clipboard
+    And evaluation of `pod(2).ip_url` is stored in the :pod3_ip clipboard
+    And evaluation of `pod(3).ip_url` is stored in the :pod4_ip clipboard
+    And I register clean-up steps:
+    """
+    Given I ensure "test-rc" replicationcontroller is deleted
+    Given I ensure "test-service" service is deleted
+    """
+
+    When I execute on the "<%= cb.pod1_name %>" pod:
+      | curl | --connect-timeout | 5 | <%= cb.pod1_ip %>:8080 |
+    Then the step should succeed
     And the output should contain "Hello OpenShift"
-    
+    When I execute on the "<%= cb.pod1_name %>" pod:
+      | curl | --connect-timeout | 5 | <%= cb.pod2_ip %>:8080 |
+    Then the step should succeed
+    And the output should contain "Hello OpenShift"
+    When I execute on the "<%= cb.pod1_name %>" pod:
+      | curl | --connect-timeout | 5 | <%= cb.pod3_ip %>:8080 |
+    Then the step should succeed
+    And the output should contain "Hello OpenShift"
+    When I execute on the "<%= cb.pod1_name %>" pod:
+      | curl | --connect-timeout | 5 | <%= cb.pod4_ip %>:8080 |
+    Then the step should succeed
+    And the output should contain "Hello OpenShift"
+
   # @author anusaxen@redhat.com
   # @case_id OCP-25787
   @admin
@@ -294,7 +314,7 @@ Feature: SDN related networking scenarios
     And I store "<%= cb.master[0].name %>" node's corresponding default networkType pod name in the :ovnkube_pod clipboard
     Given I switch to cluster admin pseudo user
     And I use the "openshift-ovn-kubernetes" project
-    #Fetching ovn master pod name to be used later 
+    #Fetching ovn master pod name to be used later
     When I run the :get client command with:
       | resource      | pods                                   |
       | fieldSelector | spec.nodeName=<%= cb.master[0].name %> |
@@ -302,7 +322,7 @@ Feature: SDN related networking scenarios
       | output        | json                                   |
     Then the step should succeed
     And evaluation of `@result[:parsed]['items'][0]['metadata']['name']` is stored in the :ovn_master_pod clipboard
-    #Checking controller iteration 1. Need to execute under ovn-contoller container 
+    #Checking controller iteration 1. Need to execute under ovn-contoller container
     When I run the :exec client command with:
       | pod              | <%= cb.ovnkube_pod %> |
       | c                | ovn-controller        |
@@ -315,12 +335,12 @@ Feature: SDN related networking scenarios
     And the output should contain "connected"
     #Checking controller iteration 2
     When I execute on the "<%= cb.ovn_master_pod %>" pod:
-      | bash | -c | ls -l /var/run/ovn/ |
+      | ls -l /var/run/ovn/ |
     Then the step should succeed
     And evaluation of `@result[:response].match(/ovn-controller.\d*\.ctl/)[0]` is stored in the :controller_pid_file clipboard
     #Checking controller iteration 3
     When I execute on the "<%= cb.ovn_master_pod %>" pod:
-      | bash | -c | ovn-appctl -t /var/run/ovn/<%= cb.controller_pid_file %> connection-status |
+      | ovn-appctl -t /var/run/ovn/<%= cb.controller_pid_file %> connection-status |
     Then the step should succeed
     And the output should contain "connected"
     #Checking controller iteration 4

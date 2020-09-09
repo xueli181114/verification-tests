@@ -9,10 +9,13 @@ verify_logged_in_admin_console:
     selector: |-
       var ns = window.localStorage['exp'];
       return ns ? document.documentElement : null;
-    timeout: 120
-  scripts:
-  - command: return window.localStorage['exp']
-    expect_result: true
+    timeout: 60
+  action:
+    if_element:
+      selector:
+        xpath: //div[@id='guided-tour-modal']//button[text()='Skip tour']
+      timeout: 30
+    ref: skip_dev_perspective_tour
 click_console_selector:
   element:
     selector:
@@ -21,7 +24,7 @@ click_console_selector:
 click_specified_idp:
   element:
     selector:
-      xpath: //a[text()='<idp_name>']
+      xpath: //a[text()='<idp_name>'] | (//a)[last()]
     op: click
 set_login_username:
   element:
@@ -40,4 +43,8 @@ login_with_specified_idp:
   action: set_login_username
   action: set_login_password
   action: submit_changes
-  
+check_on_login_page:
+  element:
+    selector:
+      xpath: //header[contains(@class,'pf-c-login__header')]
+    timeout: 30
