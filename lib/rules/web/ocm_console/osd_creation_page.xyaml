@@ -378,8 +378,6 @@ input_aws_credentials:
     action: input_aws_secret_key
 
 check_invalid_aws_credential_error_message:
-    params:
-        error_reason: "The provided AWS credentials are not valid"
     action: input_aws_credentials
     action: fill_in_required_items_on_osd_creation_page
     action: click_create_button
