@@ -343,7 +343,7 @@ check_no_input_errors_to_required_aws_items:
     action: click_create_button
     elements:
         - selector:
-            xpath: //input[@id='account_id']/../div[text()=' Field is required']
+            xpath: //input[@id='account_id']/../div[text()=' AWS account ID is required.']
         - selector:
             xpath: //input[@id='access_key_id']/../div[text()=' Field is required']
         - selector:
@@ -379,16 +379,12 @@ input_aws_credentials:
 
 check_invalid_aws_credential_error_message:
     params:
-        account_id: invalidaccountid
-        aws_access_key: invalidaccesskey
-        aws_secret: invalidawssecret
         error_reason: "The provided AWS credentials are not valid"
-        cluster_name: aws-test
-        machine_type: m5.xlarge
     action: input_aws_credentials
     action: fill_in_required_items_on_osd_creation_page
     action: click_create_button
     action: osd_creation_error_dialog_loaded
+    action: close_error_message_dialog
 
 region_dropdown_loaded:
     element: &region_dropdown
