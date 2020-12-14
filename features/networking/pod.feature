@@ -23,9 +23,9 @@ Feature: Pod related networking scenarios
   @smoke
   Scenario: Container could reach the dns server
     Given I have a project
-    Given I obtain test data file "pods/tc528410/tc_528410_pod.json"
+    Given I obtain test data file "pods/ocp10031/pod.json"
     When I run the :create client command with:
-      | f | tc_528410_pod.json |
+      | f | pod.json |
     And the pod named "hello-pod" becomes ready
     And I run the steps 20 times:
     """
@@ -262,7 +262,7 @@ Feature: Pod related networking scenarios
       | o             | jsonpath={.items[*].metadata.name}    |
     Then the step should succeed
     And evaluation of `@result[:response]` is stored in the :ovnkube_pod_name clipboard
-    And admin ensure "<%= cb.ovnkube_pod_name %>" pod is deleted from the "openshift-ovn-kubernetes" project
+    And admin ensures "<%= cb.ovnkube_pod_name %>" pod is deleted from the "openshift-ovn-kubernetes" project
     #Waiting up to 60 seconds for new ovnkube pod to get created and running on the same node where it was deleted before
     And I wait up to 60 seconds for the steps to pass:
     """
@@ -432,7 +432,7 @@ Feature: Pod related networking scenarios
       | exec_command_arg | /etc/cni/net.d/10-ovn-kubernetes.conf |
     Then the step should succeed
     #Deleting ovnkube-pod will force CNO to rewrite the conf file and bring cluster back to normal after scenario
-    And admin ensure "<%= pod.name %>" pod is deleted from the "openshift-ovn-kubernetes" project after scenario
+    And admin ensures "<%= pod.name %>" pod is deleted from the "openshift-ovn-kubernetes" project after scenario
     #Now make sure readiness probe checking above file will cause one of the two ovnkube-node containers to go down and container ready status change to false
     Given I wait up to 30 seconds for the steps to pass:
     """

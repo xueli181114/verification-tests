@@ -20,9 +20,9 @@ Feature: oc import-image related feature
   # @case_id OCP-10721
   Scenario: Could not import the tag when reference is true
     Given I have a project
-    Given I obtain test data file "image-streams/tc510523.json"
+    Given I obtain test data file "image-streams/ocp10721.json"
     When I run the :create client command with:
-      | filename | tc510523.json |
+      | filename | ocp10721.json |
     Then the step should succeed
     Given I wait up to 15 seconds for the steps to pass:
     """
@@ -37,9 +37,9 @@ Feature: oc import-image related feature
   # @case_id OCP-11760
   Scenario: Import Image when spec.DockerImageRepository not defined
     Given I have a project
-    Given I obtain test data file "image-streams/tc510526.json"
+    Given I obtain test data file "image-streams/ocp11760.json"
     When I run the :create client command with:
-      | filename | tc510526.json |
+      | filename | ocp11760.json |
     Then the step should succeed
     Given I wait up to 15 seconds for the steps to pass:
     """
@@ -57,9 +57,9 @@ Feature: oc import-image related feature
   @smoke
   Scenario: Import image when spec.DockerImageRepository with some tags defined when Kind==DockerImage
     Given I have a project
-    Given I obtain test data file "image-streams/tc510528.json"
+    Given I obtain test data file "image-streams/ocp12052.json"
     When I run the :create client command with:
-      | filename | tc510528.json |
+      | filename | ocp12052.json |
     Then the step should succeed
     Given I wait up to 15 seconds for the steps to pass:
     """
@@ -105,6 +105,8 @@ Feature: oc import-image related feature
       | image_stream | deployment-example:latest   |
     Then the output should match:
       | .*[Ss]uccess.*|
+    And a pod becomes ready with labels:
+      | deploymentconfig=deployment-example |
     When I run the :get client command with:
       | resource        | imagestreams |
     Then the output should match:
@@ -114,7 +116,7 @@ Feature: oc import-image related feature
       | resource        | dc                 |
       | o               | yaml               |
     Then the output should match:
-      |[Ll]astTriggeredImage.*deployment-example@sha256.*|
+      | openshift/deployment-example@sha256 |
     When I run the :delete client command with:
       | object_type | dc |
       | all         |    |
@@ -138,6 +140,8 @@ Feature: oc import-image related feature
       | image_stream | deployment-example:latest   |
     Then the output should match:
       | .*[Ss]uccess.* |
+    And a pod becomes ready with labels:
+      | deploymentconfig=deployment-example |
     When I run the :get client command with:
       | resource        | imagestreams |
     Then the output should match:
@@ -147,7 +151,7 @@ Feature: oc import-image related feature
       | resource        | dc                 |
       | o               | yaml               |
     Then the output should match:
-      | [Ll]astTriggeredImage.*:.*<%= project.name %>\/deployment-example@sha256.*|
+      | <%= project.name %>\/deployment-example@sha256 |
 
   # @author geliu@redhat.com
   # @case_id OCP-12766

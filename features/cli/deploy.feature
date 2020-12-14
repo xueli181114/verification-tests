@@ -86,6 +86,12 @@ Feature: deployment related features
     When I get project dc named "hooks"
     Then the output should match:
       | hooks.*|
+    And I wait up to 60 seconds for the steps to pass:
+    """
+    When I get project dc named "hooks" as JSON
+    Then the output should contain:
+      | "latestVersion": 2 |
+    """
     When I run the :rollback client command with:
       | deployment_name         | hooks-1 |
       | output                  | json    |
@@ -454,7 +460,7 @@ Feature: deployment related features
   # @case_id OCP-10724
   Scenario: deployment hook volume inheritance that volume name was null
     Given I have a project
-    Given I obtain test data file "deployment/tc510606/hooks-null-volume.json"
+    Given I obtain test data file "deployment/ocp10724/hooks-null-volume.json"
     When I run the :create client command with:
       | f | hooks-null-volume.json |
     Then the step should fail
@@ -783,7 +789,7 @@ Feature: deployment related features
   @smoke
   Scenario: Auto cleanup old RCs
     Given I have a project
-    Given I obtain test data file "deployment/tc532411/history-limit-dc.yaml"
+    Given I obtain test data file "deployment/ocp10902/history-limit-dc.yaml"
     When I run the :create client command with:
       | f | history-limit-dc.yaml |
     Then the step should succeed

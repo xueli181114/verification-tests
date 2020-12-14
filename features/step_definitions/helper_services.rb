@@ -187,6 +187,12 @@ Given /^I have LDAP service in my project$/ do
       | port_spec | <%= cb.ldap_port %>:389 |
       })
     step %Q/the step should succeed/
+    @result = BushSlicer::Common::Net.wait_for_tcp(host: "localhost", port: cb.ldap_port, timeout: 60)
+    stats = @result[:props][:stats]
+    logger.info "after #{stats[:seconds]} seconds and #{stats[:iterations]} " <<
+      "iterations, localhost is: " <<
+      "#{@result[:success] ? "accessible" : @result[:error].inspect}"
+    raise "port forwarding is not yet ready" unless @result[:success]
 end
 
 Given /^I have an ssh-git service in the(?: "([^ ]+?)")? project$/ do |project_name|
@@ -260,7 +266,7 @@ Given /^I have an http-git service in the(?: "([^ ]+?)")? project$/ do |project_
   end
 
   @result = user.cli_exec(:create, f: "#{BushSlicer::HOME}/testdata/image/gitserver/gitserver-ephemeral.yaml")
-  # @result = user.cli_exec(:run, name: "gitserver", image: "openshift/origin-gitserver", env: 'GIT_HOME=/var/lib/git')
+  # @result = user.cli_exec(:run, name: "gitserver", image: "quay.io/openshifttest/origin-gitserver@sha256:8062457c330f0da521b340f2dceb13c4852d46ec58e45a9ef276a5ec639a328c", env: 'GIT_HOME=/var/lib/git')
   raise "could not create the http-git-server" unless @result[:success]
 
   @result = user.cli_exec(:policy_add_role_to_user, role: "edit", serviceaccount: "git")
@@ -291,7 +297,7 @@ Given /^I have a git client pod in the#{OPT_QUOTED} project$/ do |project_name|
   end
 
   #@result = user.cli_exec(:create, f: "https://raw.githubusercontent.com/openshift/origin/master/examples/gitserver/gitserver-ephemeral.yaml")
-  @result = user.cli_exec(:run, name: "git-client", image: "openshift/origin-gitserver", env: 'GIT_HOME=/var/lib/git')
+  @result = user.cli_exec(:run, name: "git-client", image: "quay.io/openshifttest/origin-gitserver@sha256:8062457c330f0da521b340f2dceb13c4852d46ec58e45a9ef276a5ec639a328c", env: 'GIT_HOME=/var/lib/git')
   raise "could not create the git client pod" unless @result[:success]
 
   @result = BushSlicer::Pod.wait_for_labeled("run=git-client", count: 1,
@@ -408,7 +414,7 @@ end
 Given /^CA trust is added to the pod-for-ping$/ do
   @result = cb.ping_pod.exec(
     "bash", "-c",
-    "wget https://raw.githubusercontent.com/openshift/verification-tests/master/testdata/routing/ca.pem -O /tmp/ca.pem -T 10 -t 3",
+    "wget https://raw.githubusercontent.com/openshift/verification-tests/master/testdata/routing/ca.pem -O /tmp/ca-test.pem -T 10 -t 3",
     as: user
   )
   raise "cannot get ca cert" unless @result[:success]

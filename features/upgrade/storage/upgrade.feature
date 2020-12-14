@@ -182,10 +182,20 @@ Feature: Storage upgrade tests
   Scenario: Snapshot operator should be in available status after upgrade and can created pod with snapshot - prepare
     Given the master version >= "4.4"
  
-    #Deploy csi hostpath driver 
-    When I run the :new_project client command with:
-      | project_name | csihostpath |
-    
+    Given I store the ready and schedulable workers in the :worker clipboard
+
+    When I run the :get admin command with:
+      | resource      | nodes                     |
+      | resource_name | <%= cb.worker[0].name %>  |
+      | show_label    | true                      |
+      
+    Given evaluation of `@result[:stdout].split(/\n/)[-1].split(/\s/)[-1].split(",").select{|n| n=~ /hostname/}.join("")` is stored in the :label clipboard
+
+    When I run the :oadm_new_project admin command with:
+      | project_name  | csihostpath      |
+      | node_selector | <%= cb.label %>  |
+      | admin         | <%= user.name %> |
+
     Given I switch to cluster admin pseudo user		
     When I use the "csihostpath" project
 
@@ -301,10 +311,10 @@ Feature: Storage upgrade tests
     Given SCC "privileged" is added to the "csi-snapshotter" service account 
     Given SCC "privileged" is added to the "csi-plugin" service account 
 
-    Given I ensures "csi-hostpath-attacher-0" pod is deleted
-    Given I ensures "csi-hostpath-provisioner-0" pod is deleted
-    Given I ensures "csi-hostpath-snapshotter-0" pod is deleted
-    Given I ensures "csi-hostpathplugin-0" pod is deleted
+    Given I ensure "csi-hostpath-attacher-0" pod is deleted
+    Given I ensure "csi-hostpath-provisioner-0" pod is deleted
+    Given I ensure "csi-hostpath-snapshotter-0" pod is deleted
+    Given I ensure "csi-hostpathplugin-0" pod is deleted
 
     And I wait up to 360 seconds for the steps to pass:
     """
