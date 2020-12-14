@@ -230,7 +230,7 @@ click_add_url_button:
   element:
     <<: *active_add_url_button
     op: click
-customer_cloud_subscription_prompt_message_loaded:
+aws_customer_cloud_subscription_prompt_message_loaded:
     elements:
         - selector:
             xpath: //h1[text()='Customer cloud subscription']
@@ -254,7 +254,9 @@ customer_cloud_subscription_prompt_message_loaded:
             xpath: //div[contains(text()[1],'Refer to the')]
 
 close_customer_cloud_subscription_prompt_message:
-    action: customer_cloud_subscription_prompt_message_loaded
+    action: 
+        if_param: AWS
+        ref: aws_customer_cloud_subscription_prompt_message_loaded
     element:
         selector:
             xpath: //button[text()='Close']

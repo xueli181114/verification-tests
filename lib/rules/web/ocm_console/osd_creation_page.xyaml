@@ -10,6 +10,9 @@ osd_creation_page_loaded:
     action: cluster_detail_displayed
     action: cluster_scale_displayed
 input_cluster_name_on_osd_creation_page:
+    params:
+        locator_id: name
+    action: clear_input
     element:
         selector:
             xpath: //input[@id='name']
@@ -354,6 +357,10 @@ check_no_input_errors_to_required_aws_items:
             xpath: //input[@id='access_key_id']/../div[text()=' Field is required']
         - selector:
             xpath: //input[@id='secret_access_key']/../div[text()=' Field is required']
+check_error_to_cluster_name_on_creation_page:
+    element:
+        selector:
+            xpath: //div[@id='name-helper' and contains(text(),'<error_message>')]
 aws_account_id_textbox_loaded:
     element: &aws_account_id_textbox
         selector:
@@ -676,3 +683,35 @@ close_help_message:
         selector:
             xpath: //button[@aria-label='Close']
         op: click
+expand_node_labels:
+    element:
+        selector:
+            xpath: //span[text()='Edit node labels']
+        op: click
+
+close_edit_node_labels:
+    action: expand_node_labels
+
+input_node_label_key:
+    element:
+        selector:
+            xpath: //input[@aria-label='Key-value list key' and @name='node_labels[<row_number>].key']
+        op: clear
+    element:
+        selector:
+            xpath: //input[@aria-label='Key-value list key' and @name='node_labels[<row_number>].key']
+        op: send_keys <label_key>
+input_node_label_value:
+    element:
+        selector:
+            xpath: //input[@aria-label='Key-value list value' and @name='node_labels[<row_number>].value']
+        op: clear
+    element:
+        selector:
+            xpath: //input[@aria-label='Key-value list value' and @name='node_labels[<row_number>].value']
+        op: send_keys <label_value>
+
+check_error_for_labels:
+    element:
+        selector:
+            xpath: //div[@id='labe-help' and text()='<error_message>']
