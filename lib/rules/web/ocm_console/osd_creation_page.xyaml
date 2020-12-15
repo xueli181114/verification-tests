@@ -19,6 +19,10 @@ input_cluster_name_on_osd_creation_page:
             xpath: //input[@id='name']
         op: send_keys <cluster_name>
         type: input
+cluster_name_filled:
+    element:
+        selector:
+            xpath: //input[@id='name' and @value='<cluster_name>']
 
 creation_page_navigation_displayed:
     elements:
