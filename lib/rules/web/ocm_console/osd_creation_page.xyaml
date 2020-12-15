@@ -5,6 +5,7 @@ check_osd_creation_page:
     action: cluster_detail_displayed
     action: cluster_scale_displayed
     action: check_help_messages_on_creation_page
+    action: check_node_draining
 osd_creation_page_loaded:
     action: creation_page_navigation_displayed
     action: cluster_detail_displayed
@@ -147,6 +148,8 @@ check_aws_advanced_elements_loaded:
         - selector:
             xpath: //*[@id='network_pod_cidr' and @placeholder='10.128.0.0/16']
     action: check_advanced_privacy_loaded
+    action: click_install_into_vpc_checkbox
+    action: check_existing_vpc
 check_gcp_advanced_elements_loaded:
     elements:
         - selector:
@@ -522,11 +525,12 @@ check_byoc_creation_page:
     action: check_lb_field_in_creation_page_missing
     action: check_persistent_storage_field_in_creation_page_missing
     action: cluster_detail_displayed
+    action: multi_az_radio_button_loaded
+    action: region_dropdown_loaded
     action: cluster_scale_displayed
     action: check_networking_configuration
     action: select_advanced_radio_button
-    action: multi_az_radio_button_loaded
-    action: region_dropdown_loaded
+    action: check_aws_advanced_elements_loaded
 check_creation_pending_message:
     elements:
         - selector:
@@ -715,3 +719,77 @@ check_error_for_labels:
     element:
         selector:
             xpath: //div[@id='labe-help' and text()='<error_message>']
+
+click_install_into_vpc_checkbox:
+    element:
+        selector:
+            xpath: //input[@id='install_to_vpc']
+        op: click
+
+check_node_draining:
+    elements:
+        - selector:
+            xpath: //h4[text()='Node draining']
+        - selector:
+            xpath: //div[contains(.,'You may set a grace period for how long Pod Disruption Budget-protected workloads will')]
+        - selector:
+            xpath: //div[contains(.,'be respected during updates. After this grace period, any workloads protected by')]
+        - selector:
+            xpath: //div[contains(.,'Pod Disruption Budgets that have not been successfully drained from a node will be')]
+        - selector:
+            xpath: //div[contains(.,'forcibly evicted.')]
+        - selector:
+            xpath: //span[text()='Grace period']
+        - selector:
+            xpath: //div/span[text()='1 hour']
+        - selector:
+            xpath: //div[@class='pf-c-form__group ocm-c-upgrades-pdb-select']/div/div/button[@aria-haspopup='listbox']
+select_node_drain:
+    elements:
+        - selector:
+            xpath: //div[@class='pf-c-form__group ocm-c-upgrades-pdb-select']/div/div/button[@aria-haspopup='listbox']
+          op: click
+        - selector:
+            xpath: //li/button[text()='<drain_value>']
+          op: click
+check_existing_vpc:
+    elements:
+        - selector:
+            xpath: //h4[text()='Existing VPC']
+        - selector:
+            xpath: //div[contains(text(), 'your VPC is configured with a public and a private subnet for each availability zone that you want the cluster installed into.')]
+        - selector:
+            xpath: //span[text()='Availability zone']
+        - selector:
+            xpath: //div[@class='pf-c-form__group ocm-c-create-osd-az-select']/div[@class='pf-c-form__group-control']
+        - selector:
+            xpath: //span[text()='Private subnet ID']
+        - selector:
+            xpath: //input[contains(@id,'private_subnet_id_0')]
+        - selector:
+            xpath: //span[text()='Public subnet ID']
+        - selector:
+            xpath: //input[contains(@id,'public_subnet_id_0')]
+        - selector:
+            xpath: //span[text()='Select availability zone']
+    action: select_multi_az
+    elements:
+        - selector:
+            xpath: //input[contains(@id,'private_subnet_id_1')]
+        - selector:
+            xpath: //input[contains(@id,'public_subnet_id_1')]
+        - selector:
+            xpath: //input[contains(@id,'private_subnet_id_2')]
+        - selector:
+            xpath: //input[contains(@id,'public_subnet_id_2')]
+select_vpc_avalilability_zone:
+    elements:
+        - selector:
+            xpath: (//div[@class='pf-c-form__group ocm-c-create-osd-az-select']/div[@class='pf-c-form__group-control'])[<row_number>]
+          op: click
+        - selector:
+            xpath: //button[text()='<available_zone>']
+          op: click
+        - selector:
+            xpath: //span[text()='<available_zone>']
+    
