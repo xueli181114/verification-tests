@@ -537,3 +537,97 @@ check_node_count_field_on_edit_node_count_dialog:
       xpath: //span[text()='Node count']
   - selector:
       xpath: //select/option[text()='4']
+
+add_machine_pool_dialog_loaded:
+    elements:
+        - selector:
+            xpath: //h1[text()='Add machine pool']
+        - selector:
+            xpath: //span[text()='Compute node instance type']
+        - selector:
+            xpath: //span[text()='Compute node count']
+        - selector:
+            xpath: //select[@aria-label='Compute nodes']
+        - selector:
+            xpath: //span[text()='Edit node labels']
+        - selector:
+            xpath: //span[text()='Machine pool name']
+        - selector:
+            xpath: //input[@id='name']
+        - selector:
+            xpath: //div[@role='dialog']//button[text()='Add machine pool']
+        - selector:
+            xpath: // button[text()='Cancel']
+expand_edit_node_labels:
+    element:
+        selector:
+            xpath: //span[text()='Edit node labels']
+        op: click
+click_add_label_button:
+    element:
+        selector:
+            xpath: //button[text()='Add label']
+        op: click
+add_new_label:
+    action: click_add_label_button
+    action: input_label
+click_delete_node_label_button:
+    element:
+        selector:
+            xpath: //div[@class='space-bottom-md'][<row_number>]/button
+        op: click
+select_node_count:
+    elements:
+        - selector:
+            xpath: //select[@aria-label='Compute nodes']
+          op: click
+        - selector:
+            xpath: //option[@value='<compute_node>']
+          op: click
+input_machine_pool_name:
+    params:
+        locator_id: name
+    action: clear_input
+    element:
+        selector:
+            xpath: //input[@id='name']
+        op: send_keys <machine_pool_name>
+input_label_key:
+    elements:
+        - selector:
+            xpath: //div[@class='space-bottom-md'][<row_number>]/input[@aria-label='Key-value list key']
+          op: clear
+        - selector:
+            xpath: //div[@class='space-bottom-md'][<row_number>]/input[@aria-label='Key-value list key']
+          op: send_keys <label_key>
+input_label_value:
+    elements:
+        - selector:
+            xpath: //div[@class='space-bottom-md'][<row_number>]/input[@aria-label='Key-value list value']
+          op: clear
+        - selector:
+            xpath: //div[@class='space-bottom-md'][<row_number>]/input[@aria-label='Key-value list value']
+          op: send_keys <label_value>
+input_label:
+    action: input_label_key
+    action: input_label_value
+click_add_machine_pool_button_on_dialog:
+    element:
+        selector:
+            xpath: //div[@role='dialog']//button[text()='Add machine pool']
+        op: click
+
+check_machine_pool_dialog:
+    action: add_machine_pool_dialog_loaded
+    action: expand_edit_node_labels
+    action: click_add_label_button
+    action: input_label
+    action: select_compute_node_in_dialog
+
+check_existed_label:
+    elements:
+        - selector:
+            xpath: //div[@class='space-bottom-md']/input[@aria-label='Key-value list value' and @value='<label_value>']
+        - selector:
+            xpath: //div[@class='space-bottom-md']/input[@aria-label='Key-value list key' and @value='<label_key>']
+
