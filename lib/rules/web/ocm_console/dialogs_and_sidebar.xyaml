@@ -584,6 +584,28 @@ select_node_count:
         - selector:
             xpath: //option[@value='<compute_node>']
           op: click
+select_machine_pool_name:
+    elements:
+        - selector:
+            xpath: //select[@id='machine_pool']
+          op: click
+        - selector:
+            xpath: //option[@value='<machine_pool_name>']
+          op: click
+
+edit_machine_pool:
+    action:
+        if_param: machine_pool_name
+        ref: click_scale_machine_pool_button
+    action:
+        if_not_param: machine_pool_name
+        ref: go_to_edit_node_count_dialog_on_cluster_detail_page
+    action:
+        if_param: machine_pool_name
+        ref: select_machine_pool_name
+    action: select_node_count
+    action: click_apply_button
+
 input_machine_pool_name:
     params:
         locator_id: name

@@ -30,6 +30,12 @@ check_specified_machine_pool:
         - selector:
             xpath: //table[@aria-label='Machine pools']/tbody/tr[<row_number>]/td[4][text()='<node_count>']
 
+check_machine_pool_disappeared:
+    element:
+        selector:
+            xpath: //table[@aria-label='Machine pools']/tbody/tr/td[1][text()='<machine_pool_name>']
+        missing: true
+
 click_add_machine_pool_button:
     element:
         selector:
