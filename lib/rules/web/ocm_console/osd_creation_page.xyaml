@@ -39,7 +39,7 @@ page_title_displayed:
 cluster_detail_displayed:
     elements:
         - selector:
-            xpath: //h3[@class='osd-page-header' and text()='Cluster details']
+            xpath: //h3[text()='Cluster details']
 cluster_scale_displayed:
     elements:
     - selector:
@@ -96,7 +96,7 @@ select_basic_radio_button:
 check_networking_configuration:
     elements:
         - selector:
-            xpath: //h4[text()='Networking']
+            xpath: //h3[text()='Networking']
         - selector:
             xpath: //span[text()='Network configuration']
         - selector:
@@ -152,8 +152,7 @@ check_aws_advanced_elements_loaded:
         - selector:
             xpath: //*[@id='network_pod_cidr' and @placeholder='10.128.0.0/16']
     action: check_advanced_privacy_loaded
-    action: click_install_into_vpc_checkbox
-    action: check_existing_vpc
+    
 check_gcp_advanced_elements_loaded:
     elements:
         - selector:
@@ -359,11 +358,11 @@ check_no_input_errors_to_required_aws_items:
     action: click_create_button
     elements:
         - selector:
-            xpath: //input[@id='account_id']/../div[text()=' AWS account ID is required.']
+            xpath: //div[@id='account_id-helper' and text()=' AWS account ID is required.']
         - selector:
-            xpath: //input[@id='access_key_id']/../div[text()=' Field is required']
+            xpath: //div[@id='access_key_id-helper' and text()=' Field is required']
         - selector:
-            xpath: //input[@id='secret_access_key']/../div[text()=' Field is required']
+            xpath: //div[@id='secret_access_key-helper' and text()=' Field is required']
 check_error_to_cluster_name_on_creation_page:
     element:
         selector:
@@ -523,6 +522,8 @@ byoc_page_loaded:
     action: aws_account_id_textbox_loaded
     action: aws_access_key_textbox_loaded
     action: aws_access_secret_textbox_loaded
+    action: select_advanced_radio_button
+    
 
 check_byoc_creation_page:
     action: byoc_page_loaded
@@ -535,6 +536,8 @@ check_byoc_creation_page:
     action: check_networking_configuration
     action: select_advanced_radio_button
     action: check_aws_advanced_elements_loaded
+    action: click_install_into_vpc_checkbox
+    action: check_existing_vpc
 check_creation_pending_message:
     elements:
         - selector:

@@ -500,7 +500,9 @@ check_change_cluster_privacy_settings_dialog:
         - selector:
             xpath: //h1[text()='Change cluster privacy settings?']
         - selector:
-            xpath: //div[contains(.,'Changes may be required in AWS to maintain access. It may take up to one hour for the settings to become effective.')]
+            xpath: //div[contains(.,'Changes may be required in AWS to maintain access.')]
+        - selector:
+            xpath: //div[contains(.,'It may take up to one hour for the settings to become effective.')]
         - selector:
             xpath: //a[@href='https://docs.openshift.com/dedicated/4/cloud_infrastructure_access/dedicated-aws-private-cluster.html' and text()='Learn more']
     action: change_settings_button_on_dialog_enabled

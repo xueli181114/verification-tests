@@ -35,6 +35,15 @@ check_machine_pool_disappeared:
         selector:
             xpath: //table[@aria-label='Machine pools']/tbody/tr/td[1][text()='<machine_pool_name>']
         missing: true
+    action:
+        if_param: row_number
+        ref: check_machine_pool_row_disappeared
+check_machine_pool_row_disappeared:
+    element:
+        selector:
+            xpath: //table[@aria-label='Machine pools']/tbody/tr[<row_number>]
+        missing: true
+        timeout: 5
 
 click_add_machine_pool_button:
     element:
