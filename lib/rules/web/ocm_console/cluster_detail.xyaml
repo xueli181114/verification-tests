@@ -1,7 +1,7 @@
 #------------------------------ This file is used for cluster detail defination -------------------
 cluster_detail_page_loaded:
     action: overview_tab_loaded
-    action: monitoring_tab_loaded
+
 check_disabled_actions_on_cluster_detail_page:
     element:
         selector:
