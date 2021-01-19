@@ -466,6 +466,7 @@
     :sort_by: --sort-by=<value>
     :template: --template=<value>
     :w: --watch=<value>
+    :selector: --selector=<value>
 :help:
   :cmd: oc help
   :options:
@@ -1085,6 +1086,7 @@
   :options:
     :buildconfig: <value>
     :build_arg: --build-arg=<value>
+    :build_loglevel: --build-loglevel=<value>
     :commit: --commit=<value>
     :env: --env=<value>
     :follow: --follow=<value>

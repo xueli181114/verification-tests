@@ -157,7 +157,7 @@ Feature: Service related networking scenarios
     # Create a svc with externalIP
     Given I switch to the first user
     Given I obtain test data file "networking/externalip_service1.json"
-    And I wait up to 300 seconds for the steps to pass:
+    And I wait up to 500 seconds for the steps to pass:
     """
     When I run oc create over "externalip_service1.json" replacing paths:
       | ["spec"]["externalIPs"][0] | <%= cb.hostip %> |
@@ -165,17 +165,17 @@ Feature: Service related networking scenarios
     """
 
     # Create a pod
-    Given I obtain test data file "routing/web-server-1.yaml"
+    Given I obtain test data file "networking/externalip_pod.yaml"
     When I run the :create client command with:
-      | f | web-server-1.yaml |
+      | f | externalip_pod.yaml |
     Then the step should succeed
-    And the pod named "web-server-1" becomes ready
-
+    And the pod named "externalip-pod" becomes ready
+ 
     # Curl externalIP:portnumber should pass
     When I execute on the pod:
       | /usr/bin/curl | --connect-timeout | 10 | <%= cb.hostip %>:27017 |
     Then the output should contain:
-      | Hello-OpenShift |
+      | Hello OpenShift! |
 
   # @author weliang@redhat.com
   # @case_id OCP-24692
@@ -196,7 +196,7 @@ Feature: Service related networking scenarios
     # Create a svc with externalIP/22.2.2.10 which is in 22.2.2.0/25
     Given I have a project
     Given I obtain test data file "networking/externalip_service1.json"
-    And I wait up to 300 seconds for the steps to pass:
+    And I wait up to 500 seconds for the steps to pass:
     """
     When I run oc create over "externalip_service1.json" replacing paths:
       | ["spec"]["externalIPs"][0] | 22.2.2.10 |
@@ -205,7 +205,7 @@ Feature: Service related networking scenarios
 
     # Create a svc with externalIP/22.2.2.130 which is not in 22.2.2.0/25
     Given I obtain test data file "networking/externalip_service1.json"
-    And I wait up to 300 seconds for the steps to pass:
+    And I wait up to 500 seconds for the steps to pass:
     """
     When I run oc create over "externalip_service1.json" replacing paths:
       | ["spec"]["externalIPs"][0] | 22.2.2.130 |
@@ -213,17 +213,17 @@ Feature: Service related networking scenarios
     """
 
     # Create a pod
-    Given I obtain test data file "routing/web-server-1.yaml"
+    Given I obtain test data file "networking/externalip_pod.yaml"
     When I run the :create client command with:
-      | f | web-server-1.yaml |
+      | f | externalip_pod.yaml |
     Then the step should succeed
-    And the pod named "web-server-1" becomes ready
+    And the pod named "externalip-pod" becomes ready
 
     # Curl externalIP:portnumber on new pod
     When I execute on the pod:
       | /usr/bin/curl | -k | 22.2.2.130:27017 |
     Then the output should contain:
-      | Hello-OpenShift |
+      | Hello OpenShift! |
 
   # @author weliang@redhat.com
   # @case_id OCP-24670
@@ -249,7 +249,7 @@ Feature: Service related networking scenarios
     # Create a svc with externalIP
     Given I switch to the first user
     Given I obtain test data file "networking/externalip_service1.json"
-    And I wait up to 300 seconds for the steps to pass:
+    And I wait up to 500 seconds for the steps to pass:
     """
     When I run oc create over "externalip_service1.json" replacing paths:
       | ["spec"]["externalIPs"][0] | <%= cb.hostip %> |
@@ -275,7 +275,7 @@ Feature: Service related networking scenarios
     # Create a svc with externalIP/22.2.2.10 which is in rejectedCIDRs
     Given I have a project
     Given I obtain test data file "networking/externalip_service1.json"
-    And I wait up to 300 seconds for the steps to pass:
+    And I wait up to 500 seconds for the steps to pass:
     """
     When I run oc create over "externalip_service1.json" replacing paths:
       | ["spec"]["externalIPs"][0] | 22.2.2.10 |
@@ -284,7 +284,7 @@ Feature: Service related networking scenarios
 
     # Create a svc with externalIP/22.2.2.130 which is in rejectedCIDRs
     Given I obtain test data file "networking/externalip_service1.json"
-    And I wait up to 300 seconds for the steps to pass:
+    And I wait up to 500 seconds for the steps to pass:
     """
     When I run oc create over "externalip_service1.json" replacing paths:
       | ["spec"]["externalIPs"][0] | 22.2.2.130 |
@@ -316,7 +316,7 @@ Feature: Service related networking scenarios
     # Create a svc with externalIP
     Given I switch to the first user
     Given I obtain test data file "networking/externalip_service1.json"
-    And I wait up to 300 seconds for the steps to pass:
+    And I wait up to 500 seconds for the steps to pass:
     """
     When I run oc create over "externalip_service1.json" replacing paths:
       | ["spec"]["externalIPs"][0] | <%= cb.host1ip %> |
@@ -324,17 +324,17 @@ Feature: Service related networking scenarios
     """
 
     # Create a pod
-    Given I obtain test data file "routing/web-server-1.yaml"
+    Given I obtain test data file "networking/externalip_pod.yaml"
     When I run the :create client command with:
-      | f | web-server-1.yaml |
+      | f | externalip_pod.yaml |
     Then the step should succeed
-    And the pod named "web-server-1" becomes ready
+    And the pod named "externalip-pod" becomes ready
 
     # Curl externalIP:portnumber from pod
     When I execute on the pod:
       | /usr/bin/curl | --connect-timeout | 10 | <%= cb.host1ip %>:27017 |
     Then the output should contain:
-      | Hello-OpenShift |
+      | Hello OpenShift! |
 
     # Delete created pod and svc
     When I run the :delete client command with:
@@ -344,7 +344,7 @@ Feature: Service related networking scenarios
 
     # Create a svc with second externalIP
     Given I obtain test data file "networking/externalip_service1.json"
-    And I wait up to 300 seconds for the steps to pass:
+    And I wait up to 500 seconds for the steps to pass:
     """
     When I run oc create over "externalip_service1.json" replacing paths:
       | ["spec"]["externalIPs"][0] | <%= cb.host2ip %> |
@@ -352,17 +352,17 @@ Feature: Service related networking scenarios
     """
 
     # Create a pod
-    Given I obtain test data file "routing/web-server-1.yaml"
+   Given I obtain test data file "networking/externalip_pod.yaml"
     When I run the :create client command with:
-      | f | web-server-1.yaml |
+      | f | externalip_pod.yaml |
     Then the step should succeed
-    And the pod named "web-server-1" becomes ready
+    And the pod named "externalip-pod" becomes ready
 
     # Curl externalIP:portnumber on new pod
     When I execute on the pod:
       | /usr/bin/curl | --connect-timeout | 10 | <%= cb.host2ip %>:27017 |
     Then the output should contain:
-      | Hello-OpenShift |
+      | Hello OpenShift! |
 
   # @author anusaxen@redhat.com
   # @case_id OCP-26035
@@ -405,7 +405,7 @@ Feature: Service related networking scenarios
     # Create loadbalancer service
     When I run the :create_service_loadbalancer client command with:
       | name | hello-pod |
-      | tcp  | 5678:8080 |
+      | tcp  | 5678:8081 |
     Then the step should succeed
 
     # Get the external ip of the loadbaclancer service

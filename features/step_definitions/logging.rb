@@ -10,6 +10,7 @@ Given /^logging service has been installed successfully$/ do
   else
     example_cr = "<%= BushSlicer::HOME %>/testdata/logging/clusterlogging/example_indexmanagement.yaml"
   end
+  step %Q/logging operators are installed successfully/
   step %Q/I create clusterlogging instance with:/, table(%{
     | remove_logging_pods | false         |
     | crd_yaml            | #{example_cr} |
@@ -81,6 +82,12 @@ Given /^logging operators are installed successfully$/ do
       end
     end
   end
+  # check csv existense
+  success = wait_for(300, interval: 10) {
+    csv = subscription('elasticsearch-operator').current_csv
+    !(csv.nil?) && cluster_service_version(csv).exists?
+  }
+  raise "CSV #{csv} isn't created" unless success
   step %Q/elasticsearch operator is ready/
 
   # Create namespace
@@ -124,6 +131,12 @@ Given /^logging operators are installed successfully$/ do
       end
     end
   end
+  # check csv existense
+  success = wait_for(300, interval: 10) {
+    csv = subscription('cluster-logging').current_csv
+    !(csv.nil?) && cluster_service_version(csv).exists?
+  }
+  raise "CSV #{csv} isn't created" unless success
   step %Q/cluster logging operator is ready/
 end
 
@@ -167,7 +180,7 @@ Given /^I wait for clusterlogging(?: named "(.+)")? with #{QUOTED} log collector
     | component=kibana |
   })
   cl.wait_until_kibana_is_ready
-  # lastly check the cronjob. 
+  # lastly check the cronjob.
   if env.version_cmp('4.5', user: user) < 0
     raise "Failed to find cronjob for curator" if cron_job('curator').schedule.nil?
   else
@@ -210,23 +223,23 @@ Given /^logging service is removed successfully$/ do
   end
 end
 
-Given /^I wait until #{QUOTED} log collector is ready$/ do | log_collector |  
+Given /^I wait until #{QUOTED} log collector is ready$/ do | log_collector |
   step %Q/#{daemon_set(log_collector).replica_counters[:desired]} pods become ready with labels:/, table(%{
     | logging-infra=#{log_collector} |
-  }) 
+  })
 end
 
 Given /^I wait until ES cluster is ready$/ do
   step %Q/#{cluster_logging('instance').logstore_node_count.to_i} pods become ready with labels:/, table(%{
     | cluster-name=elasticsearch,component=elasticsearch |
-  }) 
+  })
   cluster_logging('instance').wait_until_es_is_ready
 end
 
-Given /^I wait until kibana is ready$/ do 
+Given /^I wait until kibana is ready$/ do
   step %Q/#{deployment('kibana').replica_counters[:desired]} pods become ready with labels:/, table(%{
     | component=kibana |
-  }) 
+  })
 end
 
 Given /^cluster logging operator is ready$/ do
@@ -339,7 +352,7 @@ Given /^the logging operators are redeployed after scenario$/ do
   }
 end
 
-# from logging 4.5, we don't have index project.$project-name.xxxxx, so we need other ways to check the project logs 
+# from logging 4.5, we don't have index project.$project-name.xxxxx, so we need other ways to check the project logs
 # es_util --query=*/_count -d '{"query": {"match": {"kubernetes.namespace_name": "project-name"}}}'
 # if count > 0, then the project logs are received
 When /^I wait(?: (\d+) seconds)? for the project #{QUOTED} logs to appear in the ES pod(?: with labels #{QUOTED})?$/ do |seconds, project_name, pod_labels|
@@ -374,22 +387,21 @@ Given /^logging eventrouter is installed in the cluster$/ do
   step %Q/admin ensures "eventrouter" service_account is deleted from the "openshift-logging" project after scenario/
   step %Q/admin ensures "eventrouter" config_map is deleted from the "openshift-logging" project after scenario/
   step %Q/admin ensures "eventrouter" deployment is deleted from the "openshift-logging" project after scenario/
-  # get image registry from CLO
-  image_registry = deployment('cluster-logging-operator').container_spec(name: 'cluster-logging-operator').image
   image_version = cluster_version('version').channel.split('-')[1]
-  if image_registry.include?('image-registry.openshift-image-registry.svc:5000')
-    step %Q/I process and create:/, table(%{
-      | f | #{BushSlicer::HOME}/testdata/logging/eventrouter/internal_eventrouter.yaml |
-    })
-    step %Q/the step should succeed/
+  if image_content_source_policy('brew-registry').exists?
+    registry = image_content_source_policy('brew-registry').mirror_repository[0]
+    image = "#{registry}/rh-osbs/openshift-ose-logging-eventrouter:v#{image_version}"
   else
+    # get image registry from CLO
+    image_registry = deployment('cluster-logging-operator').container_spec(name: 'cluster-logging-operator').image
     registry = image_registry.split('@')[0].gsub("cluster-logging-operator", "logging-eventrouter")
-    step %Q/I process and create:/, table(%{
-      | f | #{BushSlicer::HOME}/testdata/logging/eventrouter/internal_eventrouter.yaml |
-      | p | IMAGE=#{registry}:v#{image_version}   |
-    })
-    step %Q/the step should succeed/
+    image = "#{registry}:v#{image_version}"
   end
+  step %Q/I process and create:/, table(%{
+    | f | #{BushSlicer::HOME}/testdata/logging/eventrouter/internal_eventrouter.yaml |
+    | p | IMAGE=#{image} |
+  })
+  step %Q/the step should succeed/
   step %Q/a pod becomes ready with labels:/, table(%{
     | component=eventrouter |
   })
@@ -407,7 +419,7 @@ Given /^I create pipelinesecret(?: named#{OPT_QUOTED})?(?: with sharedkey#{OPT_Q
   secret_name ||= "pipelinesecret"
   step %Q/admin ensures "#{secret_name}" secret is deleted from the "openshift-logging" project after scenario/
   if shared_key != nil
-    step %Q/I run the :create_secret client command with:/, table(%{
+    step %Q/I run the :create_secret admin command with:/, table(%{
       | name         | #{secret_name}           |
       | secret_type  | generic                  |
       | from_file    | tls.key=logging-es.key   |
@@ -418,7 +430,7 @@ Given /^I create pipelinesecret(?: named#{OPT_QUOTED})?(?: with sharedkey#{OPT_Q
       | n            | openshift-logging        |
     })
   else
-    step %Q/I run the :create_secret client command with:/, table(%{
+    step %Q/I run the :create_secret admin command with:/, table(%{
       | name         | #{secret_name}           |
       | secret_type  | generic                  |
       | from_file    | tls.key=logging-es.key   |
@@ -471,6 +483,11 @@ end
 Given /^(fluentd|elasticsearch|rsyslog) receiver is deployed as (secure|insecure)(?: in the#{OPT_QUOTED} project)?$/ do | server, security, project_name |
   project_name ||= "openshift-logging"
   project(project_name)
+  if env.version_lt('4.6', user: user)
+    file_dir = "#{BushSlicer::HOME}/testdata/logging/logforwarding"
+  else
+    file_dir = "#{BushSlicer::HOME}/testdata/logging/clusterlogforwarder"
+  end
   case server
   when "fluentd"
     receiver_name = "fluentdserver"
@@ -492,11 +509,11 @@ Given /^(fluentd|elasticsearch|rsyslog) receiver is deployed as (secure|insecure
       if project_name != "openshift-logging"
         step %Q/I create pipelinesecret named "fluentdserver" with sharedkey "fluentdserver"/
       end
-      configmap_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/fluentd/secure/configmap.yaml"
-      deployment_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/fluentd/secure/fluentdserver_deployment.yaml"
+      configmap_file = "#{file_dir}/fluentd/secure/configmap.yaml"
+      deployment_file = "#{file_dir}/fluentd/secure/deployment.yaml"
     else
-      configmap_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/fluentd/insecure/configmap.yaml"
-      deployment_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/fluentd/insecure/fluentdserver_deployment.yaml"
+      configmap_file = "#{file_dir}/fluentd/insecure/configmap.yaml"
+      deployment_file = "#{file_dir}/fluentd/insecure/deployment.yaml"
     end
 
   when "elasticsearch"
@@ -517,18 +534,18 @@ Given /^(fluentd|elasticsearch|rsyslog) receiver is deployed as (secure|insecure
       })
       step %Q/the step should succeed/
       step %Q/I create pipelinesecret named "pipelinesecret"/
-      configmap_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/elasticsearch/secure/configmap.yaml"
-      deployment_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/elasticsearch/secure/deployment.yaml"
+      configmap_file = "#{file_dir}/elasticsearch/secure/configmap.yaml"
+      deployment_file = "#{file_dir}/elasticsearch/secure/deployment.yaml"
     else
-      configmap_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/elasticsearch/insecure/configmap.yaml"
-      deployment_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/elasticsearch/insecure/deployment.yaml"
+      configmap_file = "#{file_dir}/elasticsearch/insecure/configmap.yaml"
+      deployment_file = "#{file_dir}/elasticsearch/insecure/deployment.yaml"
     end
 
   when "rsyslog"
     receiver_name = "rsyslogserver"
     pod_label = "component=rsyslogserver"
-    configmap_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/rsyslog/insecure/rsyslogserver_configmap.yaml"
-    deployment_file = "#{BushSlicer::HOME}/testdata/logging/logforwarding/rsyslog/insecure/rsyslogserver_deployment.yaml"
+    configmap_file = "#{file_dir}/rsyslog/insecure/rsyslogserver_configmap.yaml"
+    deployment_file = "#{file_dir}/rsyslog/insecure/rsyslogserver_deployment.yaml"
 
   end
 
@@ -578,8 +595,8 @@ Given /^I upgrade the operator with:$/ do | table |
   end
   # wait for the ES cluster to be ready
   success = wait_for(600, interval: 10) {
-    elasticsearch('elasticsearch').cluster_health == "green" && 
-    (elasticsearch('elasticsearch').nodes_status.last["upgradeStatus"].empty? || 
+    elasticsearch('elasticsearch').cluster_health == "green" &&
+    (elasticsearch('elasticsearch').nodes_status.last["upgradeStatus"].empty? ||
     elasticsearch('elasticsearch').nodes_status.last["upgradeStatus"]["scheduledUpgrade"].nil?)
   }
   raise "ES cluster isn't in a good status" unless success
@@ -692,7 +709,7 @@ Given /^I check the cronjob status$/ do
         raise "can't recreate cronjobs" unless success
       end
     end
-    
+
     # check the new jobs could be successfully
     # wait up to 1 minute for the jobs to complete
     jobs = BushSlicer::Job.list(user: user, project: project)
@@ -745,7 +762,7 @@ Given /^I deploy kafka in the #{QUOTED} project via amqstream operator$/ do | pr
   raise "Error kafka cluster not ready" unless @result[:success]
 end
 
-# Get some records from a kafka topic 
+# Get some records from a kafka topic
 # https://datacadamia.com/dit/kafka/kafka-console-consumer
 Given /^I get(?: (\d+))? records from the #{QUOTED} kafka topic in the #{QUOTED} project$/ do | record_num, topic_name, project_name|
   record_num = record_num ? record_num.to_str : "10"

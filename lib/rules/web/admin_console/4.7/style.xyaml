@@ -40,7 +40,7 @@ check_filter_side_panel_style:
 check_filter_panel_style:
   elements:
   - selector:
-      xpath: //div[contains(@class, 'filter-panel-pf')]/form[contains(@class, 'filter-panel-pf-category')]//div[contains(@class, 'filter-panel-pf-category-item')]
+      xpath: //ul[contains(@class, 'vertical-tabs-pf')]/li[contains(@class, 'vertical-tabs-pf-tab')]
 check_warning_alert_style:
   elements:
   - selector:
@@ -61,9 +61,9 @@ check_info_alert_style:
   - selector:
       xpath: //div[contains(@class, 'pf-c-alert') and contains(@class, 'pf-m-info')]
     timeout: 30
-check_alert_style_on_deploy_image_page: {}
-check_alert_style_on_create_app_page:
-  action: create_app_from_imagestream
+check_alert_style_on_deploy_image_page:
+  action: goto_deploy_image_page
+  action: search_and_deploy_image
   action: check_error_alert_style
 check_alert_style_on_dc_env_page:
   action: goto_one_dc_page

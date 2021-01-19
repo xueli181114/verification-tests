@@ -253,13 +253,13 @@ close_breakdown_modal:
 check_on_monitoring_metrics_page:
   elements:
   - selector:
-      xpath: //button[text()='Add Query']
-    timeout: 20
+      xpath: //button[text()='Add query']
+    timeout: 30
   - selector:
-      xpath: //button[text()='Run Queries']
+      xpath: //button[text()='Run queries']
   - selector:
       xpath: //div[contains(@class,'query-browser__graph-container')]
-    timeout: 20
+    timeout: 30
 check_textarea:
   element:
     selector:
@@ -622,7 +622,7 @@ check_charts_in_project_utilization:
       xpath: //h4[text()='Filesystem']/ancestor::div[@data-test-id='utilization-item']//div[contains(@class,'pf-c-chart')]
     timeout: 40
   - selector:
-      xpath: //h4[text()='Network Transfer']/ancestor::div[@data-test-id='utilization-item']//div[contains(@class,'pf-c-chart')]
+      xpath: //h4[text()='Network transfer']/ancestor::div[@data-test-id='utilization-item']//div[contains(@class,'pf-c-chart')]
     timeout: 40
   - selector:
       xpath: //h4[text()='Pod count']/ancestor::div[@data-test-id='utilization-item']//div[contains(@class,'pf-c-chart')]
@@ -658,8 +658,9 @@ check_on_dev_monitoring_page:
   elements:
   - selector:
       xpath: //a[contains(@href,'/dev-monitoring/ns/<project_name>/metrics') and text()='Metrics']
+    timeout: 30
   - selector:
-      xpath: //div[contains(@class,'query-browser__graph-container') and contains(@class,'pf-c-chart')]
+      xpath: //div[contains(@class,'pf-c-chart')]
 check_no_errors_in_charts:
   elements:
   - selector:

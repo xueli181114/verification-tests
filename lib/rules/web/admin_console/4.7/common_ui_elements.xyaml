@@ -24,8 +24,11 @@ click_edit_yaml_link:
       xpath: //div[contains(@class,'view-lines')]
     timeout: 20
 check_yaml_line_content:
-  element:
-    selector:
+  elements:
+  - selector:
+      xpath: //div[contains(@class, 'ocs-yaml-editor__wrapper')]
+    timeout: 60
+  - selector:
       xpath: //div[contains(@class,'view-line') and contains(.,'<key>') and contains(.,'<value>')]
 click_create_button:
   elements:
@@ -175,7 +178,7 @@ click_instances_tab:
   action: click_tab
 click_access_review_tab:
   params:
-    tab_name: Access Review
+    tab_name: Access review
   action: click_tab
 click_schema_tab:
   params:
@@ -342,11 +345,45 @@ check_link_in_breadcrumb:
   element:
     selector:
       xpath: //ol[@class='pf-c-breadcrumb__list']/li[<layer_number>]/a[contains(@data-test-id,'breadcrumb-link') and contains(@href,'<link>') and translate(normalize-space(text()), ' ','')='<text>']
-
+check_installplandetails_text_in_breadcrumb:
+  params:
+    layer_number: 2
+    text: InstallPlan details
+  action: check_text_in_breadcrumb
+check_projectdetails_text_in_breadcrumb:
+  params:
+    layer_number: 2
+    text: Project details
+  action: check_text_in_breadcrumb
+check_replicasetdetails_text_in_breadcrumb:
+  params:
+    layer_number: 2
+    text: Replica Set details
+  action: check_text_in_breadcrumb
+check_machinedetails_text_in_breadcrumb:
+  params:
+    layer_number: 2
+    text: Machine details
+  action: check_text_in_breadcrumb
+check_machinesetdetails_text_in_breadcrumb:
+  params:
+    layer_number: 2
+    text: Machine Set details
+  action: check_text_in_breadcrumb
+check_containerdetails_text_in_breadcrumb:
+  params:
+    layer_number: 3
+    text: Container Details
+  action: check_text_in_breadcrumb
+check_imagestreamtagdetails_text_in_breadcrumb:
+  params:
+    layer_number: 3
+    text: Image Stream Tag Details
+  action: check_text_in_breadcrumb
 check_text_in_breadcrumb:
   element:
     selector:
-      xpath: //ol[@class='pf-c-breadcrumb__list']/li[<layer_number>][translate(normalize-space(text()), ' ','')='<text>']
+      xpath: //ol[@class='pf-c-breadcrumb__list']/li[<layer_number>][normalize-space(text())='<text>']
 
 check_row_filter_on_page:
   elements:
@@ -358,7 +395,7 @@ confirm_deletion:
 check_resource_item:
   elements:
   - selector:
-      xpath: //span[contains(@class,'co-m-resource-icon') and @title='<resource_type>']/parent::span[contains(@class,'co-resource-item')]//a[@class='co-resource-item__resource-name' and text()='<resource_name>' and @href='<resource_link>']
+      xpath: //span[contains(@class,'co-m-resource-icon') and @title='<resource_type>']/parent::span[contains(@class,'co-resource-item')]//a[@class='co-resource-item__resource-name' and text()='<resource_name>' and contains(@href, '<resource_link>')]
 check_resources_title_on_page:
   elements:
   - selector:
@@ -412,7 +449,7 @@ check_max_pods_column_in_table:
   action: check_column_in_table
 check_highest_severity_column_in_table:
   params:
-    field: Highest Severity
+    field: Highest severity
   action: check_column_in_table
 check_affected_pods_column_in_table:
   params:
@@ -591,13 +628,17 @@ check_restricted_access_text:
   params:
     content: Restricted Access
   action: check_page_contains
-check_no_configmaps_found_text:
+check_no_endpoints_found_text:
   params:
-    content: No Config Maps found
+    content: No Endpoints found
   action: check_page_contains
 check_no_machinehealthcheck_text:
   params:
     content: No Machine Health Checks found
+  action: check_page_contains
+check_no_results_text:
+  params:
+    content: No results
   action: check_page_contains
 submit_changes:
   elements:
@@ -628,7 +669,7 @@ click_annotation_link:
 click_annotation_edit_link:
   element:
     selector:
-      xpath: //button[contains(@data-test-id,'edit-annotations')]
+      xpath: //button[@data-test='edit-annotations']
     op: click
     timeout: 20
 uncheck_checkbox:
@@ -703,6 +744,7 @@ click_first_item_in_grid_cell_list:
   - selector:
       xpath: (//td[@role='gridcell'][1])[1]
     op: click
+    timeout: 40
 click_one_item:
   elements:
   - selector:
@@ -1188,12 +1230,12 @@ check_current_healthy:
   action: check_resource_details_key_and_value
 check_min_replicas:
   params:
-    key: Min Replicas
+    key: Min replicas
     value: <replicas_value>
   action: check_resource_details_key_and_value
 check_max_replicas:
   params:
-    key: Max Replicas
+    key: Max replicas
     value: <replicas_value>
   action: check_resource_details_key_and_value
 check_resource_kind:
@@ -1203,12 +1245,12 @@ check_resource_kind:
   action: check_resource_details_key_and_value
 check_api_group:
   params:
-    key: API Group
+    key: API group
     value: <api_group>
   action: check_resource_details_key_and_value
 check_api_version:
   params:
-    key: API Version
+    key: API version
     value: <api_version>
   action: check_resource_details_key_and_value
 check_namespaced:
@@ -1218,7 +1260,7 @@ check_namespaced:
   action: check_resource_details_key_and_value
 check_short_names:
   params:
-    key: Short Names
+    key: Short names
     value: <short_names>
   action: check_resource_details_key_and_value
 check_created_at:

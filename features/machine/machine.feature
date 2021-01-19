@@ -10,6 +10,7 @@ Feature: Machine features testing
   # @author jhou@redhat.com
   # @case_id OCP-22115
   @smoke
+  @admin
   Scenario: machine-api clusteroperator should be in Available state
     Given evaluation of `cluster_operator('machine-api').condition(type: 'Available')` is stored in the :co_available clipboard
     Then the expression should be true> cb.co_available["status"]=="True"
@@ -22,6 +23,14 @@ Feature: Machine features testing
 
     Given evaluation of `cluster_operator('machine-api').condition(type: 'Progressing')` is stored in the :co_progressing clipboard
     Then the expression should be true> cb.co_progressing["status"]=="False"
+
+  # @author zhsun@redhat.com
+  # @case_id OCP-37706
+  @smoke
+  @admin
+  Scenario: Baremetal clusteroperator should be disabled in any deployment that is not baremetal
+    Given evaluation of `cluster_operator('baremetal').condition(type: 'Disabled')` is stored in the :co_disabled clipboard
+    Then the expression should be true> cb.co_disabled["status"]=="True"
 
   # @author jhou@redhat.com
   # @case_id OCP-25436
@@ -268,7 +277,7 @@ Feature: Machine features testing
     Then the step should succeed
     And the output should contain:
       | <Validation> |
-	       
+
     Examples:
       | name                    | file_name                 | Validation                    |
       | default-valued-32269    | ms_default_values.yaml    | Placement                     |# @case_id OCP-32269
@@ -283,12 +292,12 @@ Feature: Machine features testing
     And I switch to cluster admin pseudo user
     And I use the "openshift-machine-api" project
     Then admin ensures machine number is restored after scenario
-   
+
     Given I store the last provisioned machine in the :machine clipboard
     When evaluation of `machine(cb.machine).gcp_region` is stored in the :default_region clipboard
     And evaluation of `machine(cb.machine).gcp_zone` is stored in the :default_zone clipboard
     Then admin ensures "default-valued-33056" machineset is deleted after scenario
-   
+
     Given I obtain test data file "cloud/ms-gcp/ms_default_values.yaml"
     When I run oc create over "ms_default_values.yaml" replacing paths:
       | n                                                                                         | openshift-machine-api                           |
@@ -302,7 +311,7 @@ Feature: Machine features testing
 
     # Verify machine could be created successful
     And I wait up to 300 seconds for the steps to pass:
-    """ 
+    """
     Then the expression should be true> machine_set("default-valued-33056").desired_replicas(cached: false) == 1
     """
     Then the machineset should have expected number of running machines
@@ -311,7 +320,7 @@ Feature: Machine features testing
   # @case_id OCP-33058
   @admin
   @destructive
-  Scenario: Implement defaulting machineset values for azure 
+  Scenario: Implement defaulting machineset values for azure
     Given I have an IPI deployment
     And I switch to cluster admin pseudo user
     And I use the "openshift-machine-api" project
@@ -352,14 +361,14 @@ Feature: Machine features testing
     When I run the :logs admin command with:
       | resource_name | <%= pod.name %> |
       | c             | #{cb.id}        |
-    Then the output should contain:
-      | attempting to acquire leader lease  openshift-machine-api/cluster-api-provider |
+    Then the output should match:
+      | attempting to acquire leader lease (.*)openshift-machine-api/cluster-api-provider |
     """
 
   # @author zhsun@redhat.com
   # @case_id OCP-34718
   @admin
-  Scenario: Node labels and Affinity definition in PV should match	
+  Scenario: Node labels and Affinity definition in PV should match
     Given I have a project
 
     # Create a pvc
@@ -432,7 +441,7 @@ Feature: Machine features testing
     And the output should contain:
       | Provisioned  |
     """
- 
+
     Examples:
       | name                         | template                                  | diskGiB           |
       | default-valued-33380         | <%= cb.template %>                        | <%= cb.diskGiB %> | # @case_id OCP-33380

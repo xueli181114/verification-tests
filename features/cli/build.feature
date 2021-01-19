@@ -131,9 +131,9 @@ Feature: build 'apps' with CLI
   Scenario: Create applications only with multiple db images
     Given I create a new project
     When I run the :new_app client command with:
-      | image_stream      | openshift/mongodb:latest               |
-      | image_stream      | openshift/mysql                        |
-      | docker_image      | centos/postgresql-96-centos7:latest    |
+      | image_stream      | openshift/mongodb:latest                             |
+      | image_stream      | openshift/mysql                                      |
+      | docker_image      | registry.access.redhat.com/rhscl/postgresql-96-rhel7 |
       | env               | MONGODB_USER=test                      |
       | env               | MONGODB_PASSWORD=test                  |
       | env               | MONGODB_DATABASE=test                  |
@@ -165,7 +165,7 @@ Feature: build 'apps' with CLI
     """
     And the output should contain:
       | 3.6 |
-    Given I wait for the "postgresql-96-centos7" service to become ready up to 300 seconds
+    Given I wait for the "postgresql-96-rhel7" service to become ready up to 300 seconds
     And I get the service pods
     And I wait up to 120 seconds for the steps to pass:
     """
@@ -224,7 +224,7 @@ Feature: build 'apps' with CLI
   Scenario: Using a docker image as source input using new-build cmd
     Given I have a project
     When I run the :tag client command with:
-      | source | quay.io/openshifttest/python:latest |
+      | source | quay.io/openshifttest/python:3.6 |
       | dest   | python:latest |
     Then the step should succeed
     And the "python" image stream becomes ready
@@ -654,9 +654,10 @@ Feature: build 'apps' with CLI
     And the output should match:
       | .*one or more resources.* |
     When I run the :new_app client command with:
-      | file | https://raw.githubusercontent.com/openshift/origin/master/examples/sample-app/application-template-dockerbuild.json |
+      | app_repo     | https://github.com/openshift/ruby-hello-world |
+      | image_stream | openshift/ruby:2.6                            |
     Then the step should succeed
-    And the "ruby-sample-build-1" build becomes :running
+    And the "ruby-hello-world-1" build becomes :running
     When I run the :logs client command with:
       | resource_name | |
     Then the step should fail

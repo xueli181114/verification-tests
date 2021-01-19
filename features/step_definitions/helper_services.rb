@@ -121,8 +121,8 @@ end
 Given /^I have a(n authenticated)? proxy configured in the project$/ do |use_auth|
   if use_auth
     step %Q/I run the :create_deploymentconfig client command with:/, table(%{
-      | image | aosqe/squid-proxy  |
-      | name  | squid-proxy        |
+      | image | quay.io/openshifttest/squid-proxy |
+      | name  | squid-proxy                       |
       })
     step %Q/I wait until the status of deployment "squid-proxy" becomes :running/
     step %Q/I run the :set_env client command with:/, table(%{
@@ -135,8 +135,8 @@ Given /^I have a(n authenticated)? proxy configured in the project$/ do |use_aut
     @result = user.cli_exec(:expose, resource: "deploymentconfig", resource_name: "squid-proxy", port: "3128")
   else
     step %Q/I run the :create_deployment client command with:/, table(%{
-      | image | aosqe/squid-proxy  |
-      | name  | squid-proxy        |
+      | image | quay.io/openshifttest/squid-proxy |
+      | name  | squid-proxy                       |
       })
     step %Q/a pod becomes ready with labels:/, table(%{
       | app=squid-proxy |
@@ -161,8 +161,8 @@ Given /^I have LDAP service in my project$/ do
     # So take the second one since this one can be implemented currently
     ###
     step %Q/I run the :run client command with:/, table(%{
-      | name  |ldapserver                             |
-      | image |openshift/openldap-2441-centos7:latest |
+      | name  | ldapserver                                       |
+      | image | quay.io/openshifttest/ldap:openldap-2441-centos7 |
       })
     step %Q/the step should succeed/
     step %Q/a pod becomes ready with labels:/, table(%{
