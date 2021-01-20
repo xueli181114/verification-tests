@@ -547,7 +547,7 @@ add_machine_pool_dialog_loaded:
         - selector:
             xpath: //span[text()='Compute node instance type']
         - selector:
-            xpath: //span[text()='Compute node count']
+            xpath: //span[contains(text(),'Compute node count')]
         - selector:
             xpath: //select[@aria-label='Compute nodes']
         - selector:
