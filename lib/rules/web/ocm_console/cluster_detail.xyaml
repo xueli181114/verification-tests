@@ -244,13 +244,13 @@ check_ocp_details_in_detail_page:
     action: check_osd_ocp_comman_details_in_detail_page
     elements:
         - selector:
-            xpath: //dl[1]/dd/span[text()='OCP']
+            xpath: //dd/span[text()='OCP']
         - selector:
-            xpath: //dl[1]/dt[text()='Nodes']
+            xpath: //dt/span[text()='Nodes']
         - selector:
-            xpath: //dl[1]/dt[text()='Master:']
+            xpath: //dt[text()='Master:']
         - selector:
-            xpath: //dl[2]/dt[text()='Compute:']
+            xpath: //dt[text()='Compute:']
 check_ocp_subscription_settings_in_detail_page:
     elements:
         - selector:
@@ -329,49 +329,49 @@ check_osd_details_in_detail_page:
     action: check_osd_ocp_comman_details_in_detail_page
     elements:
         - selector:
-            xpath: //dl[1]/dd/span[text()='OSD']
+            xpath: //dd/div/span[text()='OSD']
         - selector:
-            xpath: //dl[1]/dt[text()='Billing model']
+            xpath: //dt/span[text()='Billing model']
         - selector:
-            xpath: //dl[1]/dd[text()='Standard']
+            xpath: //dd/div[text()='Standard']
         - selector:
-            xpath: //dl[1]/dt[text()='Load balancers']
+            xpath: //dt/span[text()='Load balancers']
         - selector:
-            xpath: //dl[1]/dt[text()='Persistent storage']
+            xpath: //dt/span[text()='Persistent storage']
         - selector:
-            xpath: //dl[1]/dt[text()='Nodes']
+            xpath: //dt/span[text()='Nodes']
         - selector:
-            xpath: //dl[1]/dt[text()='Master:']
+            xpath: //dt[text()='Master:']
         - selector:
-            xpath: //dl[2]/dt[text()='Infra:']
+            xpath: //dt[text()='Infra:']
         - selector:
-            xpath: //dl[3]/dt[text()='Compute:']
+            xpath: //dt[text()='Compute:']
         - selector:
-            xpath: //dl[1]/dt[text()='Network']
+            xpath: //dt/span[text()='Network']
 check_osd_ocp_comman_details_in_detail_page:
     elements:
         - selector:
             xpath: //h2[text()='Details']
         - selector:
-            xpath: //dl[1]/dt[text()='Cluster ID']
+            xpath: //dt/span[text()='Cluster ID']
         - selector:
-            xpath: //dl[1]/dt[text()='Type']
+            xpath: //dt/span[text()='Type']
         - selector:
-            xpath: //dl[1]/dt[text()='Location']
+            xpath: //dt/span[text()='Location']
         - selector:
-            xpath: //dl[1]/dt[text()='Provider']
+            xpath: //dt/span[text()='Provider']
         - selector:
-            xpath: //dl[1]/dt[text()='Version']
+            xpath: //dt/span[text()='Version']
         - selector:
-            xpath: //dl[1]/dt[text()='Created at']
+            xpath: //dt/span[text()='Created at']
         - selector:
-            xpath: //dl[1]/dt[text()='Owner']
+            xpath: //dt/span[text()='Owner']
         - selector:
-            xpath: //dl[1]/dt[text()='Status']
+            xpath: //dt/span[text()='Status']
         - selector:
-            xpath: //dl[1]/dt[text()='Total vCPU']
+            xpath: //dt/span[text()='Total vCPU']
         - selector:
-            xpath: //dl[1]/dt[text()='Total memory']
+            xpath: //dt/span[text()='Total memory']
 expand_actions_behind_open_console_button:
     element:
         selector:
