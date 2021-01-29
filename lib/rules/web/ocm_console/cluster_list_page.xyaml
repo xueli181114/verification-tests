@@ -255,9 +255,24 @@ go_to_cluster_detail_page:
     element:
         selector:
             xpath: //td/a[contains(text(),'<cluster_name>')]
-        timeout: 30
+        timeout: 60
         op: click
     action: cluster_detail_page_loaded
+    action:
+        if_param: addons_tab
+        ref: click_add_ons_tab_button
+    action:
+        if_param: networking_tab
+        ref: click_networking_tab
+    action:
+        if_param: machinepool_tab
+        ref: switch_to_machine_pools_tab
+    action:
+        if_param: monitoring_tab
+        ref: click_monitoring_tab
+    action:
+        if_param: accesscontrol_tab
+        ref: click_access_control_tab
 expand_cluster_actions_on_cluster_list_page:
     element:
         selector:
