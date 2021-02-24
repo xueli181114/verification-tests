@@ -344,7 +344,7 @@ click_first_item_from_sub_resource_list_and_check_breadcrumb:
 check_link_in_breadcrumb:
   element:
     selector:
-      xpath: //ol[@class='pf-c-breadcrumb__list']/li[<layer_number>]/a[contains(@data-test-id,'breadcrumb-link') and contains(@href,'<link>') and translate(normalize-space(text()), ' ','')='<text>']
+      xpath: //ol[@class='pf-c-breadcrumb__list']/li[<layer_number>]/a[contains(@data-test-id,'breadcrumb-link') and contains(@href,'<link>') and contains(translate(normalize-space(text()), ' ',''),'<text>')]
 check_installplandetails_text_in_breadcrumb:
   params:
     layer_number: 2
@@ -358,7 +358,7 @@ check_projectdetails_text_in_breadcrumb:
 check_replicasetdetails_text_in_breadcrumb:
   params:
     layer_number: 2
-    text: Replica Set details
+    text: ReplicaSet details
   action: check_text_in_breadcrumb
 check_machinedetails_text_in_breadcrumb:
   params:
@@ -368,7 +368,7 @@ check_machinedetails_text_in_breadcrumb:
 check_machinesetdetails_text_in_breadcrumb:
   params:
     layer_number: 2
-    text: Machine Set details
+    text: MachineSet details
   action: check_text_in_breadcrumb
 check_containerdetails_text_in_breadcrumb:
   params:
@@ -419,12 +419,16 @@ cancel_build_kebab_operation:
     kebab_item: Cancel build
   action: click_one_operation_in_kebab
 edit_receiver_kebab_operation:
-  params:
-    kebab_item: Edit Receiver
-  action: click_one_operation_in_kebab
+  elements:
+  - selector:
+      xpath: //td[text()='<resource_name>']//ancestor::tr//button[@data-test-id='kebab-button']
+    op: click
+  - selector:
+      xpath: //button[@data-test-action='Edit Receiver']
+    op: click
 delete_machinehealthcheck_kabab_operation:
   params:
-    kebab_item: Delete Machine Health Check
+    kebab_item: Delete MachineHealthCheck
   action: click_one_operation_in_kebab
 delete_catalogsource_kabab_operation:
   params:
@@ -633,7 +637,7 @@ check_no_endpoints_found_text:
   action: check_page_contains
 check_no_machinehealthcheck_text:
   params:
-    content: No Machine Health Checks found
+    content: No MachineHealthChecks found
   action: check_page_contains
 check_no_results_text:
   params:
@@ -712,6 +716,21 @@ check_secondary_menu_link:
   element:
     selector: *secondary_menu
   action: check_link_and_text
+check_deploymentconfig_secondary_menu_link:
+  params:
+    secondary_menu: DeploymentConfigs
+    text: DeploymentConfigs
+  action: check_secondary_menu_link
+check_replicaset_secondary_menu_link:
+  params:
+    secondary_menu: ReplicaSets
+    text: ReplicaSets
+  action: check_secondary_menu_link
+check_replicationcontroller_secondary_menu_link:
+  params:
+    secondary_menu: ReplicationControllers
+    text: ReplicationControllers
+  action: check_secondary_menu_link
 click_dropdown:
   element:
     selector: &dropdown_name
