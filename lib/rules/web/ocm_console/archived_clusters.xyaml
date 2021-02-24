@@ -20,7 +20,7 @@ empty_table_loaded:
 archived_cluster_list_table_loaded:
     elements:
         - selector:
-            xpath: //h1[text()='Archived clusters']
+            xpath: //h1[text()='Cluster Archives']
         - selector:
             xpath: //table[@class='pf-c-table pf-m-grid-md']
         - selector:
