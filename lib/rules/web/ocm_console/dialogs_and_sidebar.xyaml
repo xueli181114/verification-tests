@@ -752,6 +752,11 @@ set_addon_install_parameter:
     action:
         if_param: parameter_input_finished
         ref: click_install_button_on_parameter_dialog
+set_addon_cidr_default_parameter:
+    element:
+        selector:
+            xpath: //button[contains(text(),'Use default')]
+        op: click
 
 input_addon_install_parameter:
     element:

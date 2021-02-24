@@ -24,6 +24,9 @@ install_addon:
     action: click_add_ons_tab_button
     action: click_addon_install_button
     action:
+        if_param: set_cidr_default
+        ref: set_addon_cidr_default_parameter
+    action:
         if_param: set_parameter
         ref: set_addon_install_parameter
     action: addon_install_button_missing
