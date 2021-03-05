@@ -72,7 +72,7 @@ unarchive_dialog_loaded:
         - selector:
             xpath: //button[@class='pf-c-button pf-m-plain' and @aria-label='Close']
         - selector:
-            xpath: //h1[text()='Unarchive cluster']
+            xpath: //span[text()='Unarchive cluster']
         - selector:
             xpath: //p[text()='Un-archiving a cluster will make it visible in the active (default) cluster list. You may need to manage subscriptions if the cluster is active.']
         - selector:
